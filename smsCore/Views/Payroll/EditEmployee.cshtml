@@ -1,0 +1,676 @@
+﻿@using sms.Models
+@model EmployeeCreationViewModel
+@inject StaticResources resources
+@{
+    ViewBag.Title = "Edit Employee";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Employee Edit
+        </li>
+
+    </ul>
+</div>
+<div class="sico-container" id="emploeeedit">
+@*@using (Ajax.BeginForm("EditEmployee", "Payroll", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "employeeditform", enctype = "multipart/form-data"}))
+{*@
+    <form asp-action="EditEmployee" asp-controller="Payroll"
+          data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="employeeditform" enctype="multipart/form-data" data_reset="true">
+  
+                   
+
+
+    @Html.HiddenFor(m => m.Employee.Id)
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row no-gutters">
+
+    <div class="col-12">
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#Personal" role="tab" aria-controls="home" aria-selected="true">Personal Information</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#institute" role="tab" aria-controls="profile" aria-selected="false">institute Information</a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" id="contact-tab" data-toggle="tab" href="#others" role="tab" aria-controls="contact" aria-selected="false">Others Informations</a>
+        </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="Personal" role="tabpanel" aria-labelledby="home-tab">
+
+    <div class="">
+    <div class="row no-gutters">
+        <div class="col">
+
+            <div class="row" style="max-width: 800px;">
+                <div class="col-12">
+                    <h4>Personal Information</h4>
+                </div>
+               @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "employeeditform", ColCssClass = "col-6 col-md-6 has-feedback", CampusFieldName = "Employee.CampusID", ShowCampus = true, CampusID = Model.Employee.CampusID })
+
+                <div class="col-6 col-md-6">
+                    <label>Employee Code <span class="asterisk" style="color:red">*</span></label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.employeeCode, new { @class = "form-control has-feedback-left small", placeholder = "Employee Code", required = "required" })
+                        <span class="fa fa-code form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.employeeCode)
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 has-feedback">
+                    <label>Gender</label>
+                    <div class="controls">
+                        @Html.DropDownListFor(model => model.Employee.gender, new SelectList(new[] { "Male", "Female" }, Model.Employee.gender), new { @class = "form-control small has-feedback-left", placeholder = "Gender" })
+                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Employee.gender)
+                                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label>Title</label>
+                    <div class="controls">
+                        @Html.DropDownListFor(model => model.Employee.Title, new SelectList(new[] { "Mr", "Mrs", "Miss" }, Model.Employee.Title), new { @class = "small form-control title", placeholder = "Gender" })
+                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+
+                </div>
+                <div class="col-8 col-md-6">
+                    <label>Employee Name<span class="asterisk" style="color:red">*</span></label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.employeeName, new { @class = "form-control has-feedback-left", placeholder = "Employee Name", required = "required" })
+                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.employeeName)
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6">
+                    <label>Father's Name<span class="asterisk" style="color:red">*</span> </label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.FatherName, new { @class = "form-control has-feedback-left", placeholder = "Father Name", required = "required" })
+                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.FatherName)
+                    </div>
+                </div>
+                @Html.Partial("_PartialDate", new PartialDateViewModels
+          {
+              Label = "Date of Birth",
+              ParentContainerID = "dob-dt",
+              ColCssClass = "col-12 col-md-6",
+              ShowAltField = false,
+              DateFieldId = "Employee_dob",
+              DateFieldName = "Employee.dob",
+              KeepDataFieldReadOnly = true,
+              IsRequired = true,
+              DefaultDate = Model.Employee.dob
+          })
+                <div class="col-6 col-md-6 has-feedback">
+                    <label>NIC No.</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.CNIC, new { @class = "small form-control has-feedback-left", placeholder = "National Identity Number" })
+                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.CNIC)
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-6 has-feedback">
+                    <label>Designation</label>
+                    <div class="controls">
+                        @Html.DropDownListFor(model => model.Employee.designationId, (SelectList)ViewBag.designationList, new { @class = "small form-control" })
+                        <span class="fa fa-users form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.designationId)
+                    </div>
+                </div>
+                <div class="col-6 col-sm-3 col-md-6 has-feedback">
+                    <label> Qualification</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.qualification, new { @class = "small form-control has-feedback-left", placeholder = " Qualification" })
+                        <span class="fa fa-institution form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.qualification)
+                    </div>
+                </div>
+
+                <div class="col-6 col-sm-3 col-md-6 has-feedback">
+                    <label>Blood Group</label>
+                    <div class="controls">
+                        @Html.DropDownListFor(model => model.Employee.bloodGroup, new SelectList(new[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" }, Model.Employee.bloodGroup), new { @class = "small form-control has-feedback-left" })
+                                        <span class="fa fa-user-md form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Employee.bloodGroup)
+                                    </div>
+                </div>
+                <div class="col-6 col-sm-3 col-md-6 has-feedback">
+                    <label>Marital Status</label>
+                    <div class="controls">
+                        @Html.DropDownListFor(model => model.Employee.maritalStatus, new SelectList(new[] { "Single", "Marreid" }, Model.Employee.maritalStatus), new { @class = "small form-control has-feedback-left" })
+                        <span class="fa fa-file form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.maritalStatus)
+                    </div>
+                </div>
+
+                @Html.Partial("_PartialDate", new PartialDateViewModels
+           {
+               Label = "Joining Date",
+               ParentContainerID = "joining-dt",
+               ColCssClass = "col-12 col-md-6",
+               ShowAltField = false,
+               DateFieldId = "Employee_joiningDate",
+               DateFieldName = "Employee.joiningDate",
+               KeepDataFieldReadOnly = true,
+               IsRequired = true,
+               DefaultDate = Model.Employee.joiningDate
+           })
+
+
+
+                @Html.Partial("_PartialDate", new PartialDateViewModels
+           {
+               Label = "Termination Date",
+               ParentContainerID = "termination-dt",
+               ColCssClass = "col-12 col-md-6",
+               ShowAltField = false,
+               DateFieldId = "Employee_terminationDate",
+               DateFieldName = "Employee.terminationDate",
+               KeepDataFieldReadOnly = true,
+               IsRequired = false,
+               DefaultDate = Model.Employee.terminationDate
+           })
+
+
+                <div class="col-6 col-md-6 has-feedback">
+                    <label>Salary Type</label>
+                    <div class="controls">
+                        @Html.DropDownListFor(model => model.Employee.salaryType, new SelectList(new[] { "Monthly", "Daily wage" }, Model.Employee.salaryType), new { @class = "small form-control has-feedback-left" })
+                        <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.bankAccountNumber)
+                    </div>
+                </div>
+                <div class="col-6 col-md-6 has-feedback" id="SalaryPackage" style="display: block">
+                    <label>Salary Package</label>
+                    <div class="controls">
+                        @Html.DropDownListFor(model => model.Employee.defaultPackageId, (SelectList)ViewBag.SalaryPackageList, new { @class = "small form-control" })
+                        <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("SalaryPackageId")
+                    </div>
+                </div>
+                <div class="col-6 col-md-6 has-feedback" id="DailyWage" style="display: none">
+                    <label>Daily Wage</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.dailyWage, new { @class = "small form-control has-feedback-left", placeholder = "Daily wage" })
+                                        <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessage("DailyWage")
+                                    </div>
+                </div>
+
+
+
+
+                <div class="col-12 col-md-6 has-feedback">
+                    <label>Naration</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.narration, new { @class = "small form-control has-feedback-left", placeholder = "Narration" })
+                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.narration)
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-4 mt-4">
+                    <label class="checkbox mr-2">
+
+                        <input name="Employee.IsActive" type="checkbox" value="true" @(Model.Employee.isActive.HasValue && Model.Employee.isActive.Value ? "checked" : "") class="mr-1" /><span> Active</span>
+                    </label><br />
+                </div>
+
+            </div>
+
+
+            <div class="form-group row" style="max-width: 800px;">
+                <div class="col-12 has-feedback">
+                    <h4>Qualification</h4>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover " border="1">
+                            <tr>
+                                <th>
+                                    University
+                                </th>
+                                <th>
+                                    Qualification
+                                </th>
+                                <th>
+                                    Year
+                                </th>
+                                <th>
+                                    Grade
+                                </th>
+                            </tr>
+                            <tbody id="tablebody">
+                                @{
+                                    int i = 0;
+                                }
+                                @for (i = 0; i < Model.Qualifications.Count; i++)
+                                {
+                                    <tr>
+                                        <td class="TdUniversity">
+                                            <input type="hidden" name="Qualifications[@i].ID" class="small form-control" value="@Model.Qualifications[i].ID" />
+                                            <input type="text" name="Qualifications[@i].University" class="small form-control" value="@Model.Qualifications[i].University" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="Qualifications[@i].QualificationType" class="small form-control" value="@Model.Qualifications[i].QualificationType" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="Qualifications[@i].Year" class="small form-control" value="@Model.Qualifications[i].Year" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="Qualifications[@i].Grade" class="small form-control" value="@Model.Qualifications[i].Grade" />
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td class="TdUniversity">
+                                        <input type="text" name="Qualifications[@i].University" class="small form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="Qualifications[@i].QualificationType" class="small form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="Qualifications[@i].Year" class="small form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="Qualifications[@i].Grade" class="small form-control" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-12 has-feedback">
+                    <h4 class="">Professional Experiences</h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover " border="1">
+                            <tr>
+                                <th>
+                                    Institution
+                                </th>
+                                <th>
+                                    Designation
+                                </th>
+                                <th>
+                                    From [Year]
+                                </th>
+                                <th>
+                                    To [Year]
+                                </th>
+                            </tr>
+                            <tbody id="tablebody2">
+
+                                @for (i = 0; i < Model.EmployeeExpriences.Count; i++)
+                                {
+                                    <tr>
+                                        <td class="tdintitute">
+                                            <input type="hidden" name="EmployeeExpriences[@i].ID" class="small form-control" value="@Model.EmployeeExpriences[i].ID" />
+                                            <input type="text" name="EmployeeExpriences[@i].Institution" class="small form-control" value="@Model.EmployeeExpriences[i].Institution" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="EmployeeExpriences[@i].Desgnition" class="small form-control" value="@Model.EmployeeExpriences[i].Desgnition" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="EmployeeExpriences[@i].From" class="small form-control" value="@Model.EmployeeExpriences[i].From" />
+                                        </td>
+                                        <td>
+                                            <input type="text" name="EmployeeExpriences[@i].To" class="small form-control" value="@Model.EmployeeExpriences[i].To" />
+                                        </td>
+
+                                    </tr>
+                                }
+
+                                <tr>
+                                    <td class="tdintitute">
+                                        <input type="text" name="EmployeeExpriences[@i].Institution" class="small form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="EmployeeExpriences[@i].Desgnition" class="small form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="EmployeeExpriences[@i].From" class="small form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="EmployeeExpriences[@i].To" class="small form-control" />
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-12 has-feedback">
+                    <h4>Subject Experties</h4>
+
+                    <div class="row">
+                        @for (i = 0; i < Model.EmloyeeSubjects.Count; i++)
+                        {
+                            <div class="col-6 col-sm-4 col-md-3">
+                                <label class="checkbox">
+                                    <input type="hidden" name="EmloyeeSubjects[@i].SubjectId" value="@Model.EmloyeeSubjects[i].SubjectId" />
+                                    <input type="checkbox" @(Model.EmloyeeSubjects[i].Select ? "checked" : "") value="true" name="EmloyeeSubjects[@i].Select" /> @Model.EmloyeeSubjects[i].SubjectName
+                                </label>
+                            </div>
+                        }
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <h4>Contact Informations</h4>
+                </div>
+                <div class="col-md-6 col-12 has-feedback">
+                    <label> Address</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.address, new { @class = "form-control has-feedback-left", placeholder = "Address" })
+                        <span class="fa fa-address-book form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.address)
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-12  has-feedback">
+                    <label>Phone Number</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.phoneNumber, new { @class = "small form-control has-feedback-left", placeholder = "Phone number" })
+                                        <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Employee.phoneNumber)
+                                    </div>
+                </div>
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>Mobile No</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.mobileNumber, new { @class = "small form-control has-feedback-left", placeholder = "Mobile No" })
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Employee.mobileNumber)
+                                    </div>
+                </div>
+
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>Email</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.email, new { @class = "form-control small has-feedback-left", placeholder = "email" })
+                        <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.email)
+                    </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <h4>Bank Account Information</h4>
+                </div>
+
+
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>Bank Name</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.bankName, new { @class = "form-control small has-feedback-left", placeholder = "bank Name" })
+                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.bankName)
+                    </div>
+                </div>
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>A/c NO</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.bankAccountNumber, new { @class = "form-control small has-feedback-left", placeholder = "A/c NO" })
+                                        <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Employee.bankAccountNumber)
+                                    </div>
+                </div>
+                <div class="col-md-6 col-12  has-feedback">
+                    <label>Branch Name</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.branchName, new { @class = "form-control small has-feedback-left", placeholder = "branch Name" })
+                                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Employee.branchName)
+                                    </div>
+                </div>
+
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>Branch Code</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.branchCode, new { @class = "form-control small has-feedback-left", placeholder = "branch Code" })
+                        <span class="fa fa-code form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.branchCode)
+                    </div>
+                </div>
+
+                <div class="col-12 mt-3">
+                    <h4>Other Informations</h4>
+                </div>
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>PAN Number</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.panNumber, new { @class = "small form-control has-feedback-left", placeholder = "pan number" })
+                        <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.panNumber)
+                    </div>
+                </div>
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>PF Number</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.pfNumber, new { @class = "small form-control has-feedback-left", placeholder = "Pf number" })
+                        <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.pfNumber)
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>ESI Number</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.esiNumber, new { @class = "small form-control has-feedback-left", placeholder = "Esi number" })
+                                        <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Employee.esiNumber)
+                                    </div>
+                </div>
+                <div class="col-12"></div>
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>Pass Port No</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.passportNo, new { @class = "form-control small has-feedback-left", placeholder = "PassPort No" })
+                        <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.passportNo)
+                    </div>
+                </div>
+                @Html.Partial("_PartialDate", new PartialDateViewModels
+                                               {
+                                                   Label = "Passport Expiry Date",
+                                                   ParentContainerID = "passport-dt",
+                                                   ColCssClass = "col-12 col-md-6",
+                                                   ShowAltField = false,
+                                                   DateFieldId = "Employee_passportExpiryDate",
+                                                   DateFieldName = "Employee.passportExpiryDate",
+                                                   KeepDataFieldReadOnly = true,
+                                                   IsRequired = false,
+                                                   DefaultDate = Model.Employee.passportExpiryDate
+                                               })
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>Visa Number</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.visaNumber, new { @class = "small form-control has-feedback-left", placeholder = "Visa No" })
+                        <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.visaNumber)
+                    </div>
+                </div>
+                @Html.Partial("_PartialDate", new PartialDateViewModels
+                                             {
+                                                 Label = "Visa Expiry Date",
+                                                 ParentContainerID = "visa-dt",
+                                                 ColCssClass = "col-12 col-md-6",
+                                                 ShowAltField = false,
+                                                 DateFieldId = "Employee_visaExpiryDate",
+                                                 DateFieldName = "Employee.visaExpiryDate",
+                                                 KeepDataFieldReadOnly = true,
+                                                 IsRequired = false,
+                                                 DefaultDate = Model.Employee.visaExpiryDate
+                                             })
+                <div class="col-md-6 col-12 has-feedback">
+                    <label>Labour Card Number</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Employee.labourCardNumber, new { @class = "small form-control has-feedback-left", placeholder = "Labour card no" })
+                        <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Employee.labourCardNumber)
+                    </div>
+                </div>
+                @Html.Partial("_PartialDate", new PartialDateViewModels
+                                              {
+                                                  Label = "Labour Expiry Date",
+                                                  ParentContainerID = "labor-dt",
+                                                  ColCssClass = "col-12 col-md-6",
+                                                  ShowAltField = false,
+                                                  DateFieldId = "Employee_labourCardExpiryDate",
+                                                  DateFieldName = "Employee.labourCardExpiryDate",
+                                                  KeepDataFieldReadOnly = true,
+                                                  IsRequired = false,
+                                                  DefaultDate = Model.Employee.labourCardExpiryDate
+                                              });
+            </div>
+        </div>
+
+    <div class="col" style="max-width: 180px;">
+        <div class="row">
+            <div class="col-12 has-feedback" style="max-width: 180px;">
+                <label class="d-block m-auto text-center" style="width: 150px;">Employee Photo</label>
+                @{
+                    if (Model.Employee.Photo != null)
+                    {
+                        <img src="data:image/*;base64,@(Convert.ToBase64String(Model.Employee.Photo))" id="EmployeePhotoPreview" class="d-block m-auto" style="width: 150px;"/>
+                    }
+                    else
+                    {
+                        <img src="~/Uploads/images/user.png" id="EmployeePhotoPreview" class="d-block m-auto" style="width: 150px;"/>
+                    }
+                }
+                <input type="file" data-preview="EmployeePhotoPreview" name="EmployeePhotoFile" id="EmployeePhotoFile" style="height: 0px; width: 0px;"/>
+                <label class="d-block m-auto" style="width: 150px;">Photo year</label>
+                <input type="text" class="d-block m-auto" style="width: 150px;" name="PhotoYear" id="PhotoYear"/>
+                @Html.ValidationMessage("EmployeePhotoFile")
+                <button type="button" class="btn btn-app btnFile float-right" data-targetfileinputid="EmployeePhotoFile" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-file-o"></i>Browse</button>
+                <button type="button" class="btn btn-app btnCamera float-right" data-preview="EmployeePhotoPreview" data-txtvalue="EmployeePhotoValue"><i class="fa fa-camera-retro"></i>Camera</button>
+            </div>
+
+        </div>
+    </div>
+
+    </div>
+    </div>
+    </div>
+
+    </div>
+
+    <div class="form-group col-12 pb-2 mt-3">
+        <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>
+
+        <button type="submit" value="Create" class="btn btn-primary pull-right">
+            <i class="fa fa-save mr-2"></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin mr-2"></i>
+            </span> Save
+        </button>
+    </div>
+    </div>
+    </div>
+</form>
+
+</div>
+<script @resources.JavaScript>
+   
+
+    $(function() {
+        function bindEvent1() {
+            $('.TdUniversity').unbind('change');
+            $('#tablebody tr:last-child .TdUniversity').on('change',
+                function () {
+                    let i = $('#tablebody tr').length;
+                    var html = '<tr><td class="TdUniversity"><input type="text" class="form-control" name="Qualifications[' + i + '].University" /></td><td><input type="text" class="form-control" name="Qualifications[' + i + '].QualificationType" /></td><td> <input type="text" class="form-control" name="Qualifications[' + i + '].Year" /> </td><td><input type="text" class="form-control" name="Qualifications[' + i + '].Grade" /></td></tr>';
+                    $('#tablebody').append(html);
+                    bindEvent1();
+                });
+        }
+
+        bindEvent1();
+
+        function bindevent() {
+            $('.tdintitute').unbind('change');
+            $('#tablebody2 tr:last-child .tdintitute').on('change',
+                function () {
+                    let i = $('#tablebody2 tr').length;
+                    var html = '<tr><td class="tdintitute"><input type="text" class="form-control" name="EmployeeExpriences[' + i + '].Institution" /></td><td><input type="text" class="form-control" name="EmployeeExpriences[' + i + '].Desgnition" /></td><td> <input type="text" class="form-control" name="EmployeeExpriences[' + i + '].From" /> </td><td><input type="text" class="form-control" name="EmployeeExpriences[' + i + '].To" /></td></tr>';
+                    $('#tablebody2').append(html);
+                    bindevent();
+                });
+        }
+
+        bindevent();
+        $('#Employee_salaryType').on('change',
+            function () {
+                if ($('#Employee_salaryType').val() == "Monthly") {
+                    $('#SalaryPackage').css({ "display": "block" });
+                    $('#DailyWage').css({ "display": "none" });
+                } else {
+                    $('#DailyWage').css({ "display": "block" });
+                    $('#SalaryPackage').css({ "display": "none" });
+
+                }
+            });
+
+        $('#Employee_salaryType').trigger('change')
+        $('.btnCamera').on('click',
+            function() {
+                var preview = $(this).data('preview');
+                var value = $(this).data('txtvalue');
+                var url = '@Url.Action("WebCam", "Dashboard")' + '?preview=' + preview + '&txtValue=' + value;
+                BootstrapDialog.show({
+                    title: 'Take Photo',
+                    message: $('<div><img src="/Images/WebsiteContent/form-loader.gif" /></div>').load(url)
+                });
+
+
+            });
+
+
+        $('.btnFile').on('click',
+            function() {
+                var preview = $(this).data('preview');
+                var value = $(this).data('txtvalue');
+                var targetFileInputID = $(this).data('targetfileinputid');
+                $('#' + targetFileInputID + '').trigger('click');
+            });
+
+        $('input[type=file]').on('change',
+            function(data) {
+
+                var preview = $(this).data('preview');
+                if (this.files) {
+                    for (i = 0; i < this.files.length; i++) {
+                        var reader = new FileReader();
+                        var cFile = this.files[i];
+                        reader.onload = (function(e) {
+                            $('#' + preview + '').attr('src', e.target.result);
+                        });
+                        reader.readAsDataURL(this.files[i]);
+                    }
+                }
+            });
+    });
+</script>

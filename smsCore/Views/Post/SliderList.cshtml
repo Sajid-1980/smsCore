@@ -1,0 +1,108 @@
+﻿@using Syncfusion.EJ2;
+@{
+    ViewBag.Title = "Index";
+
+}
+<div >
+    <div class="card">
+        <div class="card-header">
+            <a href="~/Post/CreateSlider" class="btn btn-primary float-right btn-sm">Add</a>
+            <h3 class="text-primary">Slider List</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">@*
+                    @Html.EJS().Grid("GridS").AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnChooser().AllowResizing().Columns(col =>
+               {
+                   col.Field("SliderGroup").HeaderText("Group").Width("120").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Right).Add();
+                   col.Field("ImagePath").HeaderText("Preview Image").Width("150").Add();
+                   col.Field("FirstLine").HeaderText("First Line").Width("130").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Right).Add();
+                   col.Field("SecondLine").HeaderText("Second Line").Width("120").Add();
+                   col.Field("ThirdLine").HeaderText("Third Line").Width("120").Add();
+                   col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+
+               }).AllowSorting().PageSettings(page => page.PageSize(10)).Toolbar(new List<string> { "Search", "ColumnChooser" }).Render()*@
+
+
+                    @{
+                        var modelgrid = new GridModel()
+            {
+                GridId = "GridS",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                    {
+                    new Column{FieldName="SliderGroup",HeaderText="Group",Width="150",TextAlign=TextAlign.Left},
+                    new Column{FieldName="ImagePath",HeaderText="Preview Image",Width="150",TextAlign=TextAlign.Left},
+                    new Column{FieldName="FirstLine",HeaderText="First Line",Width="150",TextAlign=TextAlign.Left},
+                    new Column{FieldName="SecondLine",HeaderText="Second Line",Width="150",TextAlign=TextAlign.Left},
+                    new Column{FieldName="ThirdLine",HeaderText="Third Line",Width="150",TextAlign=TextAlign.Left},
+                    new Column{FieldName="action",Template="#action",HeaderText="Action",Width="70",TextAlign=TextAlign.Left},
+
+                    },
+                AllowFiltering = true,
+            };
+                    }
+                    @await Html.PartialAsync("_grid",modelgrid)
+
+                </div>
+                <script type="text/x-jsrender" id="action">
+                    <a title="Edit" id="${Id}" href="/Post/SliderEdit/${Id}"><i class="fa fa-edit"></i></a>
+
+                    <a title="Delete" id="${Id}" onclick="deleteData(this)" class="edit ml-1"><i class="fa fa-trash"></i></a>
+
+                </script>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.EJS().ScriptManager();
+    <script>
+
+    var url1 = '@Url.Action("GetSliderList")';
+        $.get(url1, null, function (data) {
+            var gridObj = document.getElementById("GridS").ej2_instances[0];
+            gridObj.dataSource = (data);
+
+        });
+
+        function deleteData(me) {
+           
+            let id = $(me).attr('id');
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover data!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                customClass: 'swal-wide',
+                showCancelButton: true,
+                closeOnConfirm: false,
+                confirmButtonText: "Yes, delete it!",
+                confirmButtonColor: "#EC6C62"
+            })
+                .then((willDelete) => {
+                    if (willDelete.isConfirmed) {
+                        $.get('/Post/DeleteSlider?id=' + id, function (response) {
+                            if (response.status) {
+                                Swal.fire(response.message, {
+                                    icon: "success",
+                                });
+                                var grid = document.getElementById("GridS").ej2_instances[0];
+                                grid.refresh();
+                            }
+                            else {
+                                Swal.fire(response.message, {
+                                    icon: "error",
+                                });
+                            }
+                        })
+                    }
+                });
+        }
+    </script>
+

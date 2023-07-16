@@ -1,0 +1,539 @@
+﻿@model List<FeeSlip>
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "ReceiveFee";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Recieve Fee
+        </li>
+
+    </ul>
+</div>
+<style>
+    .td_receivedAmount {
+        display: block;
+        margin: auto;
+        max-width: 80px;
+        text-align: center;
+    }
+
+    #tbodyTable td.td_received {
+        padding: 0;
+        padding-top: 6px;
+    }
+</style>
+<section class="content">
+    @*  @using (Ajax.BeginForm("ReceiveFee", "Fee", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reset", OnComplete = "completed", LoadingElementId = "byIndividualStdForm #server-progress", OnBegin = "begin" }, new { id = "byIndividualStdForm" }))
+    {*@
+    <form asp-action="ReceiveFee" asp-controller="Fee" data-ajax="true" data-ajax-method="post" OnSuccess="reset" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="byIndividualStdForm" data_reset="true">
+
+        <div class="row">
+            <div class="col-md-4 col-12">
+                <div class="row">
+
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header with-border">
+                                <h3 class="card-title">Recieve Fee <a href="https://www.youtube.com/watch?v=6cDA5A8EMMg&list=UUQFf95Tyl3o9y-DE0vvlTQg" title="Watch our Youtube Video to understand" target="_blank" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a></h3>
+                            </div>
+                            <div class="card-body">
+
+                                <div class="row " id="row-container">
+                                    <div id="exception" class="col-12">@Html.ValidationSummary(true)</div>
+                                    @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                                    {
+                                    DefaultDate = DateTime.Today,
+                                    Label = "Received on",
+                                    ParentContainerID = "fee-received-date",
+                                    ColCssClass = "col-12 col-sm-6",
+                                    ShowAltField = true,
+                                    AltFieldFormat = "dd-mm-yy",
+                                    AltFieldId = "Receivedate",
+                                    AltFieldName = "Receivedate",
+                                    DateFieldId = "Receivedate1",
+                                    DateFieldName = "Receivedate1",
+                                    KeepDataFieldReadOnly = true
+                                    })
+
+                                    @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "row-container", ColCssClass = "col-6", ShowCampus = true })
+
+                                    <div class="col-6 col-sm-12 col-md-6">
+                                        <label>Registration No</label><font class="text-danger">*</font>
+                                        <div class="controls">
+                                            <input type="text" id="RegNo" name="RegNo" class="form-control" required />
+                                            <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                                        </div>
+                                    </div>
+                                    @*<div class="col-6 col-sm-6 col-md-3">
+                                    <label>Late Fee</label>
+                                    <input type="text" class="form-control" readonly id="lateFee" />
+                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                    </div>*@
+                                    <div class="col-12 col-md-6">
+
+                                        <label>Receive Amount</label><font class="text-danger">*</font>
+                                        <div class="controls">
+                                            <input id="ReceviedAmount" type="text" name="receivefee" class="form-control" required />
+                                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 pt-3">
+                                        <button type="button" value="Add" id="btnAdd" class="btn btn-primary float-right mr-3"><i class="fa fa-plus mr-2"></i> Add</button>
+                                        @*<input type="button" value="Bio metrics" />*@
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="card">
+
+
+                            <div class="card-body">
+                                <div class="col-12 col-md-12">
+                                    <div class="row no-gutters">
+                                        <div class="col-12">
+
+                                            <img class="profile-user-img img-fluid rounded mx-auto d-block" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                                            <h3 class="profile-username text-center">
+                                                <span class="name" id="stuName">......</span>
+                                            </h3>
+                                        </div>
+                                        <div class="col-12">
+                                            <ul class="list-group list-group-unbordered">
+                                                @*<li class="list-group-item listnoback">
+                                                <b>Address</b> <a class="pull-right text-aqua"> <span class="name address" id="lbladdress">House # 235, St 63, I-10/1 Islamabad</span></a>
+                                                </li>*@
+
+                                                <li class="list-group-item listnoback">
+                                                    <span>Campus</span>
+                                                    <a class="float-right text-aqua">
+                                                        <span class="campusname" id="lblcampus">...</span>
+                                                    </a>
+                                                </li>
+                                                <li class="list-group-item listnoback">
+                                                    <span>Class</span>
+                                                    <a class="float-right text-aqua">
+                                                        <span class="classname" id="lblclass">...</span>
+                                                    </a>
+                                                </li>
+                                                <li class="list-group-item listnoback">
+                                                    <span>Section</span>
+                                                    <a class="float-right text-aqua">
+                                                        <span class="sectionname" id="lblsection">..</span>
+                                                    </a>
+                                                </li>
+                                                <li class="list-group-item listnoback">
+                                                    <div class="row">
+                                                        <div class="col-7">
+                                                            <span>Amount</span>
+                                                            <label id="receiveablefee" class="text-center float-right text-aqua" style="background-color: black; color: white; width: 100%;">......</label>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <span>Late Fee</span>
+                                                            <label id="lateFee" class="text-center float-right text-aqua" style="background-color: black; color: white; max-width: 100%; width: 60px;">......</label>
+
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-8 col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message"></div>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <div class="col-12">
+
+                                    @*      @Html.EJS().Grid("list").Columns(col =>
+                                    {
+                                    //col.Field("RegNo").HeaderText("Reg. No").TextAlign(TextAlign.Left).Add();
+                                    col.Field("RegNo").HeaderText("Reg No").Width(120).TextAlign(TextAlign.Left).Add();
+                                    col.Field("Name").HeaderText("Name").Width(120).TextAlign(TextAlign.Left).Add();
+                                    col.Field("Class").HeaderText("Class").Width(150).TextAlign(TextAlign.Left).Add();
+                                    col.Field("Fee").HeaderText("Receiveable").Width(150).TextAlign(TextAlign.Left).Add();
+                                    col.Field("LateFee").HeaderText("Late Fee").Width(150).TextAlign(TextAlign.Left).Add();
+                                    col.Field("Total").HeaderText("Total").Width(150).TextAlign(TextAlign.Left).Add();
+                                    col.Field("Received").HeaderText("Received").Width(150).TextAlign(TextAlign.Left).Add();
+                                    col.Field("Balance").HeaderText("Balance").Width(150).TextAlign(TextAlign.Left).Add();
+                                    col.Template("#action").HeaderText("Action").Width(150).TextAlign(TextAlign.Center).Add();
+                                    }).Load("loaded").Render()*@
+                                    @{
+                                        var gridmodel = new GridModel()
+            {
+                GridId = "list",
+                Columns = new List<Column>{
+                                    new Column{FieldName="regNo",HeaderText="Reg No",Width="120",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="name",HeaderText="Name",Width="120",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="class",HeaderText="Class",Width="150",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="fee",HeaderText="Receiveable",Width="150",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="lateFee",HeaderText="Late Fee",Width="150",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="total",HeaderText="Total",Width="150",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="received",HeaderText="Received",Width="150",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="balance",HeaderText="Balance",Width="150",TextAlign=TextAlign.Left},
+                                    new Column{Template="#action",HeaderText="Action",Width="150",TextAlign=TextAlign.Center},
+                                    },
+            };
+                                    }
+                                    @await Html.PartialAsync("_grid",gridmodel)
+
+                                </div>
+
+                                <script type="text/x-jsrender" id="action">
+                                    <a href="javascript:void(0)" onclick="remove(${index})">
+                                        <i class="fa fa-close" style="color:red"></i>
+                                    </a>
+                                </script>
+
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label>Total Student</label>
+                                <label id="lblTotalNoOfStudents">....</label>
+                                <br />
+
+                                <label>Total Amount</label>
+                                <label id="total">....</label>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                @*<input type="checkbox" id="cbxDetail" name="cbxDetail" />
+                                <label>Print Receipt For School after Save</label>
+                                <br />
+
+                                <input type="checkbox" id="cbxPrint" name="cbxPrint" />
+                                <label>Print Receipt For Student after Save</label>
+                                <br />*@
+
+                                <input type="checkbox" id="cbxSend" value="false" name="cbxSend" />
+                                <label>Sent mobile Message to parent afer save</label>
+
+                            </div>
+
+                            <div class="col-12">
+                                <button type="button" value="Create" id="submit" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</section>
+
+<script @resources.JavaScript>
+    function loaded() {
+        let grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = [];
+    }
+    $.validator.setDefaults({
+        submitHandler: function () {
+
+        }
+    });
+    jQuery.validator.setDefaults({
+        debug: true,
+        success: "valid"
+    });
+    jQuery.validator.addMethod('checkexist',
+        function (v, e) {
+            let grid = document.getElementById("list").ej2_instances[0];
+            var found = (grid.dataSource).find(function (v1, i) { return v1.RegNo == v; });
+            if (found) {
+                return false;
+            }
+            else return true;
+        }, "Student already added.");
+    $("#byIndividualStdForm").validate({
+        rules: {
+            ReceviedAmount: {
+                required: true,
+                number: true
+            },
+
+            RegNo: {
+                required: true,
+                number: true,
+                checkexist: true
+            },
+            Receivedate: {
+                required: true,
+            }
+        },
+        messages: {
+            ReceviedAmount: "Enter received amount.",
+            Receivedate: "Select a valid date.",
+
+        },
+        errorElement: "em",
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass("is-invalid").removeClass("is-valid");
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).addClass("is-valid").removeClass("is-invalid");
+        }
+    });
+
+</script>
+
+<script @resources.JavaScript>
+
+    $(this).on('keypress',
+        function(e) {
+            if (e.which == 13) {
+
+                var add = true;
+                if ($('#RegNo').is(":focus")) {
+                    $('#ReceviedAmount').focus();
+                    $('#ReceviedAmount').select();
+                    add = false;
+                }
+
+                if (add)
+                    $('#add').trigger('click');
+
+                return false;
+            }
+            if (e.which == 8) {
+
+                if ($('#ReceviedAmount').is(":focus") && $('#ReceviedAmount').val() == 'undefined') {
+                    $('#RegNo').focus().select();
+                }
+            }
+        });
+    $('#RegNo').on('change',
+        function() {
+            Getdata();
+        });
+    $('#Campus').on('change',
+        function() {
+            if ($('#RegNo').val() != null && $('#RegNo').val() != "" && $('#RegNo').val() != "0") {
+                Getdata();
+            }
+        });
+
+    function Getdata() {
+
+        var id = $('#RegNo').val();
+
+        let grid = document.getElementById("list").ej2_instances[0];
+
+
+        $('#ReceviedAmount').disable();
+        $('#btnAdd').disable();
+
+        $('#ReceviedAmount').val('0');
+        $('#receiveablefee').html('0');
+        $('#lateFee').html('0');
+        $('#stuName').html('.......');
+        $(lblcampus).html('...');
+        $(lblclass).html('...');
+        $(lblsection).html('...');
+        $(pbxPhoto).attr('src', "/Uploads/images/user.png");
+        if (!id)
+            return false;
+        var found = (grid.dataSource).find(function (v1, i) { return v1.RegNo == id; });
+        if (found) {
+            return false;
+        }
+        let stdinfoUrl = '/api/students/get-student-info/' + id;
+        $.get(stdinfoUrl, function (dataa) {
+            var data = JSON.parse(dataa);
+            if (data) {
+                $('#stuName').html(data.studentName);
+                $(lblcampus).html(data.campusName);
+                $(lblclass).html(data.className);
+                $(lblsection).html(data.sectionName);
+                $(pbxPhoto).attr('src', data.photo);
+                //$('#CampusID').val(data.CampuseID);
+                var url = '/api/fee/get-receiveable-fee';
+                url += '?regno=' + id + '&receivedDate=' + $('#Receivedate').val() + '&campusID=' + $('#Campus').val();
+                $.get(url, function (response) {
+                    if (response.Data[0].balance) {
+                        $(receiveablefee).html(response.Data[0].balance);
+                        $(lateFee).html(response.Data[0].lateFee);
+                        $('#ReceviedAmount').enable();
+                        $('#btnAdd').enable();
+
+                        var total = parseFloat($('#receiveablefee').text()) + parseFloat($('#lateFee').html());
+                        $('#ReceviedAmount').val(total).focus().select();
+                    } else {
+                        $(receiveablefee).html('0');
+                        $(lateFee).html('0');
+                        $(RegNo).focus().select().val('');
+                        $(RegNo).addClass("is-invalid").removeClass("is-valid");
+                        $('#ReceviedAmount').disable();
+                        $('#btnAdd').disable();
+                    }
+                });
+            }
+        }).error(function () {
+            $('#stuName').html('.......');
+            $(lblcampus).html('...');
+            $(lblclass).html('...');
+            $(lblsection).html('...');
+            $(pbxPhoto).attr('src', "/Uploads/images/user.png");
+            $('#ReceviedAmount').disable();
+            $('#btnAdd').disable();
+            $(receiveablefee).html('0');
+            $(lateFee).html('0');
+        });
+
+    }
+
+    function reset() {
+        let grid = document.getElementById('list').ej2_instances[0];
+        grid.dataSource = [];
+        grid.refresh();
+    }
+
+    function remove(i) {
+        let grid = document.getElementById("list").ej2_instances[0];
+        (grid.dataSource).splice(i, 1);
+        grid.refresh();
+
+        var grantTotal = grid.dataSource.reduce(function (p, c) {
+            return p + c.Received;
+        }, 0);
+
+        $('#total').html(grantTotal.toString());
+        $('#lblTotalNoOfStudents').html((grid.dataSource).length);
+        $('#RegNo').val('').focus();
+    }
+    function indexFunc(i) {
+        return i + 1;
+    }
+    $('#btnAdd').on('click',
+        function () {
+
+            var result = $('#byIndividualStdForm')[0].checkValidity();
+            if (!result) {
+                var validator = $("#byIndividualStdForm").validate();
+                validator.showErrors();
+                return false;
+            } else {
+                var id = parseInt($('#RegNo').val());
+                let grid = document.getElementById("list").ej2_instances[0];
+                var found = (grid.dataSource).find(function (v, i) { return v.RegNo == id; });
+                //console.log(found);
+                if (found) {
+                    $('#RegNo').focus().select();
+                    return false;
+                }
+                var total = parseFloat($('#receiveablefee').text()) + parseFloat($('#lateFee').html());
+                var latefee = parseFloat($('#lateFee').html());
+                var received = parseFloat($('#ReceviedAmount').val());
+                var balance = total - parseFloat(received);
+                if (received > total) {
+                    $('#ReceviedAmount').focus().select();
+                    return false;
+                }
+
+
+                if (total > 0 && received > 0) {
+                    var row = { SNO: grid.dataSource.length + 1, RegNo: $('#RegNo').val(), Name: $('#stuName').text(), Class: $(lblclass).text(), Fee: $('#receiveablefee').text(), LateFee: latefee, Total: total, Received: received, Balance: balance };
+                    (grid.dataSource).unshift(row);
+                    grid.refresh();
+                    //table.row.add([table.rows().count() + 1, id, $('#stuName').text(), $(lblclass).text(), $('#receiveablefee').text(), latefee, total, received, balance]).draw();
+                }
+                var grantTotal = grid.dataSource.reduce(function (p, c) {
+                    console.log(p, c);
+                    return p + c.Received;
+                },0);
+
+                $('#total').html(grantTotal.toString());
+                $('#lblTotalNoOfStudents').html((grid.dataSource).length);
+                $('#RegNo').val('').focus();
+
+                $('#lateFee').html('0');
+                $('#ReceviedAmount').val('0');
+            }
+            $('#btnAdd').disable();
+            $('#ReceviedAmount').disable();
+
+            $(RegNo).focus();
+
+        });
+
+    $('#submit').on('click',
+        function () {
+
+            $('#server-progress').show();
+            $('#submit').disable();
+            var Fees = [];
+            var i = 0;
+            var grid = document.getElementById('list').ej2_instances[0];
+            grid.dataSource.forEach(function (v, i) {
+                Fees[i] = { RegistrationNo: v.RegNo, Total: v.Total, Received: v.Received };
+                i++;
+            });
+            var sendmessage = false;
+            if ($('#cbxSend').is(':checked')) {
+                sendmessage = true;
+            }
+            $.post("@Url.Action("RecieveFee", "Fee")",
+                {
+                    cbxSend: sendmessage,
+                    cbxPrint: false,
+                    cbxDetail: false,
+                    receiveDate: $(Receivedate1).val(),
+                    slip: Fees,
+                    Campus: $('#Campus').val(),
+                },
+                function (data) {
+                    $('#submit').enable();
+
+                    $('#server-progress').hide();
+                    if (data.Data.type == "success") {
+                        $('#message').html('<span class="float-left alert alert-info w-100">Information added to database successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                        grid.dataSource = [];
+                    } else if (data.Data.type == "failede") {
+                        $('#message').html('<span class="float-left alert alert-danger w-100">Something went wrong while trying to store data. <a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                    } else {
+                        $('#message').html('<span class="float-left alert alert-danger w-100">' + data.responseText + '<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span> ');
+                    }
+                }).error(function () {
+                    $('#submit').enable();
+
+                    $('#server-progress').hide();
+
+                });
+
+            return false;
+        });
+
+
+</script>
+

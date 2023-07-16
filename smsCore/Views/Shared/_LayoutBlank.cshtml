@@ -1,0 +1,256 @@
+﻿@using Microsoft.EntityFrameworkCore
+@using smsCore.Data.Helpers;
+@inject StaticResources resources
+@inject SchoolEntities context
+@inject ClsBussinessSetting setting;
+<!DOCTYPE html>
+<html>
+@{
+    var menu = context.PublicMenus.AsNoTracking().Where(w => w.IsActive).OrderBy(o => o.SortOrder).ToList();
+    var pages = context.PublicPages.AsNoTracking().Where(w =>w.IsActive && (w.PageName!="home" && w.PageName!="about" && w.PageName!="contact") && w.Description=="Header Menu" || w.Description=="Both").ToList().Select(s => new PublicMenu {
+        Url="/pages/"+s.PageName, DisplayText=s.PageTitle
+    });
+
+    var footerpages = context.PublicPages.AsNoTracking().Where(w => w.IsActive &&  (w.PageName!="home" && w.PageName!="about" && w.PageName!="contact") && w.Description=="Footer Menu" || w.Description=="Both").ToList().Select(s => new PublicMenu {
+        Url="/pages/"+s.PageName,
+        DisplayText=s.PageTitle
+    });
+    var company = context.Company.AsNoTracking().Select(s=>new { mailingName=s.mailingName, companyName=s.companyName, address=s.address, emailId=s.emailId, phone=s.phone }).FirstOrDefault();
+    company = company == null ? new { mailingName = "", companyName = "", address = "", emailId = "", phone="" } : company;
+    string title = company.mailingName;
+    string SchoolName = company.companyName;
+    //var logo = company.logo;
+    //string logoPath = "/publicsite/images/logo.png";
+    var logoPath = resources.GetImageUrl("logo", EnumManager.Imagetype.Logo);
+    if (string.IsNullOrEmpty(logoPath))// (logo!=null && logo.Length!=0)
+    {
+        logoPath = "/publicsite/images/logo.png";
+        //logoPath = "data:image/png;base64,"+Convert.ToBase64String(logo);
+    }
+    //var footer = context.ContentPosts.Where(w => w.PostType.Name=="footer").Select(s => s.PostContent).FirstOrDefault();
+    setting.CampusId = 0;
+    string play_store_url = "";
+    string apple_store_url = "";
+    var play_url = setting.Read("PlayStoreLink", true);
+    if( play_url!=null)
+    {
+        play_store_url = play_url.PropertyValue.Trim();
+    }
+    var apple_url = setting.Read("AppleStoreLink", true);
+    if( apple_url!=null)
+    {
+        apple_store_url = play_url.PropertyValue.Trim();
+    }
+}
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- Site Metas -->
+    <title>@SchoolName</title>
+    <meta name="keywords" content="school, Education, Primay school, Institute, Gilgit Baltistan, Gilgit, Skardu">
+    <meta name="description" content="">
+    <meta name="author" content="Softify Technologies">
+
+    <!-- Site Icons -->
+    <link rel="shortcut icon" href="#" type="image/x-icon" />
+    <link rel="apple-touch-icon" href="#" />
+    @*@Styles.Render("~/publicsite")*@
+    <link href="~/lib/bootstrap4/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/publicsite/css/pogo-slider.min.css" rel="stylesheet" />
+    <link href="~/publicsite/css/style.css" rel="stylesheet" />
+    <link href="~/publicsite/css/responsive.css" rel="stylesheet" />
+    <link href="~/publicsite/css/custom.css" rel="stylesheet" />
+    
+    
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/publicsite/js/jquery.pogo-slider.min.js"></script>
+    <script src="~/publicsite/js/slider-index.js"></script>
+    <script src="~/publicsite/js/smoothscroll.js"></script>
+    <script src="~/publicsite/js/form-validator.min.js"></script>
+    <script src="~/publicsite/js/contact-form-script.js"></script>
+    <script src="~/publicsite/js/custom.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body id="home" data-spy="scroll" data-target="#navbar-wd" data-offset="98">
+    <!-- LOADER -->
+    <div id="preloader">
+        <div class="loader">
+            <img src="/publicsite/images/loader.gif" alt="#" />
+        </div>
+    </div>
+    <!-- end loader -->
+    <!-- END LOADER -->
+    <!-- Start header -->
+    <header class="top-header">
+        <nav class="navbar header-nav navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/"><img src="@logoPath" alt="@SchoolName" /><span style="margin-left: 10px;font-size: 16px;font-weight: bold;" class="logo-name">@SchoolName</span></a>
+                <button id="togglebar" class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-wd" aria-controls="navbar-wd" aria-expanded="false" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbar-wd">
+                    <ul class="navbar-nav">
+                        @foreach (var i in menu)
+                        {
+
+                            <li><a class="nav-link active" href="@i.Url">@i.DisplayText</a></li>
+                            if (i.Url == "/")
+                            {
+                                foreach (var p in pages)
+                                {
+                                    <li><a class="nav-link active" href="@p.Url">@p.DisplayText</a></li>
+                                }
+                            }
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li><a class="nav-link active" href="/Home/Dashboard">Dashboard</a></li>
+                        }
+                        else
+                        {
+                            <li><a class="nav-link active" href="/Identity/Account/Login">Login</a></li>
+                        }
+                        @if (!string.IsNullOrEmpty(play_store_url) || !string.IsNullOrEmpty(apple_store_url))
+                        {
+                            <li><a class="nav-link active" href="#footer">Mobile App</a></li>
+                        }
+                        </ul>
+
+                </div>
+                @*<div class="search-box">
+                        <input type="text" class="search-txt" placeholder="Search">
+                        <a class="search-btn">
+                            <img src="/Content/images/search_icon.png" alt="#" />
+                        </a>
+                    </div>*@
+            </div>
+        </nav>
+    </header>
+    <!-- End header -->
+    @RenderBody()
+    <!-- Start Footer -->
+    <footer class="footer-box">
+        <div class="container">
+
+            <div class="row" id="footer">
+
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+                    <div class="footer_blog">
+                        <div class="full mb-2">
+                            <img src="@logoPath" style="max-width:100px" alt="@SchoolName" />
+                        </div>
+                        <div class="full white_fonts">
+                            <h5>@SchoolName</h5>
+                            <p>
+                                @if (!string.IsNullOrEmpty(play_store_url))
+                                {
+                                    <a href="@play_store_url" target="_blank">
+                                        <img class="img-fluid mt-3" style="max-width:180px;" src="~/publicsite/images/playstore.png" />
+                                    </a>
+                                }
+                                @if (!string.IsNullOrEmpty(apple_store_url))
+                                {
+                                    <a href="@apple_store_url" target="_blank">
+                                        <img class="img-fluid mt-3" style="max-width:180px;" src="~/publicsite/images/playstore.png" />
+                                    </a>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+                    <div class="footer_blog footer_menu white_fonts">
+                        <h3>Quick links</h3>
+                        <ul>
+                            @foreach (var rm in footerpages)
+                            {
+
+                                <li><a href="@rm.Url"> @rm.DisplayText</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+                    <div class="footer_blog full white_fonts">
+                        <h3>Newsletter</h3>
+                        <p>Stay connected with us by providing your email.</p>
+                        <div class="newsletter_form">
+                            <form action="index.html">
+                                <input type="email" placeholder="Your Email" name="#" required />
+                                <button>Submit</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-3">
+                    <div class="footer_blog full white_fonts">
+                        <h3>Contact us</h3>
+                        <ul class="full">
+                            <li><img src="~/publicsite/images/i5.png"><span>@company.address</span></li>
+                            <li><img src="~/publicsite/images/i6.png"><span>@company.emailId</span></li>
+                            <li><img src="~/publicsite/images/i7.png"><span>@company.phone</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </footer>
+    <!-- End Footer -->
+
+    <div class="footer_bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <p class="crp">© Copyrights 2020 design by <a target="_blank" href="http://softify.pk">Softify Technologies</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" id="scroll-to-top" class="hvr-radial-out"><i class="fa fa-angle-up"></i></a>
+
+
+    @* @Scripts.Render("~/publicsitejs");*@
+
+    <script defer>
+
+        
+        /* counter js */
+
+       // jQuery(function ($) {
+            // custom formatting example
+            //$('.count-number').data('countToOptions', {
+            //    formatter: function (value, options) {
+            //        return value.toFixed(options.decimals).replace(/\B(?=(?:\d{3})+(?!\d))/g, ',');
+            //    }
+            //});
+
+            //// start all the timers
+            //$('.timer').each(count);
+
+            //function count(options) {
+            //    var $this = $(this);
+            //    options = $.extend({}, options || {}, $this.data('countToOptions') || {});
+            //    $this.countTo(options);
+            //}
+        //});
+    </script>
+    
+</body>
+</html>

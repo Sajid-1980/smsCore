@@ -1,0 +1,119 @@
+﻿@using sms.Models
+@model Homework
+@inject StaticResources resources
+
+
+@{
+    ViewBag.Title = "Homework Evaluate";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Evaluate Homework
+            </li>
+
+        </ul>
+    </div>
+}
+
+<section class="content" id="searchstudent-container">
+    <div class="row">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="col-md-12">
+                            <div class="row">
+                                @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "searchstudent-container", ColCssClass = "col-12 col-sm-3 col-md-3", ShowSubjects = true, ShowCampus = true, ShowClasses = true, ShowSections = true })
+
+                                @Html.Partial("_PartialDate", new PartialDateViewModels
+               {
+                   Label = "Date",
+                   ParentContainerID = "adm-date",
+                   ColCssClass = "col-12 col-sm-3 col-md-3",
+                   ShowAltField = false,
+                   DateFieldId = "subDate",
+                   DateFieldName = "Date",
+                   KeepDataFieldReadOnly = true,
+                   DefaultDate = DateTime.Now
+               })
+                            </div>
+
+                            <button type="button" onclick="searches()" name="search" class="btn btn-primary btn-sm checkcard-toggle float-right mt-4"><i class="fa fa-search"></i> Search</button>
+                        </div>
+
+                        <div class="col-12 no-gutters mt-3">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title">
+                                        <i class="fa fa-book"></i> Evaluate Homework
+                                    </h3>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            @Html.EJS().Grid("GridS").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                                       {
+                                           col.Field("CampusName").HeaderText("Campus").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                                           col.Field("ClassName").HeaderText("Class").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                                           col.Field("Subject").HeaderText("Subject").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                                           col.Field("HomeworkDate").HeaderText("HomeworkDate").Width("80").Format("dd/MM/yyyy").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                                           col.Field("SubmissionDate").HeaderText("SubmissionDate").Width("80").Format("dd/MM/yyyy").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                                           col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(TextAlign.Left).Add();
+                                       }).FilterSettings(filter => { filter.Type(Syncfusion.EJ2.Grids.FilterType.CheckBox); }).AllowSorting(true).PageSettings(page => page.PageSize(5)).Toolbar(new List<string>()
+                                      { "PdfExport", "Print", "ExcelExport", "Search" ,"ColumnChooser" }).Render()
+                                        </div>
+
+                                        <script type="text/x-jsrender" id="action">
+                                            <a title="Edit" class="editL" id="${Id}" href="/Edit/${Id}"><i class="fa fa-edit"></i></a>
+                                            <a title="Delete" class="delete" id="${Id}" href="/Delete/${Id}"><i class="fa fa-trash ml-2"></i></a>
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+    function searches() {
+        var classid = $('#Classes').val();
+        var sectionid = $('#Sections').val();
+        var subjectid = $('#Subjects').val();
+        var campusId = $('#Campus').val();
+        var hwDate = $('#subDate').val();
+        var url1 = '@Url.Action("GetsearchHomework")';
+
+        url1 += '?classid=' + classid + '&sectionid=' + sectionid + '&campusId=' + campusId + '&subjectid=' + subjectid + '&hwDate=' + hwDate;
+        var grid = document.getElementById("GridS").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+</script>

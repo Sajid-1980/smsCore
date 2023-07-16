@@ -1,0 +1,196 @@
+﻿@using m = Models;
+@inject StaticResources resources
+
+@model Campus
+
+@{
+    ViewBag.Title = "Create Campus";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Create Campus
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+   @* @using (Ajax.BeginForm("CreateCampus", "School", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "editSchoolmainForm #server-progress", OnBegin = "begin"}, new {id = "editSchoolmainForm",data_reset="true", enctype = "multipart/form-data"}))
+    {*@
+
+    <form asp-action="CreateCampus" asp-controller="School" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editSchoolmainForm" data_reset="true">
+                   
+        <div class="row">
+
+            <div class="col-12 ">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">Create Campus</h3>
+                    </div>
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="Container">
+
+                            <div class="row ">
+                                <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                    <label>Campus Name</label><font class="text-danger">*</font>
+                                                              <div class="controls">
+                                                                  @Html.TextBoxFor(model => model.CampusName, new { @class = "form-control has-feedback-left", required = "true" })
+                                                                  <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
+                                                                  @Html.ValidationMessageFor(model => model.CampusName)
+                                                              </div>
+                                </div>
+                                <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                    <label>Address</label>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.address, new { @class = "form-control has-feedback-left" })
+                                        <span class="fa fa-address-book form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.address)
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                    <label> Mailing Name</label><font class="text-danger">*</font>
+                                                                <div class="controls">
+                                                                    @Html.TextBoxFor(model => model.mailingName, new { @class = "form-control has-feedback-left", required = "true" })
+                                                                    <span class="fa fa-address-book form-control-feedback left" aria-hidden="true"></span>
+                                                                    @Html.ValidationMessageFor(model => model.mailingName)
+                                                                </div>
+                                </div>
+                                <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                    <label>Phone</label><font class="text-danger">*</font>
+                                                        <div class="controls">
+                                                            @Html.TextBoxFor(model => model.phone, new { @class = "form-control has-feedback-left", required = "true", type = "datetime" })
+                                                            <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                                            @Html.ValidationMessageFor(model => model.phone)
+                                                        </div>
+                                </div>
+                                <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                    <label>Mobile</label><font class="text-danger">*</font>
+                                                         <div class="controls">
+                                                             @Html.TextBoxFor(model => model.mobile, new { @class = "form-control has-feedback-left", required = "true", type = "datetime" })
+                                                             <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                                             @Html.ValidationMessageFor(model => model.phone)
+                                                         </div>
+                                </div>
+                                <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                    <label>Web</label><font class="text-danger">*</font>
+                                                      <div class="controls">
+                                                          @Html.TextBoxFor(model => model.web, new { @class = "form-control has-feedback-left", required = "true", type = "datetime" })
+                                                                                          <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                                                                          @Html.ValidationMessageFor(model => model.phone)
+                                                                                      </div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                    <label>Email </label><font class="text-danger">*</font>
+                                                         <div class="controls">
+                                                             <input type="text" name="Email" class="form-control has-feedback-left" required />
+                                                             <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                                                             @Html.ValidationMessage("Email")
+                                                         </div>
+                                </div>
+                                <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                    <label>Password </label><font class="text-danger">*</font>
+                                                            <div class="controls">
+                                                                <input type="password" name="password" minlength="7" class="form-control has-feedback-left" required />
+                                                                <span class="fa fa-key form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessage("Password")
+                                                            </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    
+                                    <button type="reset" name="Reset" id="resetbtn" class="btn btn-ganger float-right mt-2"><i class="fa fa-refresh mr-2"></i>Reset</button>
+                                    <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                                        <i class="fa fa-save mr-2"></i>
+                                        <span>
+                                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                        </span> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">Campus List</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12">
+
+                            @Html.EJS().Grid("list_campus").DataSource(s => { s.Url("/School/CampusList").Adaptor("UrlAdaptor"); }).Columns(col =>
+                       {
+                           col.Field("CampusName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                           col.Field("mailingName").HeaderText("Mailing name").TextAlign(TextAlign.Left).Add();
+                           col.Field("phone").HeaderText("Phone").TextAlign(TextAlign.Left).Add();
+                           col.Field("web").HeaderText("Web").TextAlign(TextAlign.Left).Add();
+                           col.Field("mobile").HeaderText("Mobile").TextAlign(TextAlign.Left).Add();
+                           col.Field("address").HeaderText("Address").TextAlign(TextAlign.Left).Add();
+                           col.Field("action").Template("#action").HeaderText("Action").Width("170").TextAlign(TextAlign.Center).Add();
+                       }).Height("auto").Width("auto").Render()
+                        </div>
+                        <script type="text/x-jsrender" id="action">
+                            <a title="Edit" href="/School/CampusEdit/${getid(ID)}" class="ajax-load ml-1"><i class="fa fa-edit"></i></a>
+
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+   </form>
+</section>
+<script @resources.JavaScript>
+    function reloadGridData() {
+        var grid = document.getElementById('list_campus').ej2_instances[0];
+        grid.refresh();
+    }
+    $('#list_campus').on('click',
+        'a',
+        function (e) {
+            e.preventDefault();
+            var title = 'Payment Method';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>
+@Html.EJS().ScriptManager()

@@ -1,0 +1,161 @@
+﻿@model ExamsRule
+@{
+     
+        Layout = null;
+    
+}
+<style>
+    form> .control-group {
+        float: left;
+        width: 45% !important;
+    }
+</style>
+@*@using (Ajax.BeginForm("ExamHelds", "Exams", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "ExamHeldsmainForm #server-progress", OnBegin = "begin"}, new {id = "ExamHeldsmainForm"}))
+{*@
+
+<form asp-action="ExamHelds" asp-controller="Exams"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="ExamHeldsmainForm" data_reset="true">
+                   
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ID)
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" data-val="true" value="@ViewBag.ExamID" name="ExamHeldID"/>
+
+    <div class="row">
+        @* Studnets promotion rules *@
+        <div class="col-12 col-xs-12 form-group has-feedback">
+            <h3>Student Promotion Rules</h3>
+        </div>
+        <label class="col-md-5 col-xs-12 form-group has-feedback pb-2"> Any Student Who Fail In</label>
+        <div class="col-md-3 col-xs-12 form-group has-feedback pb-2">
+            @Html.TextBoxFor(model => model.CoreFail, null, new {@class = "form-control  text-center", placeholder = "..."})
+            @Html.ValidationMessage("CoreFail")
+        </div>
+        <label class="col-md-3 col-xs-12 form-group has-feedback pb-2">core Subjects</label>
+
+        <label class="col-md-5 col-xs-12 form-group has-feedback pb-2"> Any Student Who Fail In</label>
+        <div class="col-md-3  col-xs-12 form-group has-feedback pb-2">
+            @Html.TextBoxFor(model => model.CoreWithNoneCoreFail, null, new {@class = "form-control  text-center", placeholder = "..."})
+            @Html.ValidationMessage("CoreFail")
+        </div>
+        <label class="col-md-3 col-xs-12 form-group has-feedback pb-2 ">core Subjects</label>
+        <label class="col-md-5 col-xs-12 form-group has-feedback pb-2 "> And</label>
+        <div class="col-md-3  col-xs-12 form-group has-feedback pb-2">
+            @Html.TextBoxFor(model => model.NoneCoreFail, null, new {@class = "form-control  text-center", placeholder = "..."})
+            @Html.ValidationMessage("CoreFail")
+        </div>
+        <label class="col-md-3 col-xs-12 form-group has-feedback pb-2"> non core Subjects </label>
+        <hr/>
+    </div>
+
+    @* Grades Assigning *@
+    <div class="col-12 col-xs-12 form-group has-feedback">
+        <h3>Grading Rules</h3>
+    </div>
+    <div class="row">
+        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+            <label>Month</label>
+            @Html.TextBoxFor(model => model.ExamHeld.EntryDate, null, new {@class = "form-control has-feedback-left", type = "date", placeholder = "For Month"})
+            <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+            @Html.ValidationMessage("EntryDate")
+        </div>
+
+        <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+            <label>Pass Percentage</label>
+            @Html.TextBoxFor(model => model.AtLeastPercentage, null, new {@class = "form-control has-feedback-left", placeholder = "0%"})
+            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+            @Html.ValidationMessage("AtLeastPercentage")
+        </div>
+
+        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+            <label>A+</label>
+            @Html.TextBoxFor(model => model.APlus, null, new {@class = "form-control  text-center", placeholder = "0%"})
+            @Html.ValidationMessage("APlus")
+        </div>
+
+        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+            <label>A</label>
+            @Html.TextBoxFor(model => model.A, null, new {@class = "form-control  text-center", placeholder = "0%"})
+            @Html.ValidationMessage("A")
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+            <label>B+</label>
+            @Html.TextBoxFor(model => model.BPlus, null, new {@class = "form-control  text-center", placeholder = "0%"})
+            @Html.ValidationMessage("BPlus")
+        </div>
+
+        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+            <label>B</label>
+            @Html.TextBoxFor(model => model.B, null, new {@class = "form-control  text-center", placeholder = "0%"})
+            @Html.ValidationMessage("B")
+        </div>
+
+        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+            <label>C</label>
+            @Html.TextBoxFor(model => model.C, null, new {@class = "form-control  text-center", placeholder = "0%"})
+            @Html.ValidationMessage("C")
+        </div>
+
+        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+            <label>D</label>
+            @Html.TextBoxFor(model => model.D, null, new {@class = "form-control  text-center", placeholder = "0%"})
+            @Html.ValidationMessage("D")
+        </div>
+
+
+        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback">
+            <label>E</label>
+            @Html.TextBoxFor(model => model.E, null, new {@class = "form-control text-center", placeholder = "0%"})
+            @Html.ValidationMessage("E")
+        </div>
+
+        <div class="form-group col-12 pb-2 mt-4">
+            <a href="@Url.Action("SearchExam", "Exams")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>
+
+            <button type="submit" value="Create" class="btn btn-info pull-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Apply
+            </button>
+        </div>
+    </div>
+
+    </form>
+@*<div class="col-lg-12 ">
+        <div class="control-group">
+            <div class="col-lg-8 message message-success" id="ExamHeldsMessage"></div>
+            <div  id="loader" style="display:none;">
+                <img src="/Images/WebsiteContent/camera-loader.gif" />
+            </div>
+            <button type="submit" class="btn btn-default pull-right">
+                <i class="fa fa-save"> </i> Save
+            </button>
+        </div>
+    </div>
+    }*@
+
+
+@*<script @StaticResources.JavaScript>
+        $(function () {
+            $('#ExamHeldsmainForm').ajaxForm({
+                target: '#ExamHeldsMessage',
+                beforeSubmit: function () { $('#loader').show();},
+                success: function () {
+                    $('#loader').hide();
+                    $('#ExamHeldsMessage').fadeIn();
+                    setTimeout(function () { $('#ExamHeldsMessage').fadeOut('slow') }, 5000);
+                }
+            });//end ajaxForm
+
+
+        });//body end
+    </script>*@

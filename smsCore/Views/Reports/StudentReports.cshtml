@@ -1,0 +1,259 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Student Reports";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        @*<li class="active">
+                <a href="@Url.Action("StudentReports","Reports")">Student Report</a>
+            </li>*@
+        <li class="active">
+            Student Report
+        </li>
+    </ul>
+</div>
+<section id="ReportSection" class="content">
+    <div class="row">
+        <div class="col-12">
+            @*<div class="card">
+            <div class="card-header">
+                <h4>
+                    Student Reports <a href="https://www.youtube.com/watch?v=7ZfLwX-hhBM&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a>
+                </h4>
+            </div>
+        </div>*@
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>Student Reports</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("PresentStudentsInformation", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/present student list.png" alt="missing" />
+                                <label> Students Information</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("ClassWiseList", "StudentReports") ">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/class wise list.png" alt="" />
+                                <label>Class Wise List</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("StudentIdentification", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/student identification.png" alt="" />
+                                <label>Student Identification</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("WithdrewStudent", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/withdrawn student.png" alt="" />
+                                <label> Withdraw Student</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("ReportByGender", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/report by gender.png" alt="" />
+                                <label> Report By Gender</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("ListofFreeAdmissions", "StudentReports") ">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/free admission.png" alt="" />
+                                <label>List of Free Admissions</label>
+                            </a>
+                        </li>
+                        @*<li>
+                        <a class="ajax-load" href="@Url.Action("LetterToStudent", "StudentReports" )">
+                            <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/letter to student.png" alt="" />
+                            <label>Letter To Student</label>
+                        </a>
+                    </li>*@
+                        @*<li>
+                        <a class="ajax-load" href="@Url.Action("Search", "StudentReports" )">
+                            <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/board certificate.png" alt="" />
+                            <label>Board Registration Return(Legal)</label>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="ajax-load" href="@Url.Action("Index", "StudentReports" )">
+                            <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/board certificate.png" alt="" />
+                            <label>  Board Registration Return(Legal)For Inter</label>
+                        </a>
+                    </li>*@
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("OrphanList", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/orphan student list.png" alt="" />
+                                <label>Orphan List</label>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Transport Reports</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("ClassWise", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/class wise report.png" alt="" />
+                                <label>Class Wise</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("DriverWise", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/driver wise report.png" alt="" />
+                                <label>Driver Wise</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("TripWise", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/trip wise report.png" alt="" />
+                                <label>Trip Wise</label>
+                            </a>
+                        </li>
+                        @*<li>
+                        <a class="ajax-load" href="@Url.Action("ClassWise", "StudentReports")">
+                            <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/transport list.png" alt="" />
+                            <label> Transport List</label>
+                        </a>
+                    </li>*@
+                        @*<li>
+                        <a class="ajax-load" href="@Url.Action("TransportCheck", "StudentReports")">
+                            <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/transport check.png" alt="" />
+                            <label>Transport Check</label>
+                        </a>
+                    </li>
+                    <li>
+                        <a class="ajax-load" href="@Url.Action("EditTransportSetting", "StudentReports")">
+                            <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/transport setting.png" alt="" />
+                            <label> Edit Transport Setting</label>
+                        </a>
+                    </li>*@
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Student List</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("PhoneList", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/list/phone list.png" alt="" />
+                                <label>Phone List</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("MissingDocuments", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/list/missing document.png" alt="" />
+                                <label>Missing Documents</label>
+                            </a>
+                        </li>
+                        @*<li>
+                        <a class="ajax-load" href="@Url.Action("DynaimcReport", "StudentReports")">
+                            <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/list/dynamic report.png" alt="" />
+                            <label>Dynamic report</label>
+                        </a>
+                    </li>*@
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("ParentsList", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/list/parent list.png" alt="" />
+                                <label> List Of Parents</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("SubWiseList", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/list/subscription wise list.png" alt="" />
+                                <label>Com Subscription Wise List</label>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Certificate</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("IDCard", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/certificates/ID card.png" alt="" />
+                                <label> ID Card</label>
+                            </a>
+                        </li>
+                        <li>
+                        <a class="ajax-load" href="@Url.Action("LeavingCertificate", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/certificates/bus card.png" alt="" />
+                                <label>School Leaving Certificate</label>
+                            </a>
+                    </li>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("BirthCertificate", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/certificates/birthcertificate.png" alt="" />
+                                <label>Birth Certificate</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("CharacterCertificate", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/certificates/birth confirmation.png" alt="" />
+                                <label>Character Certificate</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("StudentRegister", "StudentReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/all student information.png" alt="" />
+                                <label>Student Registration Form</label>
+                            </a>
+                        </li>
+
+                        @*<li>
+                        <a class="ajax-load" href="@Url.Action("BirthConfirmation", "StudentReports")">
+                            <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/certificates/birth confirmation.png" alt="" />
+                            <label> Birth Confirmation</label>
+                        </a>
+                    </li>*@
+                        @*<li>
+                        <a class="ajax-load" href="@Url.Action("PracticalCertificate", "StudentReports")">
+                            <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/certificates/practical certificate.png" alt="" />
+                            <label> Practical Certificate</label>
+                        </a>
+                    </li>*@
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script @resourse.JavaScript>
+
+    $('#ReportSection a.ajax-load').on('click', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+
+    });
+
+</script>

@@ -1,0 +1,52 @@
+﻿@model  tbl_MonthlySalaryDetails
+@{
+    ViewBag.Title = "Monthly Salary Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+@*@using (Ajax.BeginForm("MonthlySalaryAmountEdit", "Payroll", new AjaxOptions { HttpMethod = "POST",OnComplete = "completed", LoadingElementId = "SalaryAmountEditForm #server-progress", OnBegin = "begin" }, new { id = "SalaryAmountEditForm" }))
+{*@
+<form asp-action="MonthlySalaryAmountEdit" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SalaryAmountEditForm" data_reset="true">
+  
+                   
+
+
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    @Html.HiddenFor(m =>m.Id)
+    <div class=row>
+        <div class="col-md-8 col-sm-6 col-12 form-group has-feedback">
+            <label> Description:</label><font class="text-danger">*</font>
+                                        <div class="controls">
+                                            @Html.TextBox("name", Model.PayHead.payHeadName, new { @class = "form-control", @readonly = "true" })
+                                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-12 form-group has-feedback">
+            <label> Amount:</label><font class="text-danger">*</font>
+                                   <div class="controls">
+                                       @Html.TextBoxFor(model => model.Amount, new { @class = "form-control", required = "required" })
+                                       <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                       @Html.ValidationMessage("Amount")
+                                   </div>
+        </div>
+        <div class="form-group col-12 p-2">
+            <button type="submit" value="Create" class="btn btn-primary float-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Save
+            </button>
+        </div>
+    </div>
+</form>
+

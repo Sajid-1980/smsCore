@@ -1,0 +1,96 @@
+﻿@model Models.LibraryIssuedBook
+@inject StaticResources resourse;
+@{
+    ViewBag.Title = "DeleteBookIssue";
+}
+
+<div>
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+
+    <h5>Are You Sure You Want to Delete This!!.</h5>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.LibraryBookRecordId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LibraryBookRecordId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.BookCondition)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.BookCondition)
+        </dd>
+
+        <dt>
+            @Html.DisplayFor(model => model.DueDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DueDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReturnDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReturnDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayFor(model => model.IssuedDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IssuedDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Remarks)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Remarks)
+        </dd>
+
+        <dt>
+            @Html.DisplayFor(model => model.IssuedDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.IssuedDate)
+        </dd>
+
+    </dl>
+  @*  @using (Ajax.BeginForm("DeleteBookIssue", "Library", new AjaxOptions { HttpMethod = "POST", OnSuccess = "disablebutton", OnComplete = "completed", LoadingElementId = "deleteLibraryBookissueForm #server-progress", OnBegin = "begin" }, new { id = "deleteLibraryBookissueForm", enctype = "multipart/form-data" }))
+    {*@
+    <form asp-action="DeleteBookIssue" asp-controller="Library" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="deleteLibraryBookissueForm" data_reset="true">
+  
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" asp-for="ID" />
+        <button asp="Index" data-dismiss="modal" aria-label="Close" class="btn btn-danger float-right"> <i class="fa fa-chevron-circle-left mr-2"></i> Cancel and Close</button>
+        <button type="submit" value="Create" id="submitbuttom" class="btn btn-primary float-right">
+            <i class="fa fa-save mr-2"></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+
+            </span> Delete
+        </button>
+    </form>
+</div>
+<script @resourse.JavaScript>
+    $(function() {
+        $("#datepicker").datepicker();
+    });
+    function disablebutton() {
+        $('#submitbuttom').hide();
+    }
+</script>

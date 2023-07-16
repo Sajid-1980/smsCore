@@ -1,0 +1,82 @@
+﻿ 
+@model  AccountGroupInfo
+@{
+    ViewBag.Title = "Account Group Edit";
+    
+        Layout = null;
+    
+}
+<style>
+    select.form-control {
+        max-height: 30px;
+    }
+</style>
+@*@using (Ajax.BeginForm("AccountgroupEdit", "AccountGroup", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "AccountgroupEditmainForm #server-progress", OnBegin = "begin" }, new { id = "AccountgroupEditmainForm" }))
+{*@
+
+
+<form asp-action="AccountgroupEdit" asp-controller="AccountGroup"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="AccountgroupEditmainForm" data_reset="true">
+                   
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="tab-content" id="myTabContent">
+                <div class="row">
+                    <div class="col-6 col-md-4">
+                        <label>GroupName</label>
+                        @Html.HiddenFor(m => m.AccountGroupId)
+                        <input type="text" name="GroupName" value="@Model.AccountGroupName" class="form-control has-feedback-left" required />
+                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("GroupName")
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <label>Under</label>
+                        @Html.DropDownList("GroupUnder",null ,htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessage("underGroupId")
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <label>Nature</label>
+                        <input type="text" name="Nature" value="@Model.Nature" id="nature" class="form-control has-feedback-left" required readonly />
+                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("Nature")
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <label>Affect Gross profit</label>
+                        @Html.DropDownListFor(m => m.AffectGrossProfit, new SelectList(new string[] { "No", "Yes" }, Model == null ? null : "AfeectGrossprofit"), new { @class = "form-control has-feedback-left" })
+                        @Html.ValidationMessage("AfeectGrossprofit")
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <label>Narration</label>
+                        <input type="text" name="Narration" value="@Model.Narration" class="form-control has-feedback-left" />
+                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("Narration")
+                    </div> 
+                    <div class="col-12 col-md-12">
+                        <button type="submit" class="btn btn-info float-right mr-2" name="save"><i class="fa fa-save mr-2"></i> save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </form>
+<script>
+    $('#GroupUnder').on('change', function () {
+        var groupid = $('#GroupUnder').val();
+
+        var url = ('@Url.Action("changeUndergroup", "AccountGroup", new { groupid=0 })').replace('0', groupid);
+        $.get(url, function (data) {
+            $('#nature').val(data);
+        });
+        });
+</script>

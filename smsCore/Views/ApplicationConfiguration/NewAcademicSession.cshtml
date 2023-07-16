@@ -1,0 +1,139 @@
+﻿@inject StaticResources rec;
+
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Setting
+            </li>
+            <li class="active">
+                Add Academic Session
+            </li>
+
+        </ul>
+    </div>
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-body">
+                   @* @using (Ajax.BeginForm("NewAcademicSession", "ApplicationConfiguration", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "SessionIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "SessionIndexmainForm"}))
+                    {*@
+
+                    <form asp-action="NewAcademicSession" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post"  data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SessionIndexmainForm" data_reset="true">
+       
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @Html.Partial("_PartialDate", new PartialDateViewModels { Label = "From Date", ParentContainerID = "from-date", ColCssClass = "col-12 col-md-6", ShowAltField = false, DateFieldId = "FromDateId", DateFieldName = "FromDate", KeepDataFieldReadOnly = true })
+
+                            @Html.Partial("_PartialDate", new PartialDateViewModels { Label = "To Date", ParentContainerID = "to-date", ColCssClass = "col-12 col-md-6", ShowAltField = false, DateFieldId = "toDateId", DateFieldName = "ToDate", KeepDataFieldReadOnly = true })
+
+                           
+                            <div class="col-12 col-md-12 float-right mt-2">
+                                <label><input type="checkbox" class="mr-2" name="CurrentSession" id="currentSessionId" />Mark As Current Session</label>
+                            </div>
+                            <div class="col-12 col-md-12 float-right mt-2">
+                                <button type="submit" class="pull-right btn btn-primary float-right"><i class="fa fa-save mr-2"></i> Save</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>
+                        Change Financial Year <a href="https://www.youtube.com/watch?v=LcG_cpH1AkU#t=115s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a>
+                    </h3>
+                </div>
+                <div class="card-body">
+                  @*  @Html.EJS().Grid("list_session").DataSource(s => { s.Url("/ApplicationConfiguration/SessionListFor").Adaptor("UrlAdaptor"); }).Columns(col =>
+                       {
+                           col.Field("FinancialYearId").HeaderText("Id").TextAlign(TextAlign.Left).Add();
+                           col.Field("FromDate").HeaderText("Start").Format("dd/MM/yyyy").TextAlign(TextAlign.Left).Add();
+                           col.Field("ToDate").HeaderText("End").Format("dd/MM/yyyy").TextAlign(TextAlign.Left).Add();
+                           col.Template("#action").HeaderText("Current").TextAlign(TextAlign.Left).Add();
+                       }).Height("auto").Width("auto").Render()*@
+
+                    @{
+                        var gridmodel = new GridModel()
+                        {
+                                GridId = "list_session",
+
+                                DataUrl = "/ApplicationConfiguration/SessionListFor",
+                           
+                                Columns = new List<Column>
+                                    {
+                                    new Column{FieldName="financialYearId",HeaderText="Id",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="fromDate",HeaderText="Start",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="toDate",HeaderText="End",TextAlign=TextAlign.Left},
+                                    new Column{FieldName="isCurrent",HeaderText="Current",TextAlign=TextAlign.Left},
+
+                                    },
+                        };
+                     }
+                    @await Html.PartialAsync("_grid",gridmodel)
+                    <script id="action" type="text/x-jsrender">
+                        ${if(IsCurrent)}
+                        <input type="checkbox" id="CurrentId" data-id="${Id}" name="Current" onclick="Check_CurrentSession(this)" checked />"
+                        ${else}
+                        <input type="checkbox" id="CurrentId" data-id="${Id}" name="Current" onclick="Check_CurrentSession(this)" />"
+                        ${/if}
+                    </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @rec.JavaScript>
+    function reloadGridData() {
+        let grid = document.getElementById('list_session').ej2_instances[0];
+        grid.refresh();
+    }
+
+
+    function Check_CurrentSession(element) {
+
+        let grid = document.getElementById('list_session').ej2_instances[0];
+        if ($(element).prop('checked') == true) {
+            var clickedA = $(element);
+            var CurrentRow = clickedA.closest('tr');
+            var Id = $(element).attr('data-id');
+            if (confirm("Are You Sure To Change The Current Financial Year!")) {
+                var url1 = '@Url.Action("CurrentSessionCheck")';
+                url1 += '?Id=' + Id ;
+                url = url1;
+                $.get(url,
+                    function(data) {
+                        if (data == "success") {
+                            $('#message').html('<span class="float-left alert alert-info w-100">Information added to database successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                        }
+                        else {
+                            $('#message').html('<span class="float-left alert alert-danger w-100">'+data+'<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                        }
+                        grid.refresh();
+                    });
+            }
+        }
+        reloadGridData();
+    }
+
+</script>

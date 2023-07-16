@@ -1,0 +1,195 @@
+﻿@using sms.Models
+@inject StaticResources resourse;
+@model System.Data.DataTable
+
+@{
+    ViewBag.Title = "Message Subscribtion";
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Message Subscribtion
+            </li>
+
+        </ul>
+    </div>
+}
+
+<style>
+    select.form-control { max-height: 30px; }
+</style>
+<section class="content" id="messagesubscrid">
+    <div class="row">
+        <div class="col-12">
+            @*@using (Ajax.BeginForm("MessageSubscribtion", "Message", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "MessageSubscribtionmainForm #server-progress", OnBegin = "begin"}, new {id = "MessageSubscribtionmainForm"}))
+            {*@
+            <form asp-action="MessageSubscribtion" asp-controller="Message" data-ajax="true" OnSuccess="reloadGridData" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="MessageSubscribtionmainForm" data_reset="true">
+                   
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "messagesubscrid", ColCssClass = "col-md-3 col-sm-4 col-12", ShowCampus = true, ShowClasses = true, ShowSections = true})
+
+                            @*@Html.Partial("_PartialSchoolProperty", new ViewDataDictionary() { { "NoFeeGroup", true }, { "NoSession", true }, { "NoExams", true }, { "NoSubjects", true }, { "NoGroups", true }, { "ColCssClass", "col-12 col-sm-6 col-md-3" } })*@
+                            <div class="col-12 col-sm-6 col-md-3 form-group has-feedback pt-4">
+                                <button type="button" id="view" name="view" class="btn btn-primary float-right mt-2" onclick="reloadGridData()"><i class="fa fa-search"></i> Search</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">Message Subscribtion List <a href="https://www.youtube.com/watch?v=Qf-M08OGFwU&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="allSelectOption" class="row">
+                            <div class="col-12 mb-2">
+                                <label class="float-right mr-3"> <input type="checkbox" class="mr-1" name="IssuedFee" id="Check_IssuedFee" value="IssuedFee" />IssuedFee</label>
+                                <label class="float-right mr-3"> <input type="checkbox" class="mr-1" name="ReceiveFee" id="Check_ReceiveFee" value="ReceiveFee" />ReceiveFee</label>
+                                <label class="float-right mr-3"> <input type="checkbox" class="mr-1" name="Result" id="Check_Result" value="Result" />Result</label>
+                                <label class="float-right mr-3">
+                                    <input type="checkbox" id="Check_attendences" class="mr-1" name="Attendence" /><span id="Check_attendencesText">Attendence</span>
+                                </label>
+                                <label class="float-right mr-3">Select All:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+@*@*
+                                @Html.EJS().Grid("list_sms").Columns(col =>
+                           {
+                               col.Field("RegistrationNo").HeaderText("RegistrationNo").TextAlign(TextAlign.Left).AllowEditing(false).IsPrimaryKey(true).Add();
+                               col.Field("StudentName").HeaderText("StudentName").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                               col.Field("FName").HeaderText("FName").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                               col.Field("Attendance").HeaderText("Attendance").TextAlign(TextAlign.Center).DisplayAsCheckBox(true).EditType("booleanedit").Add();
+                               col.Field("Result").HeaderText("Result").TextAlign(TextAlign.Center).DisplayAsCheckBox(true).EditType("booleanedit").Add();
+                               col.Field("ReceiveFee").HeaderText("ReceiveFee").TextAlign(TextAlign.Center).DisplayAsCheckBox(true).EditType("booleanedit").Add();
+                               col.Field("IssuedFee").HeaderText("IssuedFee").TextAlign(TextAlign.Center).DisplayAsCheckBox(true).EditType("booleanedit").Add();
+                            }).Height("70vh").Width("auto").EditSettings(e => e.AllowEditing(true).Mode(EditMode.Batch)).Render()*@
+
+                                @{
+                                    var modelgrid = new GridModel()
+            {
+                GridId = "list_sms",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                ShowHeader = false,
+                Columns = new List<Column>
+                                {
+                                new Column{FieldName="registrationNo",HeaderText="RegistrationNo",AllowSorting=true,Width="80",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="studentName",HeaderText="StudentName",AllowSorting=true,Width="80",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="FName",HeaderText="FName",AllowSorting=true,Width="80",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="attendance",HeaderText="Attendance",AllowSorting=true,Width="80",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="result",HeaderText="Result",AllowSorting=true,Width="80",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="issuedFee",HeaderText="IssuedFee",AllowSorting=true,Width="70",HeaderTextAlign=TextAlign.Left},
+
+                                },
+                AllowFiltering = true,
+            };
+                                }
+                                @await Html.PartialAsync("_grid",modelgrid)
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary float-right " id="btnSave"><i class="fa fa-save mr-2"></i>Save</button>
+                        
+                        <label class="float-right mr-2"><input type="checkbox" value="True" /> Send Status Message</label>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+
+    var grid = document.getElementById("list_sms").ej2_instances[0];
+    function reloadGridData() {
+        var campid = $('#Campus').val();
+        var secid = $('#Sections').val();
+        var clsid = $('#Classes').val();
+        var url1 = '@Url.Action("MessageSubscribtionList")';
+        url1 += '?campid=' + campid + '&secid=' + secid + '&clsid=' + clsid;
+        grid.dataSource = new ej.data.DataManager({
+            batchUrl:'/Message/MessageSubscription',
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+   
+
+    $('#btnSave').on('click', function () {
+        
+        let changes = grid.getBatchChanges();
+        console.log(changes);
+        if (!changes.changedRecords || changes.changedRecords.length == 0) {
+            return false;
+        }
+        grid.endEdit();
+    })
+    //attendance check box
+    $('#Check_attendences').on('change',
+        function () {
+            var checked = $(this).is(':checked');
+            var data = grid.currentViewData;
+            $.each(data, function (i, v) {
+                grid.updateCell(i, 'Attendance', checked);
+                //grid.setCellValue(v.RegistrationNo, 'Attendance', checked);
+            })
+        });
+
+    //result check box
+    $('#Check_Result').on('change',
+        function () {
+            var checked = $(this).is(':checked');
+            var data = grid.currentViewData;
+            $.each(data, function (i, v) { grid.updateCell(i,  'Result', checked); })
+        });
+
+
+    //Issued Fee  Check Box
+    $('#Check_IssuedFee').on('change',
+        function () {
+            var checked = $(this).is(':checked');
+            var data = grid.currentViewData;
+            $.each(data, function (i, v) { grid.updateCell(i,  'IssuedFee', checked); })
+        });
+
+
+    //Receive Check Box
+    $('#Check_ReceiveFee').on('change',
+        function () {
+            var checked = $(this).is(':checked');
+            var data = grid.currentViewData;
+            $.each(data, function (i, v) { grid.updateCell(i,  'ReceiveFee', checked); })
+        });
+
+
+
+</script>

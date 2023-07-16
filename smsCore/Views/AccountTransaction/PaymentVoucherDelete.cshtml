@@ -1,0 +1,130 @@
+﻿@model System.Data.DataTable
+
+@{
+    ViewBag.Title = "PaymentVoucher Delete";
+}
+
+<style>
+    select.form-control {
+        max-height: 30px;
+    }
+</style>
+
+@*@using (Ajax.BeginForm("PaymentVoucherDelete", "AccountTransaction", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "PaymentVoucherDeleteForm #server-progress", OnBegin = "begin" }, new { id = "PaymentVoucherDeleteForm" }))
+
+{*@
+
+<form asp-action="PaymentVoucherDelete" asp-controller="AccountTransaction"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="PaymentVoucherDeleteForm" data_reset="true">
+           
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row no-gutters sico-form-col">
+        <div class="col-12">
+            <h4>Are You Sure You Want to Delete This !!</h4>
+            @{int j = 1;
+            }
+            @foreach (System.Data.DataRow item in Model.Rows)
+            {
+                if (j == 1)
+                {<input type="hidden" name="MasterId" value="@item["Masterid"]" class="form-control has-feedback-left" />
+
+                    <div class="row">
+                        <div class="col-6 col-md-4">
+                            <label>Voucher No</label>
+                            <label><b>@item["VoucherNo"]</b></label>
+
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label>Date</label>
+                            <input type="hidden" name="date" value="@item["Date"]" class="form-control has-feedback-left" required />
+                            <label><b>@item["Date"]</b></label>
+
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label>Bank/Cash</label>
+                            <label><b>@item["LedgerId"]</b></label>
+
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <label>Narration</label>
+                            <label><b>@item["Narration"]</b></label>
+
+                        </div>
+                    </div>
+                }
+                j++;
+            }
+        </div>
+    </div>
+    <div class="row no-gutters sico-form-col mt-1">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" border="1">
+
+                    <thead>
+                        <tr>
+                            <th>
+                                S. No
+                            </th>
+                            <th>
+                                Bank/Cash
+                            </th>
+                            <th>
+                                Amount
+                            </th>
+                            <th>
+                                Currency
+                            </th>
+                            <th>
+                                Cheque No
+                            </th>
+                            <th>
+                                Cheque Date
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablebody">
+                        @{int i = 1;}
+                        @foreach (System.Data.DataRow item in Model.Rows)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="DetailsId" value="@item["DetailsId"]" class="form-control has-feedback-left" />
+
+                                    @i
+                                </td>
+                                <td>
+                                    @item["Bank/Cash"]
+                                </td>
+                                <td>
+                                    @item["Amount"]
+                                </td>
+                                <td>
+                                    @item["Currency"]
+                                </td>
+                                <td>
+                                    @item["ChequeNo"]
+                                </td>
+                                <td>
+                                    @item["ChequeDate"]
+                                </td>
+
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-12 col-md-12 mt-2">
+            <button type="submit" class="btn btn-danger float-right mr-2" name="save"><i class="fa fa-trash mr-2"></i> Delete</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,78 @@
+﻿@using System.Data
+@model System.Data.DataTable
+@{
+    ViewBag.Title = "Send Result";
+    Layout = null;
+}
+
+<div class="row no-gutters  mt-1">
+    <div class="col-12">
+        <table class="table table-bordered table-hover " border="1" id="tbl_results">
+            <thead>
+            <tr>
+                @{ var i = 1; }
+                @foreach (DataColumn cols in Model.Columns)
+                {
+                    if (i == 1)
+                    {
+                        <th><input type="checkbox" name="selectAll" id="selectAll" class="mr-2" /></th>
+                    }
+                    <th>
+                        @cols.Caption
+                    </th>
+                    i++;
+                }
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (DataRow dr in Model.Rows)
+            {
+                <tr>
+                    @{ var j = 1; }
+                    @foreach (DataColumn cols in Model.Columns)
+                    {
+                        if (j == 1)
+                        {
+                            <td>
+                                <input type="checkbox"class="select-row" />
+                            </td>
+                        }
+                        <td>
+                            @if (j == 1)
+                            {
+                                <input type="hidden" name="Regno" value="@dr[cols.ColumnName].ToString()" disabled/>
+                            }
+                            @dr[cols.ColumnName].ToString()
+                        </td>
+                        j++;
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $('.select-row').each(function () {
+        $(this).on('change', function () {
+            var val = $(this).is(':checked');
+            if (val)
+                $(this).closest('tr').find('input[name="Regno"]').removeAttr('disabled');
+            else
+                $(this).closest('tr').find('input[name="Regno"]').attr('disabled', 'true');
+        })
+    })
+
+    $('#selectAll').on('change', function () {
+        var table = $('#tbl_results');
+        $('td input:checkbox', table).prop('checked', this.checked);
+        var chk = this.checked;
+        $('#tbl_results td input[name="Regno"]').each(function () {
+            if (chk)
+                $(this).removeAttr('disabled');
+            else
+                $(this).attr('disabled', 'true');
+
+        })
+    });
+</script>

@@ -1,0 +1,51 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Admin Reports";
+}
+
+<section id="ReportSection" class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Admin Reports</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a href="@Url.Action("DailyCashReport", "AdminReports")">
+                                <img class=" img-circle" src="~/Content/Photos/ReportIcons/admin/daily cash report.png" alt=""/>
+                                <label>Daily Cash Report</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("IncomeMap", "AdminReports")">
+                                <img class=" img-circle" src="~/Content/Photos/ReportIcons/admin/income map.png" alt=""/>
+                                <label>Income Map</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("UnwantedClients", "AdminReports")">
+                                <img class=" img-circle" src="~/Content/Photos/ReportIcons/admin/unwanted clients.png" alt=""/>
+                                <label>Unwanted Clients</label>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+
+    $('#ReportSection a').on('click', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+
+    });
+
+</script>

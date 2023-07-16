@@ -1,0 +1,94 @@
+﻿@model RegisterViewModel
+@{
+    ViewBag.Title = "Teacheruser";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+    Layout = null;
+    ;
+}
+
+<div class="container" id="userIndex-container">
+    <div class="row">
+        <div class=" col-12">
+
+            <form asp-action="Teacherusers" asp-controller="Teacher"  data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="teacheruser" data_reset="true">
+
+           @* @using (Ajax.BeginForm("Teacherusers", "Teacher", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "teacheruser #server-progress", OnBegin = "begin"}, new {id = "teacheruser"}))
+            {*@
+                <div class="row">
+                    <div class="col-12">
+                        <div id="message">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-md-10 has-feedback">
+                        <label>Email</label>
+                        <div class="controls">
+                            <input type="hidden" name="employeeId" value="@ViewBag.employeeId" />
+                            @Html.TextBoxFor(model => model.Email, new { @class = "form-control has-feedback-left" })
+                            <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.Email)
+                        </div>
+                    </div>
+
+                    @*<div class="col-12 col-md-5 has-feedback">
+                            <label>Role</label>
+                            @Html.DropDownList("Roles", null, new { @class = "form-control" })
+                            <span class="fa fa-user-secret form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessage("Roles")
+                        </div>*@
+
+                    <div class="col-12 col-md-6 has-feedback">
+                        <label>Password</label>
+
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.Password, new { @class = "form-control has-feedback-left", type = "password" })
+                                                <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.Password)
+                                            </div>
+                    </div>
+
+
+                    <div class="col-12 col-md-6 has-feedback">
+                        <label>Confirm Password</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.ConfirmPassword, new { @class = "form-control has-feedback-left", type = "password" })
+                            <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                        </div>
+                    </div>
+
+
+                    <div class="form-group col-12 pb-2 mt-3">
+                        <a href="@Url.Action("EmployeeRegister", "Payroll")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back </a>
+
+                        <button type="submit" value="Create" class="btn btn-primary pull-right">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        @*<div class="col-md-8 col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">User List</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="users-gridContainer">
+                            <table id="jqgusers" cellpadding="0" cellspacing="0"></table>
+                            <div id="jqgpusers" style="text-align:center;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+
+    </div>
+</div>

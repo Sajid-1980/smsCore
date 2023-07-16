@@ -1,0 +1,76 @@
+/* This is a compiled file, you should be editing the file in the templates directory */
+.pace {
+    -moz-user-select: none;
+    -webkit-pointer-events: none;
+
+    -webkit-user-select: none;
+    pointer-events: none;
+    user-select: none;
+}
+
+.pace .pace-activity {
+    -webkit-transform: translateX(100%) translateY(-100%) rotate(45deg);
+    -webkit-transition: -webkit-transform 0.3s;
+    background: #fcd25a;
+    display: block;
+    height: 300px;
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    top: 0;
+    transform: translateX(100%) translateY(-100%) rotate(45deg);
+    transition: transform 0.3s;
+    width: 300px;
+    z-index: 2000;
+}
+
+.pace.pace-active .pace-activity {
+    -webkit-transform: translateX(50%) translateY(-50%) rotate(45deg);
+    transform: translateX(50%) translateY(-50%) rotate(45deg);
+}
+
+.pace .pace-activity::before,
+.pace .pace-activity::after {
+    -moz-box-sizing: border-box;
+    border: 5px solid #fff;
+    border-radius: 50%;
+    bottom: 30px;
+    box-sizing: border-box;
+    content: '';
+    display: block;
+    left: 50%;
+    position: absolute;
+}
+
+.pace .pace-activity::before {
+    -webkit-animation: pace-theme-corner-indicator-spin 3s linear infinite;
+    animation: pace-theme-corner-indicator-spin 3s linear infinite;
+    border-left-color: rgba(0, 0, 0, .2);
+    border-right-color: rgba(0, 0, 0, .2);
+    height: 80px;
+    margin-left: -40px;
+    width: 80px;
+}
+
+.pace .pace-activity::after {
+    -webkit-animation: pace-theme-corner-indicator-spin 1s linear infinite;
+    animation: pace-theme-corner-indicator-spin 1s linear infinite;
+    border-bottom-color: rgba(0, 0, 0, .2);
+    border-top-color: rgba(0, 0, 0, .2);
+    bottom: 50px;
+    height: 40px;
+    margin-left: -20px;
+    width: 40px;
+}
+
+@-webkit-keyframes pace-theme-corner-indicator-spin {
+    0% { -webkit-transform: rotate(0deg); }
+
+    100% { -webkit-transform: rotate(359deg); }
+}
+
+@keyframes pace-theme-corner-indicator-spin {
+    0% { transform: rotate(0deg); }
+
+    100% { transform: rotate(359deg); }
+}

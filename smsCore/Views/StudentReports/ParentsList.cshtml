@@ -1,0 +1,157 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Parents List";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("StudentReports", "Reports")">Student Report</a>
+        </li>
+        <li class="active">
+            Parent List
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="parentlist">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "parentlist", ColCssClass = " col-12 col-sm-3  form-group has-feedback", ForSearch = true, ShowCampus = true})
+
+                        <div class="col-12 col-sm-4 form-group has-feedback">
+                            <label>Multiple Adm No[seperated each by comma ',']</label>
+                            <div class="row">
+                                <div class="col-9 controls">
+                                    <input type="text" class="form-control " name="regno" value="1-50000" id="regno"/>
+                                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                                <div class="col-3">
+                                    <label><input type="checkbox" class="mr-1" id="cmball"/> All</label>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-12 pt-4 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn mt-4" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_parents",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Parent List",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="PermenantAddress", HeaderText="Permenant Address", AutoFit=true },
+                        new Column{ FieldName="FatherNatureOfJob", HeaderText="Nature Of Job", AutoFit=true },
+
+                        new Column{ FieldName="CNIC", HeaderText="CNIC", AutoFit=true },
+                        new Column{ FieldName="ChildCount", HeaderText="Childs", AutoFit=true },
+                        new Column{ FieldName="MobileNo", HeaderText="Mobile No.", AutoFit=true }
+                        }
+                };
+            }
+            @Html.Partial("_grid", grid)
+            @*@Html.EJS().Grid("list_rpt_parent").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Template("#sno").HeaderText("S.No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("AdmissionID").HeaderText("Admission ID").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("StudentName").HeaderText("Student Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("PermenantAddress").HeaderText("Permenant Address").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("FatherNatureOfJob").HeaderText("Father's Nature Of Job").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("CNIC").HeaderText("CNIC").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("ChildCount").HeaderText("Child Count").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("MobileNo").HeaderText("Mobile No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           //col.Field("MobileNo").HeaderText("Mobile No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+            @*<script id="parentuser" type="text/x-jsrender">
+            <a href="#" class="" title="Credentials" onclick="showpop(${})"><i class="fa fa-lock"></i></a>
+        </script>*@
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_parent").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_parent_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_parent_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+    $('#cmball').on('change',
+        function() {
+            if ($(this).is(':checked')) {
+                $('#regno').disable();
+            } else {
+                $('#regno').enable();
+            }
+        });
+
+    @*function showpop(e) {
+
+        //{Url.Action("parentuser", "StudentReports", new
+        var title = "Add Parent User";
+        var url = '@Url.Action("parentuser", "StudentReports")';
+        url += '?id=' + e;
+        BootstrapDialog.show({
+            title: title,
+            message: $('<div />').load(url),
+            onhide: function() { $('.modal-dialog').hide() }
+
+
+        });
+        return false;
+    }*@
+
+    $('#btnSearch').on('click',
+        function() {
+            var regnos = $('#regno').val();
+            var cmball = "false";
+            if ($('#cmball').is(':checked')) {
+                cmball = "true";
+            }
+            var url1 = '@Url.Action("GetParentsList")';
+            url1 += '?campusId=' + $('#Campus').val() + '&regnos=' + regnos + '&cbxAll=' + cmball;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+           
+        });
+    
+</script>
+@Html.EJS().ScriptManager()

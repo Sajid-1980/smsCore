@@ -1,0 +1,86 @@
+﻿@inject StaticResources resources
+
+
+@{
+    ViewBag.title = "Message logs";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Message Logs
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3>
+                        <i class="fa fa-search mr-2"></i> Search Pakages log
+                    </h3>
+                </div>
+                <div class="card-body">
+                   @* @using (Ajax.BeginForm("MessageLogs", "MyMessages", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "MessageLogsmainForm #server-progress", OnBegin = "begin"}, new {id = "MessageLogsmainForm"}))
+                    {*@
+
+                    <form asp-action="MessageLogs" asp-controller="MyMessages" data-ajax="true" data-ajax-method="post"   data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="MessageLogsmainForm" data_reset="true">
+   
+
+
+                        <div class="row">
+                            <div class="col-12 col-sm-6">
+                                <label>Start Date</label>
+                                <div class="controls">
+                                    <input type="date" name="StartDate" id="StartDate" class="form-control has-feedback-left " required />
+                                    <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label>End Date</label>
+                                <div class="controls">
+                                    <input type="date" name="EndDate" id="EndDate" class="form-control has-feedback-left " required />
+                                    <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <button type="submit" name="view" class="btn btn-primary float-right"><i class="fa fa-search pr-2"></i> Search</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-body">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+
+    function search() {
+        var url1 = '@Url.Action("MessageLogs", "MyMessages")';
+        var startdate = $('#StartDate').val();
+        var enddate = $('#EndDate').val();
+
+        url1 += '?StartDate=' + startdate + '&EndDate=' + enddate;
+
+        $.post(url1,
+            function(data) {
+
+            });
+    }
+
+</script>

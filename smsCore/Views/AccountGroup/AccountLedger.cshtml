@@ -1,0 +1,387 @@
+﻿@model tbl_AccountLedger
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Account Ledger";
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Accounts
+            </li>
+            <li class="active">
+                Account Ledger
+            </li>
+
+        </ul>
+    </div>
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header with-border px-2">
+                    <h3 class="card-title">Account Ledger Creation</h3>
+                </div><!-- /.box-header -->
+                @* @using (Ajax.BeginForm("Accountledger", "AccountGroup", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "AccountLedgermainForm #server-progress", OnBegin = "begin"}, new {id = "AccountLedgermainForm", data_reset="true"}))
+                {*@
+                <form asp-action="Accountledger" asp-controller="AccountGroup"
+                      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="AccountLedgermainForm" data_reset="true">
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-12">
+
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#main" role="tab" aria-controls="home" aria-selected="true">Main Details</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#others" role="tab" aria-controls="profile" aria-selected="false">Secondary Details</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="main" role="tabpanel" aria-labelledby="home-tab">
+
+                                        <div class="row no-gutters">
+
+                                            <div class="row">
+                                                <div class="col-6 col-md-6">
+                                                    <label>Name</label>
+                                                    <div class="controls">
+                                                        @Html.TextBoxFor(model => model.LedgerName, new { @class = "form-control has-feedback-left", required = true })
+                                                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                                        @Html.ValidationMessage("LedgerName")
+                                                    </div>
+                                                </div>
+                                                <div class="col-6 col-md-6">
+                                                    <label>Group</label>
+                                                    @Html.DropDownListFor(model=>model.AccountGroupId, (SelectList) ViewBag.LedgerLists, new {@class = "form-control"})
+                                                    @Html.ValidationMessage("GroupId")
+                                                </div>
+
+                                                <div class="col-6 col-md-8">
+                                                    <label>Opening Balance</label>
+                                                    <div class="controls">
+                                                        @Html.TextBoxFor(model => model.OpeningBalance, new { @class = "form-control has-feedback-left", required = true })
+                                                        <span class="fa fa-sort-amount-asc form-control-feedback left" aria-hidden="true"></span>
+                                                        @Html.ValidationMessage("OpeningBalance")
+                                                    </div>
+                                                </div>
+                                                <div class="col-1 col-md-4">
+                                                    <label></label>
+                                                    @Html.DropDownListFor(m=>m.CrOrDr, new SelectList(new[] {"Cr", "Dr"}, Model == null ? null : Model.CrOrDr), new {@class = "form-control has-feedback-left mt-1"})
+                                                    @Html.ValidationMessage("CrDr")
+                                                </div>
+
+
+
+
+                                                <div class="col-6 col-md-12">
+                                                    <label>Narration</label>
+                                                    <div class="controls">
+                                                        @Html.TextBoxFor(model => model.Narration, new { @class = "form-control has-feedback-left" })
+                                                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                                        @Html.ValidationMessage("Narration")
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="profile-tab">
+                                        <div class="bankDetail" style="display:none;">
+                                            <div class="col-md-12 col-12 has-feedback" style="display: none">
+                                                <label>Account Number</label>
+                                                <div class="controls">
+                                                    @Html.TextBoxFor(model => model.AccountNo, new { @class = "form-control has-feedback-left" })
+                                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8 col-sm-4 col-12 has-feedback" style="display: none">
+                                                <label>Branch Name</label>
+                                                <div class="controls">
+                                                    @Html.TextBoxFor(model => model.BranchName, new { @class = "form-control has-feedback-left" })
+                                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 col-sm-4 col-12 has-feedback" style="display: none">
+                                                <label>Branch Code</label>
+                                                <div class="controls">
+                                                    @Html.TextBoxFor(model => model.BranchCode, new { @class = "form-control has-feedback-left" })
+                                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="" id="Sunday" style="display: none">
+                                            <div class="row no-gutters">
+                                                <div class="col order-1 col-12">
+                                                    <div class="row">
+                                                        <div class="col-md-6 col-12 has-feedback">
+                                                            <label>Mailing Name</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.MailingName, new { @class = "form-control has-feedback-left" })
+                                                                <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-12 has-feedback">
+                                                            <label>Address</label>
+
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.Address, new { @class = "form-control has-feedback-left" })
+                                                                <span class="fa fa-map-marker form-control-feedback left" aria-hidden="true"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-12 has-feedback">
+                                                            <label>Phone</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.Phone, new { @class = "form-control has-feedback-left" })
+                                                                <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-12 has-feedback">
+                                                            <label>Email</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control has-feedback-left" })
+                                                                <span class="fa fa-mail-forward form-control-feedback left" aria-hidden="true"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-12 has-feedback">
+                                                            <label>Mobile</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.Mobile, new { @class = "form-control has-feedback-left" })
+                                                                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-12 has-feedback">
+                                                            <label>Credit period</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.CreditPeriod, new { @class = "form-control has-feedback-left" })
+                                                                <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-6 col-12 has-feedback">
+                                                            <label>Credit Limit</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.CreditLimit, new { @class = "form-control has-feedback-left" })
+                                                                <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-footer px-2">
+                        <div class="row">
+                            <div class="col-12 text-right">
+                                @* <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>*@
+                                <button type="submit" value="Create" class="btn btn-primary">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Account Ledger List</h3>
+                </div><!-- /.box-header -->
+                @{
+                    var modelgrid = new GridModel()
+            {
+                GridId = "jqgAccountLedger",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                DataUrl = "/AccountGroup/GetAccountLedgerForJq",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                {
+                new Column{FieldName="ledgerId",HeaderText="Id",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="ledgerName",HeaderText="ledger Name",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="accountGroupId",HeaderText="GroupId ",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="openingBalance",HeaderText=" Opening Balance",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="crOrDr",HeaderText="Cr/Dr",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="action",HeaderText="Action",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+
+                },
+
+            };
+                }
+                @await Html.PartialAsync("_grid",modelgrid)
+
+                <div class="card-body">
+                    <div class="row ">
+                        <div id="AccountLedger-gridContainer" class="col-12">
+                            <table id="jqgAccountLedger" cellpadding="0" cellspacing="0"></table>
+                            <div id="jqgpAccountLedger" style="text-align: center;"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script @resources.JavaScript>
+
+
+
+
+    function reloadGridData() {
+        var gird = document.getElementById('jqgAccountLedger').ej2_instances[0];
+        gird.refresh();
+    }
+
+    $(document).ready(function () {
+        $('#AccountGroupId').on('change',
+            function () {
+
+                if (($('#AccountGroupId').val() == "17") || ($('#AccountGroupId').val() == "28")) {
+                    $('.bankDetail').css({ "display": "block" });
+                    //$('#bankDetails').css({ "display": "block" });
+                    //$('#bankDetailss').css({ "display": "block" });
+                } else {
+                    $('.bankDetail').css({ "display": "none" });
+                    //$('#bankDetails').css({ "display": "none" });
+                    //$('#bankDetailss').css({ "display": "none" });;
+
+                }
+                if (($('#AccountGroupId').val() == "26") || ($('#AccountGroupId').val() == "22")) {
+                    $('#Sunday').css({ "display": "block" });
+                } else {
+                    $('#Sunday').css({ "display": "none" });
+                }
+
+            });
+        var url1 = '@Url.Action("GetAccountLedgerForJq")';
+
+        $('#jqgAccountLedger').jqGrid({
+            //url from wich data should be requested
+            url: url1,
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'Post',
+            //columns names sr, dname, ccode, address1, phone, tname, aname,dcode,ntn,holiday
+
+            //            colNames: ['sr','aname','tname', 'ccode', 'dcode','dname', 'address1', 'phone','ntn','holiday'],
+            //columns model
+            colModel: [
+                { label: 'Id', name: 'ledgerId', index: 'ledgerId', align: 'left', width: 30, hidden: true },
+                { label: 'Ledger', name: 'ledgerName', index: 'ledgerName', align: 'left', width: 80 },
+                { label: 'Group', name: 'accountGroupId', index: 'accountGroupId', align: 'left', width: 90 },
+                { label: 'Opening Balance', name: 'openingBalance', index: 'openingBalance', align: 'center', width: 80 },
+                { label: 'Cr/Dr', name: 'crOrDr', index: 'crOrDr', align: 'left', width: 40 },
+                { label: 'Action', name: 'action', index: 'action', align: 'center', width: 40 }
+            ],
+            //caption: 'Account Ledger List',
+            //enable footer
+            footerrow: false,
+            userDataOnFooter: false,
+            //expect object instead of flat array
+            jsonReader: { repeatitems: false, id: 'ledgerId' },
+            //pager for grid
+            pager: $('#jqgpAccountLedger'),
+            //number of rows per page
+            rowNum: 10,
+            //initial sorting column
+            sortname: 'ledgerId',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            height: 'auto',
+            editable: true,
+            //height:500,
+
+        }
+                loadComplete: function () {
+            var table = this;
+            setTimeout(function () {
+                updatePagerIcons(table);
+            },
+                0);
+        },
+            gridComplete: function () {
+                $('.ajax').on('click',
+                    function (e) {
+                        e.preventDefault();
+                        var title = $(this).attr('title');
+                        var url = $(this).attr('href');
+
+                        BootstrapDialog.show({
+                            title: title,
+                            message: $('<div />').load(url),
+                            onhide: function (dialogRef) {
+
+                                reloadGridData();
+                            }
+                        });
+                        return false;
+                    });
+            }
+            });
+
+    function updatePagerIcons(table) {
+        var replacement =
+        {
+            'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+            'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+            'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+            'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+        };
+        $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function () {
+            var icon = $(this);
+            var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+            if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+        });
+    }
+
+    $('#jqgAccountLedger').jqGrid('setGridParam', { url: url1 });
+    var DataGrid = $('#jqgAccountLedger');
+
+    //sets the grid size initially
+    DataGrid.jqGrid('setGridWidth', parseInt($('#AccountLedger-gridContainer').width()));
+
+    //handles the grid resize on window resize
+    $(window).resize(function () {
+        DataGrid.jqGrid('setGridWidth', parseInt($('#AccountLedger-gridContainer').width()));
+    });
+    $('#jqgAccountLedger').trigger('reloadGrid', { current: true, fromserver: true });
+        });
+</script>

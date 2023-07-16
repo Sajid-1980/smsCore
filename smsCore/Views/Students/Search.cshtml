@@ -1,0 +1,263 @@
+﻿@inject StaticResources resources
+@{
+    ViewBag.Title = "Studentview";
+    Layout = null;
+    string keyword = ViewBag.keyword;
+}
+<style>
+    .e-grid .e-rowcell.e-templatecell {
+        overflow: visible !important;
+    }
+
+    .e-grid .e-gridcontent {
+        overflow: visible !important;
+    }
+
+        .e-grid .e-gridcontent .e-content {
+            overflow: visible !important;
+        }
+
+    .show > .btn-secondary.dropdown-toggle {
+        position: relative;
+        z-index: 0;
+    }
+
+    .dropdown-menu.show {
+        z-index: 999999999 !important;
+        position: relative !important;
+        transform: none !important;
+    }
+</style>
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Search Student
+        </li>
+
+    </ul>
+</div>
+
+@*<div class="col-md-12 mainDive">
+    <div class="card mb-4">*@
+<section class="content" id="searchstudent-container">
+    <div class="row">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">
+                        <i class="fa fa-search"></i> Select Criteria <a href="https://www.youtube.com/watch?v=qnCNefvfqfg&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=20s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="row">
+                                @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels
+                           {
+                               ParentContainerID = "searchstudent-container",
+                               ColCssClass = "col-6 col-sm-4 col-md-4",
+                               ForSearch = true,
+                               ShowCampus = true,
+                               ShowClasses = true,
+                               ShowSections = true
+                           })
+
+                                <div class="col-sm-12 mt-4">
+                                    <div class="row">
+                                        <div class="col-md-6 col-12">
+                                            <label>
+                                                <input type="checkbox" name="Isexpell" class="Isexpell" />
+                                                Search Ex-Students also
+                                            </label>
+                                        </div>
+                                        <div class="col-md-6 col-12">
+                                            <button type="button" name="search" onclick="$('#search_text').val('');searches(this,'cls');" value="search_filter" class="btn btn-primary btn-sm pull-right checkbox-toggle"><i class="fa fa-search"></i> Search</button>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <form role="form" action="#" method="post" class="">
+                                <div class="row">
+
+                                    @*<input type="hidden" name="ci_csrf_token" value="">*@
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Search By Keyword</label>
+@*                                            @Html.DropDownList("studentlist", (SelectList)ViewBag.studentregno, new { @class = "form-control" })
+*@
+                                            <div class="controls">
+                                                <input type="text" id="search_text" name="search_text" value="@keyword" class="form-control" placeholder="Search By Student Name, Roll Number, Enroll Number, National Id, Local Id Etc.">
+                                                <span class="fa fa-search form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 mt-1 text-right">
+                                        <div class="row">
+                                            <div class="col-md-6 col-12 text-left">
+                                                <label><input type="checkbox" name="Isexpell" class="Isexpell" /> Search Ex-Students also </label>
+                                            </div>
+                                            <div class="col-md-6 col-12">
+                                                <button type="button" name="search" onclick="searches(this,'keyword')" value="search_full" class="btn btn-primary pull-right btn-sm checkbox-toggle"><i class="fa fa-search"></i> Search</button>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-list"></i> Student List</h3>
+                </div>
+
+                <div class="col-12">
+           @{
+                        var modelgrid = new GridModel()
+                        {
+                            GridId = "list",
+                            AllowExcelExport=true,
+                            AllowPdfExport=true,
+                            AllowGrouping=true,
+                            Width="auto",
+                            Height="auto",
+                            ShowHeader=false,
+                            AddSerialNo = true,
+                            Columns = new List<Column>
+                            {
+                              //  new Column{FieldName="sNO",HeaderText="S.NO",Width="50",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="registrationNo",HeaderText="Reg. No",AllowSorting=true,Width="100",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="studentName",HeaderText="Name",Width="100",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="fName",HeaderText="Father's Name",Width="150",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="className",HeaderText="Class",Width="60",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="sex",HeaderText="Gender",Width="100",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="dOb",HeaderText="DOB",Width="80",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="action",HeaderText="Action",Template="#action",HeaderTextAlign=TextAlign.Left},
+                            },
+                         };
+            }
+                    @await Html.PartialAsync("_grid",modelgrid)
+
+                   @*.ToolbarClick("toolbarClick")*@
+              @*       @Html.EJS().Grid("list").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+   {
+       //col.Field("SNO").HeaderText("S.No").Width("50").TextAlign(TextAlign.Left).Add();
+       col.Field("RegistrationNo").AllowSorting(true).HeaderText("Reg. No").Width("60").TextAlign(TextAlign.Left).Add();
+       col.Field("StudentName").Template("#stdname").HeaderText("Name").Width("120").TextAlign(TextAlign.Left).Add();
+       col.Field("FName").HeaderText("Father's Name").Width("100").TextAlign(TextAlign.Left).Add();
+       col.Field("ClassName").HeaderText("Class").Width("60").TextAlign(TextAlign.Left).Add();
+       col.Field("Sex").HeaderText("Gender").Width("80").TextAlign(TextAlign.Left).Add();
+       col.Field("DOB").HeaderText("DOB").Width("80").Format("dd/MM/yyyy").TextAlign(TextAlign.Left).Add();
+       col.Field("action").Template("#action").HeaderText("").Width("70").TextAlign(TextAlign.Left).Add();
+   }).AllowSorting(true).AllowPaging().PageSettings(page => page.PageSize(5).PageSizes(new string[] { "5", "15", "30", "50", "100", "All" })).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Load("load").Render()*@  </div>
+               
+            </div>
+             <script type="text/x-jsrender" id="stdname">
+                    <a class="ajax-load" rel="nofollow" href="/Students/Studentview/${getid(StudentId)}">${StudentName}</a>
+                </script>
+                <script type="text/x-jsrender" id="action">
+                    <div class="sico-drp dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Actions
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="position:relative !important;">
+                            ${if(!IsExpell)}
+                            <a title="Edit" href="/Students/Edit/${getid(StudentId)}" class="dropdown-item ajax-load"><i class="fa fa-edit mr-2"></i>Edit</a>
+                            <a title="View" href="/Students/Studentview?id=${getid(StudentId)}" class="dropdown-item ajax-load"><i class="fa fa-list mr-2"></i> View Details</a>
+                            ${else}
+                            <a href="/Students/Studentview/${getid(StudentId)}" class="dropdown-item  ajax-load"><i class="fa fa-list mr-2"></i>View Details</a>
+                            <a href="/StudentReports/LeavingCertificate/${getid(StudentId)}" class="dropdown-item  ajax-load"><i class="fa fa-print mr-2"></i>School Leaving Certificate</a>
+                            <a title="Readmission" href="/Students/UnExpell?expellDetailID=${ExpellDetailsId}" class="edit dropdown-item  ajax-load"><i class="fa fa-arrow-rotate-right mr-2"></i> Re admission</a>
+                            ${/if}
+                        </div>
+                    </div>
+                </script>
+        </div>
+    </div>
+</section>
+
+<script  @resources.JavaScript>
+ @if (!string.IsNullOrEmpty(keyword))
+    {
+        <text>
+    function load() {
+        searches(null, 'keyword')
+    }
+        </text>
+    }else{
+        <text>
+    function load() {
+
+    }
+        </text>
+    }
+</script>
+<script  @resources.JavaScript>
+    $('#list').on('click',
+        'a.ajax-load',
+        function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var url = window.$(this).attr('href');
+            Navigate(url);
+            return false;
+        });
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("list").ej2_instances[0];
+        if (args.item.id === 'list_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'list_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+
+    function searches(me, method) {
+        
+        var classid = $('#Classes').val();
+        var sectionid = $('#Sections').val();
+        //var id = $('#studentlist').val();
+        var search_text = $('#search_text').val();
+        var checkIsexpell = false;
+        if ($('.Isexpell').is(':checked')) {
+            checkIsexpell = true;
+        }
+
+        if (method == 'cls') {
+            search_text = '';
+        }
+        else {
+            classid = '';
+            sectionid = '';
+        }
+
+        var gridObj = document.getElementById("list").ej2_instances[0];
+        gridObj.dataSource = [];
+        var url = 'searchResult';
+
+        url += '?campusId=' + $('#Campus').val() + '&classid=' + classid + '&sectionid=' + sectionid  + '&Isexpell=' + checkIsexpell;
+        gridObj.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+</script>

@@ -1,0 +1,195 @@
+﻿@inject StaticResources resources
+
+@{
+    //ViewBag.Title = "Add New Exam";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+     
+        Layout = null;
+  
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Staff Attendance
+        </li>
+        <li class="active">
+            Attendance By Code No.
+        </li>
+    </ul>
+</div>
+<style>
+    .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox], .radio input[type=radio], .radio-inline input[type=radio] {
+        margin-left: -15px;
+    }
+</style>
+<section class="content" id="staff-attendance-container">
+    <div class="row ">
+        @*<div class="col-12">
+                <div id="newCreateMessage">
+                </div>
+            </div>*@
+        @Html.AntiForgeryToken()
+        <div class="col-sm-12 col-md-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header with-border">
+                            <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria <a href="https://www.youtube.com/watch?v=Q5DnOy5rciw&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=40s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row" id="attendancebytype-container">
+                                @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { CampusLoadCallBack = "reloadGridData();", ParentContainerID = "attendancebytype-container", ColCssClass = "col-12 pt-2 has-feedback", ForSearch = true, ShowCampus = true })
+
+                                <div class="col-md-6 col-sm-6 col-6 form-group has-feedback">
+                                    <label>Attendance</label><font class="text-danger">*</font>
+                                                             <div class="controls">
+                                                                 @Html.DropDownList("AttendanceType", (SelectList)ViewBag.AttendanceType, new { @class = "form-control chosen has-feedback-left", placeholder = "Enter name here." })
+                                                                 <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                                                 @Html.ValidationMessage("CreateName")
+                                                             </div>            </div>
+
+                                <div class=" col-6 form-group has-feedback">
+                                    <label>Code No.</label><font class="text-danger">*</font>
+                                                           <div class="controls">
+                                                               @Html.TextBox("CodeNo", null, new { @class = "form-control has-feedback-left", placeholder = "Enter Code" })
+                                                               <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                                               @Html.ValidationMessage("CodeNo")
+                                                           </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <div class="col-12 col-md-12">
+                                <img class="profile-user-img img-responsive img-circle" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                                <h3 class="profile-username text-center">
+                                    <span class="name" id="lblregno">.......</span>
+                                </h3>
+                                <ul class="list-group list-group-unbordered">
+                                    <li class="list-group-item listnoback">
+                                        <b>Campus</b>
+                                        <a class="pull-right text-aqua">
+                                            <span class="campusname" id="lblcampus">......</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <b>Address</b>
+                                        <a class="pull-right text-aqua">
+                                            <span class="name address" id="lbladdress">..........</span>
+                                        </a>
+                                    </li>
+
+
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+        <div class="col-md-8 col-sm-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-list mr-2"></i>Staff Attendance List</h3>
+                </div>
+                <div class="card-body">
+                    <div id="Existing" class="table-responsive around10 pt0">
+                        @Html.EJS().Grid("list_attenance_bycode").Columns(col =>
+                   {
+                       col.Field("CodeNo").HeaderText("Code No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                       col.Field("Name").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                       col.Field("Time").HeaderText("Time").TextAlign(TextAlign.Left).Add();
+                       col.Field("Status").Template("#tmpStatus").HeaderText("Status").TextAlign(TextAlign.Left).Add();
+                   }).Load("loaded").Render()
+                    </div>
+                    <script type="text/x-jsrender" id="tmpStatus">
+                        ${if(Status=="Error")}
+                        <div class="btn btn-danger">
+                            <span class="text-white">${Status}</span>
+                        </div>
+                        ${else if(Status=="Not Found")}
+                        <div class="btn btn-warning">
+                            <span class="text-white">${Status}</span>
+                        </div>
+                        ${else}
+                        <div class="btn btn-success">
+                            <span class="text-white">${Status}</span>
+                        </div>
+                        ${/if}
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<script @resources.JavaScript>
+    function loaded() {
+        let grid = document.getElementById("list_attenance_bycode").ej2_instances[0];
+        grid.dataSource = [];
+    }
+</script>
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+
+
+    $('#CodeNo').change(function () {
+        let grid = document.getElementById("list_attenance_bycode").ej2_instances[0];
+        var codeno = $(this).val();
+        var campusId = $('#Campus').val();
+        $(lblregno).html('...');
+        $(lblcampus).html('...');
+        $(lbladdress).html('...');
+        $(pbxPhoto).attr('src', '/Uploads/images/user.png');
+
+        var found = (grid.dataSource).find(function (v, i) { return v.CodeNo == codeno; });
+        //console.log(found);
+        if (found) {
+            $('#CodeNo').focus().select();
+            return false;
+        }
+        block('#staff-attendance-container');
+        //var exist = table.columns(1).data().eq(0).indexOf(regno);
+        let saveUrl = '/Attendances/SaveAttendanceofStaff';
+        $.post(saveUrl,
+            { codeno: codeno, time: moment().format("DD-MM-YYYY HH:mm"), type: $('#AttendanceType').val(), campusId },
+                function(data) {
+                    if (data) {
+                        let info = { CodeNo: codeno, Name: data.data.employeeName, Time: moment().format("DD-MM-YYYY HH:mm"), Status: data.data.Status };
+                        (grid.dataSource).unshift(info);
+                        grid.refresh();
+
+                        $(lblregno).html(data.data.employeeName);
+                        $(lblcampus).html(data.data.CampusName);
+                        $(lbladdress).html(data.data.PostalAddress);                        
+                        $(pbxPhoto).attr('src', data.data.Photo);
+                    } else {
+                        //alert();
+                    }
+                    $('#staff-attendance-container').unblock();
+            }).error(function () {
+                $('#staff-attendance-container').unblock();
+            });
+        $('#CodeNo').select();
+    }); //end reg no change
+
+</script>
+

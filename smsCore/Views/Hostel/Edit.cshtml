@@ -1,0 +1,88 @@
+﻿@using sms.Models
+@model  Hostel
+
+@{
+    ViewBag.Title = "Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@*@using (Ajax.BeginForm("Edit", "Hostel", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "editHostelmainForm #server-progress", OnBegin = "begin"}, new {id = "editHostelmainForm", enctype = "multipart/form-data"}))
+{*@
+<form asp-action="Edit" asp-controller="Hostel"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editHostelmainForm" data_reset="true">
+                   
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="Container" id="hosteledit">
+
+        <div class="row ">
+
+
+            @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "hosteledit", ColCssClass = "col-12 col-sm-6 has-feedback", CampusID = Model.CampusId, CampusFieldName = "CampusId", ShowCampus = true})
+
+            <div class="col-12 col-sm-6 has-feedback">
+                <div  class="controls">
+                    <label>Hostel Name</label><font class="text-danger">*</font>
+                    @Html.TextBoxFor(model => model.HostelName, new { @class = "small form-control has-feedback-left", required = "true" })
+                    <span class="fa fa-building small form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.HostelName)
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 has-feedback">
+                <label>Total Students</label><font class="text-danger">*</font>
+                                             <div  class="controls">
+                                                 @Html.TextBoxFor(model => model.TotalStudents, new { @class = "small form-control has-feedback-left", required = "true", type = "number" })
+                                                 <span class="fa fa-users small form-control-feedback left" aria-hidden="true"></span>
+                                                 @Html.ValidationMessageFor(model => model.TotalStudents)
+                                             </div>
+
+            </div>
+            <div class="col-12 col-sm-6 has-feedback">
+                <label>Total Rooms</label><font class="text-danger">*</font>
+                                          <div  class="controls">
+                                              @Html.TextBoxFor(model => model.TotalRooms, new { @class = "small form-control has-feedback-left", required = "true", type = "number" })
+                                                          <span class="fa fa-bed small form-control-feedback left" aria-hidden="true"></span>
+                                                          @Html.ValidationMessageFor(model => model.TotalRooms)
+                                                      </div>
+            </div>
+            @*<div class="col-12 col-md-4 col-sm-6 has-feedback">
+            <label>AnnualExpense</label>
+            @Html.TextBoxFor(model => model.AnnualExpense, new { @class = "small form-control has-feedback-left", required = "true" })
+            <span class="fa fa-money small form-control-feedback left" aria-hidden="true"></span>
+            @Html.ValidationMessageFor(model => model.AnnualExpense)
+        </div>*@
+            <div class="col-12 col-sm-6 has-feedback">
+                <label>Location</label><font class="text-danger">*</font>
+                                       <div  class="controls">
+                                           @Html.TextBoxFor(model => model.Location, new { @class = "small form-control has-feedback-left", required = "true" })
+                                           <span class="fa fa-map-marker small form-control-feedback left" aria-hidden="true"></span>
+                                           @Html.ValidationMessageFor(model => model.Location)
+                                       </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+               @* <a href="@Url.Action("Index", "Hostel")" aria-label="Close" class="btn btn-danger float-left mt-2"> <i class="fa fa-times mr-2"></i>Back to Dashboard</a>*@
+                <button type="reset" name="Reset" id="resetbtn" class="btn btn-primary float-right mt-2 btn-sm"><i class="fa fa-refresh mr-2"></i>Reset</button>
+                <button type="submit" value="Edit" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2 btn-sm">
+                    <i class="fa fa-save mr-2"></i>
+                    <span>
+                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                    </span> Save
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

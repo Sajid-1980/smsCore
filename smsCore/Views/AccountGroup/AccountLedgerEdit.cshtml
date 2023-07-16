@@ -1,0 +1,216 @@
+﻿@using Models;
+@model  tbl_AccountLedger
+@{
+    ViewBag.Title = "AccountLedgerEdit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+
+@*@using (Ajax.BeginForm("Accountledger", "AccountGroup", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "AccountLedgermainForm #server-progress", OnBegin = "begin" }, new { id = "AccountLedgermainForm", data_reset = "true" }))
+{*@
+
+
+    @Html.HiddenFor(model=>model.Id)
+    
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-12">
+
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#main" role="tab" aria-controls="home" aria-selected="true">Main Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#others" role="tab" aria-controls="profile" aria-selected="false">Secondary Details</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="main" role="tabpanel" aria-labelledby="home-tab">
+
+                        <div class="row no-gutters">
+
+                            <div class="row">
+                                <div class="col-6 col-md-6">
+                                    <label>Name</label>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.LedgerName, new { @class = "form-control has-feedback-left", required = true })
+                                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessage("LedgerName")
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-6">
+                                    <label>Group</label>
+                                    @Html.DropDownListFor(model => model.AccountGroupId, (SelectList)ViewBag.LedgerLists, new { @class = "form-control" })
+                                    @Html.ValidationMessage("GroupId")
+                                </div>
+
+                                <div class="col-6 col-md-8">
+                                    <label>Opening Balance</label>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.OpeningBalance, new { @class = "form-control has-feedback-left", required = true })
+                                        <span class="fa fa-sort-amount-asc form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessage("OpeningBalance")
+                                    </div>
+                                </div>
+                                <div class="col-1 col-md-4">
+                                    <label></label>
+                                    @Html.DropDownListFor(m => m.CrOrDr, new SelectList(new[] { "Cr", "Dr" }, Model == null ? null : Model.CrOrDr), new { @class = "form-control has-feedback-left mt-1" })
+                                    @Html.ValidationMessage("CrDr")
+                                </div>
+
+
+
+
+                                <div class="col-6 col-md-12">
+                                    <label>Narration</label>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.Narration, new { @class = "form-control has-feedback-left" })
+                                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessage("Narration")
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="profile-tab">
+                        <div class="bankDetail" style="display:none;">
+                            <div class="col-md-12 col-12 has-feedback" style="display: none">
+                                <label>Account Number</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.AccountNo, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-4 col-12 has-feedback" style="display: none">
+                                <label>Branch Name</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.BranchName, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-12 has-feedback" style="display: none">
+                                <label>Branch Code</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.BranchCode, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="" id="Sunday" style="display: none">
+                            <div class="row no-gutters">
+                                <div class="col order-1 col-12">
+                                    <div class="row">
+                                        <div class="col-md-6 col-12 has-feedback">
+                                            <label>Mailing Name</label>
+                                            <div class="controls">
+                                                @Html.TextBoxFor(model => model.MailingName, new { @class = "form-control has-feedback-left" })
+                                                <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-12 has-feedback">
+                                            <label>Address</label>
+
+                                            <div class="controls">
+                                                @Html.TextBoxFor(model => model.Address, new { @class = "form-control has-feedback-left" })
+                                                <span class="fa fa-map-marker form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-12 has-feedback">
+                                            <label>Phone</label>
+                                            <div class="controls">
+                                                @Html.TextBoxFor(model => model.Phone, new { @class = "form-control has-feedback-left" })
+                                                <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-12 has-feedback">
+                                            <label>Email</label>
+                                            <div class="controls">
+                                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control has-feedback-left" })
+                                                <span class="fa fa-mail-forward form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-12 has-feedback">
+                                            <label>Mobile</label>
+                                            <div class="controls">
+                                                @Html.TextBoxFor(model => model.Mobile, new { @class = "form-control has-feedback-left" })
+                                                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-12 has-feedback">
+                                            <label>Credit period</label>
+                                            <div class="controls">
+                                                @Html.TextBoxFor(model => model.CreditPeriod, new { @class = "form-control has-feedback-left" })
+                                                <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 col-12 has-feedback">
+                                            <label>Credit Limit</label>
+                                            <div class="controls">
+                                                @Html.TextBoxFor(model => model.CreditLimit, new { @class = "form-control has-feedback-left" })
+                                                <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="card-footer">
+        <div class="row">
+            <div class="form-group col-12 pb-2 mt-3">
+                <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>
+                <button type="submit" value="Create" class="btn btn-primary pull-right">
+                    <i class="fa fa-save mr-2"></i>
+                    <span>
+                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                    </span> Save
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    //function reload() {
+    //      location.reload();
+    //  }
+
+    $('#GroupId').on('change', function () {
+        if (($('#GroupId').val() == "17") || ($('#GroupId').val() == "28")) {
+            $('#bankDetail').css({ "display": "block" });
+            $('#bankDetails').css({ "display": "block" });
+            $('#bankDetailss').css({ "display": "block" });
+        }
+        else {
+            $('#bankDetail').css({ "display": "none" });
+            $('#bankDetails').css({ "display": "none" });
+            $('#bankDetailss').css({ "display": "none" });;
+
+        }
+        if (($('#GroupId').val() == "26") || ($('#GroupId').val() == "22")) {
+            $('#Sunday').css({ "display": "block" });
+        }
+        else {
+            $('#Sunday').css({ "display": "none" });
+        }
+
+    });
+</script>

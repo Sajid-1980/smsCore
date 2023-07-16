@@ -1,0 +1,161 @@
+﻿@using sms.Models
+@model System.Data.DataTable
+@inject StaticResources resourse;
+
+@{
+    ViewBag.Title = "Sent Result";
+}
+<style>
+    thead th {
+        font-size: 12px;
+        text-align: center;
+        vertical-align: middle;
+    }
+        thead th:nth-child(n+3), tbody td:nth-child(n+3) {
+            max-width: 75px;
+        }
+    td {
+        font-size: 12px;
+        vertical-align:middle;
+        text-align:center
+    }
+    td:nth-child(3){
+        text-align:left;
+    }
+</style>
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Send Result Test
+            </li>
+
+        </ul>
+    </div>
+}
+
+<style>
+    select.form-control { max-height: 30px; }
+</style>
+<section class="content" id="sendresult">
+    <div class="row">
+        <div class="col-12">
+           @* @using (Ajax.BeginForm("SentResult", "Message", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "SendReceiveFeemainForm #server-progress", OnBegin = "begin"}, new {id = "SendReceiveFeemainForm"}))
+            {*@
+            <form asp-action="SentResult" asp-controller="Message" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="MessageSubscribtionmainForm" data_reset="true">
+             
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">
+                            Send Result     <a href="https://www.youtube.com/watch?v=Qf-M08OGFwU&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=135s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a>
+                        </h4>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "sendresult", ColCssClass = "col-12 col-sm-6 col-md-3", ShowCampus = true, ShowClasses = true, ShowSections = true, ShowExams = true })
+
+                            
+
+                            <div class="col-12 col-md-4 col-sm-6 mt-4 col-lg-4 form-group has-feedback">
+                                <label> <input type="checkbox" name="showposition" id="showposition" /> Include and Send Position</label>
+                            </div>
+                            <div class="col-12 col-md-8 mt-3">
+                                <button type="button" class="btn btn-primary float-right" name="view" id="add"><i class="fa fa-search mr-2"></i>View</button>
+
+                            </div>
+
+                            <div class="col-md-12 no-gutters">
+                                <div id="timeTableDisplay" class="table-responsive">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="SentResult-gridContainer" class="col-12">
+                                <table id="jqgSentResult" cellpadding="0" cellspacing="0"></table>
+                                <div id="jqgpSentResult" style="text-align: center;"></div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters sico-form-col">
+                            <div class="col-12 col-md-4" style="margin-top: -10px;">
+                                <label>Remark</label>
+                                <div class="controls">
+                                    <input type="text" name="Remarks" class="form-control" />
+                                    <span class="fa fa-comment form-control-feedback"></span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-8 pt-4">
+                                <button type="submit" class="btn btn-primary float-right mt-2 " name="save"><i class="fa fa-send mr-2"></i>Send Result</button>
+                               @* <button type="button" class="btn btn-primary float-right mr-2 mt-2" name="save"><i class="fa fa-mail-forward mr-2"></i>Send Email</button>*@
+                                <label class="float-right mr-2 mt-4"><input type="checkbox" value="True"/> Add Attendence</label>
+                                <label class="float-right mr-2 mt-4"><input type="checkbox" value="True"/> Save Mesage</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<script @resourse.JavaScript>
+    
+    $('#add').on('click',
+        function () {
+            $('#timeTableDisplay').html('');
+            var url = ('@Url.Action("SendResultViewData")');
+            var classid = $('#Classes').val();
+            var campus = $('#Campus').val();
+            var sections = $('#Sections').val();
+            var exams = $('#Exams').val();
+            var attendance = "true";
+
+            var showposition = false;
+            if ($('#showposition').is(':checked')) {
+                showposition = true;
+            }
+            var data = { cmbClass: classid, cmbCampus: campus, cmbSection: sections, cmbExam: exams, attendances: attendance, showposition };
+
+            $.ajax({
+                url: url,
+                method: "POST",
+                data: data,
+                success: function(data) {
+                    $('#timeTableDisplay').html(data);
+                },
+                error: function(e, x, a) {
+                    console.log(e, x, a);
+                    alert("No Result found.");
+                }
+            });
+        });
+    $('#remo').on('click',
+        function() {
+            alert("Are you sure to remove?");
+            $('tbody tr').each(function() {
+                var chkbox = $(this).find('#selectrow');
+                if (chkbox.is(':checked')) {
+                    $(this).remove();
+                }
+            });
+        });
+</script>

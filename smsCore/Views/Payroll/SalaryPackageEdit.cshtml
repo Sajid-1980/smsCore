@@ -1,0 +1,165 @@
+﻿@model SalaryPackageViewModel
+
+@*@using smsCore.Data.Models.ViewModels.SalaryPackageViewModel
+*@
+@{
+    ViewBag.Title = "Salary Package Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Salary Package Edit
+        </li>
+
+    </ul>
+</div>
+<section class="content">
+   @* @using (Ajax.BeginForm("SalaryPackageEdit", "Payroll", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "classFeeIndexmainForm" }))
+    {*@
+    <form asp-action="SalaryPackageEdit" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+  
+                   
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h3 class="card-title">Salary Package Edit</h3>
+                    </div><!-- /.box-header -->
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row no-gutters ">
+                            <div class="col-12">
+                                @Html.HiddenFor(m => m.Id, new { required = "true" })
+
+                                <div class="row">
+                                    <div class="col-12 col-md-8">
+                                        <label>Package Name</label>
+                                        <div class="controls">
+                                            @Html.TextBoxFor(m => m.PackageName, new { @class = "form-control has-feedback-left", required = "true" })
+                                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("PackageName")
+                                        </div>
+                                    </div>
+                                        <div class="col-6 col-md-4 pt-4">
+                                            <label class="checkbox">
+                                                <input type="checkbox" value="true" class="mr-1 mt-2" @(Model.IsActive?"checked":"") name="IsActive" />Active
+                                            </label>
+                                        </div>
+                                       
+                                    <div class="col-12">
+                                        <label>Narration</label>
+                                        <div class="controls">
+                                            @Html.TextBoxFor(m => m.Narration, new { @class = "form-control has-feedback-left" })
+                                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("Narration")
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card card-primary">
+                    <div class="card-header ptbnull">
+                        <h3 class="card-title titlefix">Pay head List</h3>
+                    </div><!-- /.box-header -->
+                    <div class="card-body">
+                        <div class="row mt-3">
+                            <div id="salarypackageCreation-gridContainer" class="col-12">
+                                @Html.EJS().Grid("list_payhead").DataSource(dataManger =>
+                  {
+                      dataManger.Url("/Payroll/GetPayheadsInPackage/"+Model.Id.ToString()).Adaptor("UrlAdaptor");
+                  }).Columns(col =>
+                  {
+                      col.Template("${sno(index)}").HeaderText("S.No").Width("70").TextAlign(TextAlign.Left).Add();
+                      col.Field("Name").HeaderText("Description").TextAlign(TextAlign.Left).Add();
+                      col.Field("Type").HeaderText("Type").Width("130").TextAlign(TextAlign.Left).Add();
+                     col.Template("#amount").HeaderText("Amount").TextAlign(TextAlign.Center).Width("170").TextAlign(TextAlign.Left).Add();
+                  }).DataBound("gettotalamount").Render()
+                                <script type="text/x-jsrender" id="amount">
+                                    <Input type="text" name="PayHeads[${index}].Amount" value="${Amount}" onchange="gettotalamount()" class="pay-amount form-control p-1" />
+                                    <Input type="hidden" name="PayHeads[${index}].Id" value="${payHeadId}">
+                                </script>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-md-4 mt-3 ml-auto mr-3">
+                                        <label class="control-label">Total Amount</label>
+                                        <div class="controls">
+                                            <input type="text" id="total-amount" class="p-1 float-right form-control" style="max-width:130px" name="SalaryAmount" value="" readonly />
+                                            @* <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>*@
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group col-12 pb-2 mt-3">
+                                @*<a href="@Url.Action("SalaryPackageRegister", "Payroll")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back </a>*@
+
+                                <button type="submit" value="Create" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i> <span>
+                                        <i id="server-progress" style="display:none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+
+
+
+
+<script>
+
+    function gettotalamount() {
+
+        var grid = document.getElementById("list_payhead").ej2_instances[0];
+        var grantTotal = 0;
+        let i = 0;
+        $('#list_payhead .pay-amount').each(function () {
+            try {
+                let type = grid.currentViewData[i].Type;
+                grantTotal += (parseFloat($(this).val().trim() ?? 0) > 0) ? (parseFloat($(this).val().trim() ?? 0) * type) : 0;
+            }
+            catch { }
+            i++;
+        });
+        $('#total-amount').val(grantTotal);
+    }
+
+    function reloadGridData() {
+        var grid = document.getElementById("list_payhead").ej2_instances[0];
+        grid.refresh();
+    }
+
+
+     //   });
+</script>
+
+@Html.EJS().ScriptManager()

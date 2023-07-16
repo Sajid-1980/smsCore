@@ -1,0 +1,68 @@
+﻿@model Exam
+
+@{
+    ViewBag.Title = "Add New Exam";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+    
+        Layout = null;
+    
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Create Student
+        </li>
+
+    </ul>
+</div>
+
+@*@using (Ajax.BeginForm("NewExam", "Exams", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "NewExammainForm #server-progress", OnBegin = "begin"}, new {id = "NewExammainForm"}))
+{*@
+<form asp-action="NewExam" asp-controller="Exams"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="NewExammainForm" data_reset="true">
+   
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="sico-form-col row">
+            @Html.AntiForgeryToken()
+
+            <div class="col-md-9 col-sm-9 col-12 form-group has-feedback">
+                <div class="controls">
+                    <label>Exam Name</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.ExamName, null, new { @class = "form-control has-feedback-left", placeholder = "Exam Name" })
+                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("ExamName")
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 form-group ">
+                <button type="submit" value="Create" id="btnSubmit" class="btn btn-primary pull-right btnSearchExam">
+                    <i class="fa fa-save mr-2"></i>
+                    <span>
+                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                    </span> Save
+                </button>
+            </div>
+            <div id="ExamHeld">
+            </div>
+        </div>
+    </div>
+
+    </form>

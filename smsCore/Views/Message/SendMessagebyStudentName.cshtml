@@ -1,0 +1,353 @@
+﻿@using sms.Models
+@model System.Data.DataTable
+@inject StaticResources resourse;
+@{
+    ViewBag.Title = "SendMessagebyStudentName";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Send Message to Students
+        </li>
+
+    </ul>
+</div>
+
+<style>
+    #_fieldset {
+        border: groove;
+        border-color: #f7f1f1;
+        margin: 0;
+        min-width: 0;
+        padding: 10px;
+    }
+
+    legend {
+        display: block;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    input[type="radio"] {
+        height: 20px;
+        width: 20px;
+    }
+</style>
+<section class="content" id="sendmessagebystudentname">
+    <div class="row">
+        <div class="col-12">
+            @*@using (Ajax.BeginForm("SendMessagebyStudentName", "Message", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "SendMessagebyStudentNamemainForm #server-progress", OnBegin = "begin" }, new { id = "SendMessagebyStudentNamemainForm" }))
+            {*@
+            <form asp-action="SendMessagebyStudentName" asp-controller="Message" OnSuccess="reloadGridData" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SendMessagebyStudentNamemainForm" data_reset="true">
+             
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                           
+                            <div class="col-12 col-md-3">
+                                <fieldset id="_fieldset">
+                                    <legend>
+                                        <input type="radio" name="RadioSelect" id="mobileNo" value="mobileNo" /> Search by
+                                    </legend>
+                                    <label>Mobile No</label>
+                                    <div class="controls">
+                                        <input type="text" name="mobileNo" id="mobileinput" class="form-control fa fa-neuter" minlength="7" nmaxlength="17" />
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                </fieldset>
+
+                            </div>
+
+                            <div class="col-12 col-md-3">
+                                <fieldset id="_fieldset">
+                                    <legend>
+                                        <input type="radio" name="RadioSelect" id="regno" value="regno" /> Search by
+                                    </legend>
+                                    <div class="controls">
+                                        <label>Registration No</label>
+                                        <div class="controls">
+                                            <input type="text" name="regno" id="regnoinput" class="form-control" minlength="1" maxlength="15" />
+                                            <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <fieldset id="_fieldset">
+                                    <legend>
+                                        <input type="radio" name="RadioSelect" id="selectclass" checked /> Search by classes
+                                    </legend>
+                                    <div id="selectclassinput" class="row" disable style="">
+                                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {CampusLoadCallBack= "reloadGridData();", ParentContainerID = "sendmessagebystudentname", ColCssClass = "col-6 ", ForSearch = true, ShowCampus = true, ShowClasses = true })
+
+                                    </div>
+                                </fieldset>
+
+                            </div>
+
+                            <div class="col-12 mt-2">
+                                <button type="button" class="btn btn-primary float-right" onclick="reloadGridData()"><i class="fa fa-search pr-2"></i> Search</button>
+                                <a href="https://www.youtube.com/watch?v=Qf-M08OGFwU&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=80s" target="_blank"title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right mr-5"><i class="fa fa-question-circle"></i> Help </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="SendMessage-gridContainer" class="col-12 col-md-6">
+                                <h5>Send Message To</h5>
+                                @{
+
+                                    List<object> toolbarItems = new List<object>();
+                                    toolbarItems.Add(new { text = "Add All", tooltipText = "Add All", prefixIcon = "e-add", id = "addall", align = "Left" });
+                                    List<object> toolbarItems2 = new List<object>();
+                                    toolbarItems2.Add(new { text = "Remove All", tooltipText = "Remove All", prefixIcon = "e-icons Clear_input_001", id = "removeall", align = "Right" });
+                                }
+                               @* 
+                                @Html.EJS().Grid("list_send").Toolbar(toolbarItems2).ToolbarClick("RemoveAll").Columns(col =>
+                           {
+                                col.Field("RegistrationNo").HeaderText("Reg No").TextAlign(TextAlign.Left).Add();
+                               col.Field("StudentName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                               col.Field("Mobileno").HeaderText("Mobile").TextAlign(TextAlign.Left).Add();
+                               col.Template("#action_remove").HeaderText("Action").Width(120).TextAlign(TextAlign.Center).Add();
+                           }).Load("loaded").AllowSorting().AllowPaging().PageSettings(p => { p.PageSize(15).PageSizes(new string[] { "15", "50", "100", "All" }); }).Render()*@
+
+                           
+                            @{
+                                var modelgrid = new GridModel()
+            {
+                GridId = "list_send",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                            {
+                            
+                                new Column{FieldName="registrationNo",HeaderText="Reg. No",TextAlign=TextAlign.Left},
+                                new Column{FieldName="studentName",HeaderText="Name",TextAlign=TextAlign.Left},
+                                new Column{FieldName="mobileno",HeaderText="Mobile",AutoFit=true,TextAlign=TextAlign.Left},
+                                new Column{Template="#action_remove",HeaderText="Action",Width="120",AutoFit=true,TextAlign=TextAlign.Left},
+                            },
+                AllowFiltering = true,
+            };
+                            }
+                            @await Html.PartialAsync("_grid",modelgrid)
+                                <script type="text/x-jsrender" id="action_remove">
+                                    <a href="javascript:void(0)" onclick="remove(${index})">
+                                        <i class="fa fa-close" style="color:red"></i>
+                                    </a>
+                                </script>
+                            </div>
+                            <div id="SendMessagebyStudentName-gridContainer" class="col-12 col-md-6">
+                                <h5>Search and Select Student</h5>  
+   @*                             @Html.EJS().Grid("list_std").Toolbar(toolbarItems).ToolbarClick("Addall").Columns(col =>
+                           {
+                               col.Template("#action").HeaderText("Action").Width(120).TextAlign(TextAlign.Center).Add();
+                               col.Field("RegistrationNo").HeaderText("Reg No").TextAlign(TextAlign.Left).Add();
+                               col.Field("StudentName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                               col.Field("Mobileno").HeaderText("Mobile").TextAlign(TextAlign.Left).Add();
+                           }).AllowPaging().PageSettings(p=> { p.PageSize(15).PageSizes(new string[] { "15", "50", "100", "All" }); }).Render()*@
+
+                                @{
+                                    var modelgrids = new GridModel()
+            {
+                GridId = "list_std",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                                {
+                                new Column{FieldName="#action",HeaderText="Action",Width="120",TextAlign=TextAlign.Left},
+                                new Column{FieldName="registrationNo",HeaderText="Reg. No",TextAlign=TextAlign.Left},
+                                new Column{FieldName="studentName",HeaderText="Name",TextAlign=TextAlign.Left},
+                                new Column{FieldName="mobileno",HeaderText="Mobile",AutoFit=true,TextAlign=TextAlign.Left},
+  
+                                },
+                AllowFiltering = true,
+            };
+                                }
+                                @await Html.PartialAsync("_grid",modelgrids)
+                                <script type="text/x-jsrender" id="action">
+                                    <a href="javascript:void(0)" onclick="add(${index})">
+                                        <i class="fa fa-chevron-circle-left" style="color:green"></i>
+                                    
+                                    </a>
+                                </script>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 my-2">
+                                <div id="message"></div>
+                            </div>
+                            <div class="col-12 col-md-6 ">
+                                <label class="bolder">Message<span class="text-danger">*</span></label><br>
+                                <textarea name="MessageTxt" id="MessageTxt" class="form-control"></textarea>
+                            </div>
+                            <div class="col-12 col-md-6 mt-5 pt-3">
+                                <button type="button" id="Sendmessage" class="btn btn-primary float-right " name="save">
+                                    <i class="fa fa-save mr-2"></i> <i class="fa fa-spinner fa-spin mr-2" id="server-progress" style="display: none;"> </i>Send Message
+                                </button>
+                                <label class="float-right mr-3 mt-3"><input type="checkbox" class="mr-1" name="Isunicode" id="Isunicode" />Is RTL Message</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+    function loaded() {
+        let grid = document.getElementById("list_send").ej2_instances[0];
+        grid.dataSource = [];
+    }
+    function Addall() {
+        var grid = document.getElementById("list_std").ej2_instances[0];
+        let data = grid.getCurrentViewRecords();
+        let grid2 = document.getElementById("list_send").ej2_instances[0];
+        $.each(data, function (i, v) {
+            let found = grid2.dataSource.find(function (v2) { return v2.RegistrationNo == v.RegistrationNo; })
+            if (!found) {
+                (grid2.dataSource).unshift(v);
+            }
+        });
+        grid2.refresh();
+    }
+
+    function RemoveAll() {
+        loaded();
+    }
+</script>
+
+
+<script @resourse.JavaScript>
+
+
+    function reloadGridData() {
+        var campid = $('#Campus').val();
+        var regnoinput = $('#regnoinput').val();
+        var clsid = $('#Classes').val();
+        var mobileinput = $('#mobileinput').val();
+        var url1 = '/Message/StudentListForBulkMessage';
+        if ($('#regno').is(':checked')) {
+            url1 += '?regnoinput=' + regnoinput;
+        } else if ($('#mobileNo').is(':checked')) {
+            url1 += '?mobileinput=' + mobileinput;
+        } else if ($('#selectclass').is(':checked')) {
+            url1 += '?campid=' + campid + '&clsid=' + clsid;
+        }
+        var grid = document.getElementById("list_std").ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+
+
+    function sendstudentfrwd(element) {
+        var clickedA = $(element);
+        var CurrentRow = clickedA.closest('tr');
+        var regno = $(CurrentRow).find('td:eq(1)').text();
+        var StudentName = $(CurrentRow).find('td:eq(2)').text();
+        var Mobileno = $(CurrentRow).find('td:eq(3)').text();
+
+        var exist = false;
+        for (i = 0; i < localdata.length; i++) {
+            var regNo = localdata[i].regno;
+            if (regNo == regno) {
+                exist = true;
+                break;
+            }
+        }
+        if (exist) {
+            alert('this student is alread added.');
+        } else {
+            localdata.push({ 'regno': regno, 'StudentName': StudentName, 'MobileNo': Mobileno });
+            $('#jqgSendMessage').jqGrid('setGridParam', { data: localdata }).trigger('reloadGrid', { current: true });
+        }
+    }
+    function remove(i) {
+        let grid2 = document.getElementById("list_send").ej2_instances[0];
+        grid2.dataSource.splice(i, 1);
+        grid2.refresh();
+    }
+    function add(i) {
+        var grid = document.getElementById("list_std").ej2_instances[0];
+        let grid2 = document.getElementById("list_send").ej2_instances[0];
+        let data = grid.getCurrentViewRecords();
+        let found = grid2.dataSource.find(function (v) { return v.RegistrationNo == data[i].RegistrationNo; })
+        if (found) {
+            return false;
+        }
+        (grid2.dataSource).unshift(data[i]);
+
+        grid2.refresh();
+    }
+
+    $('#Sendmessage').on('click',
+        function() {
+            let Message = $('#MessageTxt').val();
+            if (!Message) {
+                sweetalert("Plaese type message before continue", '', 'error');
+                $('#MessageTxt').focus();
+                return false;
+            }
+
+            let grid2 = document.getElementById("list_send").ej2_instances[0];
+            var urlsend = '@Url.Action("SendMessagebyStudentNames")';
+            console.log(grid2.getCurrentViewRecords());
+            let data = grid2.getCurrentViewRecords().map(function (v) {
+                return { Mobile: v.Mobileno };
+            });
+            if (data.length == 0) {
+                sweetalert("Plaese select atleast one student before continue", '', 'error');
+                return false;
+            }
+
+            data[0].Message = $('#MessageTxt').val();
+            data[0].IsRtl = ($('#Isunicode').is(':checked'))? 'True' : 'False';
+            block('#sendmessagebystudentname');
+            $.post(urlsend,
+                { records: data },
+                function (result) {
+                    if (result.status) {
+
+                        $('#message').html('<span class="float-left alert alert-info w-100">' + result.message +'<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                        grid2.dataSource = [];
+                        $('#sendmessagebystudentname').unblock();
+                    }
+                    else {
+                        $('#message').html('<span class="float-left alert alert-danger w-100">' + result.message+'<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                        $('#sendmessagebystudentname').unblock();
+                    }
+                }).error(function () {
+                    $('#message').html('<span class="float-left alert alert-danger w-100">Unknow network error occured..<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                    $('#sendmessagebystudentname').unblock();
+                })
+
+        });
+
+</script>

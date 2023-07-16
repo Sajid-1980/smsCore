@@ -1,0 +1,142 @@
+﻿
+@inject StaticResources rec;
+@{
+    ViewBag.Title = "timetableconfiguration";
+   
+}
+
+
+<div class="col-12">
+
+    @*@using (Html.BeginForm("timetableconfiguration", "TimeTable", FormMethod.Post, new { id = "frmconfig_timetable", enctype = "multipart/form-data", @class = "form-horizontal form-label-left " }))
+    {*@
+
+  @*  @using (Ajax.BeginForm("timetableconfiguration", "TimeTable", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+    {*@
+
+    <form asp-action="timetableconfiguration" asp-controller="TimeTable" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+
+
+
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="row" >
+            <div class="col-6" id="firstperiodstart">
+                <input type="time" name="FirstPeriod" id="firstPeriod" class="form-control" required />
+                @*@Html.Partial("_PartialDate", new PartialDateViewModels
+           { Label = "First Period Start", ParentContainerID = "firstperiodstart", ColCssClass = "col-6", ShowAltField = false, 
+               DateFieldId = "firstPeriod", DateFieldName = "FirstPeriod", KeepDataFieldReadOnly = true })*@
+
+            </div>
+            <div class="col-6">
+                <label>Period Duration</label><font class="text-danger">*</font>
+                <input type="number" name="PeriodDuration" id="PeriodDuration" class="form-control" required/>
+            </div>
+            <div class="col-6 NoOfPeriods">
+                <label>No Of Period/Day</label>
+                <input type="number" name="NoOfPeriod" id="NoOfPeriod" value="0" class="form-control" readonly/>
+            </div>
+            <div class="col-6">
+                <label>
+                    <input type="checkbox" name="Auto" id="Auto" class="mt-4 auto" checked/> Auto
+                </label>
+            </div>
+
+            <div class="col-12 mt-4">
+                <h6>Other(Period Break, Assembly etc)</h6>
+            </div>
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover " border="1">
+                        <thead class="theadbody">
+                        <tr>
+                            <th>Period</th>
+                            <th>Describtion</th>
+                            <th>Duration</th>
+                            <th>
+                                <a href="#" class="add">+</a>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody id="tablebody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+        <a href="@Url.Action("TimeTableInManual", "TimeTable")" aria-label="Back to Dashboard" class="btn btn-danger float-right"> <i class="fa fa-chevron-circle-left mr-2"></i> Back</a>
+        <button type="submit" value="Create" class="btn btn-primary float-right">
+            <i class="fa fa-save mr-2 "></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+            </span> Save
+        </button>
+    </form>
+
+</div>
+
+
+<script @rec.JavaScript>
+    //if ($('.auto').is(':checked')) {
+    //    $('#NoOfPeriod').attr(readonly);
+    //}
+    //if ($('.auto:checked')) {
+    //    $('#NoOfPeriod').attr('readonly', true); // On Load, should it be read only?
+    //}
+
+    $('.auto').change(function() {
+        if ($(this).is(":checked")) {
+            alert("checked");
+            $(this).attr('checked', true);
+            $('#NoOfPeriod').prop('readonly', true); //If checked - Read only
+        } else {
+            $(this).attr('checked', false);
+            $('#NoOfPeriod').prop('readonly', false); //Not Checked - Normal
+            alert($('#NoOfPeriod').val());
+
+        }
+    });
+
+    function onload() {
+        var url = '@Url.Action("OtherPeriod", "Dashboard")';
+        $('#tablebody').html('');
+        $.get(url,
+            function(data) {
+                var html = '';
+                $.each(data,
+                    function(key, value) {
+                        html += '<tr><td> <input type="text" name="PeriodNo" id="PeriodNo" class="form-control" value="' + value.PeriodNo + '" /></td><td><input type="text"  name="Description" id="Description" class="form-control" value="' + value.Description + '" /></td><td colspan="2"><input type="text"  name="Duration" class="form-control"  id="Duration" value="' + value.Duration + '" /></td></tr>';
+                    });
+                $('#tablebody').html(html);
+            });
+    }
+
+    onload();
+    $('.add ').on('click',
+        function() {
+            var html = '<tr><td ><input type="text" class="form-control"  name="PeriodNo" id="PeriodNo" /></td><td><input type="text" class="form-control" name="Description" id="Description" /><td colspan="2"><input type="text" class="form-control " name="Duration"  id="Duration"/></tr>';
+            $('#tablebody').append(html);
+
+        });
+
+    $("#btnSave").click(function() {
+        $.ajax(
+            {
+                type: "POST", //HTTP POST Method
+                url: "btnSaveClickAutoTimeTable", // Controller/View
+                data: { //Passing data
+                    
+                }
+            });
+    });
+
+
+</script>

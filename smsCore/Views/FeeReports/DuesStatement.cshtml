@@ -1,0 +1,242 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Dues Statement";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Fee Report</a>
+        </li>
+        <li class="active">
+            Dues Statement
+        </li>
+    </ul>
+</div>
+
+
+<section class="content" id="duesStatement-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-2 col-sm-3">
+                            <label>Reg NO</label>
+                            <div class="controls">
+                                <input type="text" id="regno" class="form-control" />
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "duesStatement-container", ColCssClass = "col-12 col-sm-3 col-md-2  form-group has-feedback", ForSearch = false, ShowCampus = true, ShowClasses = true })
+                        <div class="col-12 col-sm-3 col-lg-1  col-md-2 form-group has-feedback mt-4">
+                            <label><input type="checkbox" id="range" /> Range</label>
+                        </div>
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+                          {
+                              Label = "From Date",
+                              ParentContainerID = "from-date",
+                              ColCssClass = "col-12 col-sm-3 col-md-2",
+                              ShowAltField = false,
+                              DateFieldId = "fromdate",
+                              DateFieldName = "fromdate",
+                              KeepDataFieldReadOnly = true
+                          })
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+                   {
+                       Label = "To Date",
+                       ParentContainerID = "to-date",
+                       ColCssClass = "col-12 col-sm-3 col-md-2",
+                       ShowAltField = false,
+                       DateFieldId = "todate",
+                       DateFieldName = "todate",
+                       KeepDataFieldReadOnly = true
+                   })
+
+
+                        <div class="col-12 col-sm-3 col-md-2">
+                            <label>Category</label>
+                            <select id="category" class="form-control has-feedback">
+                                <option value="AllStudents">All Students</option>
+                                <option value="PresentStudents">Present Students</option>
+                                <option value="ExStudents">Ex Students</option>
+                            </select>
+                        </div>
+                        @*<div class="col-12 col-sm-12 col-md-6 col-lg-4">
+            <label class="control-label">Group By:</label>
+            <select id="chngroup" class="form-control" onchange="$('#btnSearch').trigger('click');">
+                <option class="form-control" value="AdmissionID">Reg. No</option>
+                <option class="form-control" value="ClassName">Class</option>
+                <option class="form-control" value="ForMonth">Month</option>
+                <option class="form-control" value="Total">Total</option>
+                <option class="form-control" value="Received">Received</option>
+                <option class="form-control" value="Balance">Balance</option>
+                <option class="form-control" value="clear">REMOVE GROUPING</option>
+            </select>
+        </div>*@
+                        <div class="col text-right">
+                            <button type="button" class="btn btnSearchStudent btn-primary sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_classwise_feegroup",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Due Statement",
+                    AllowPaging=true,
+                    AllowPrint=true,
+                    AllowExcelExport=true,
+                    AllowGrouping=true,
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+                        new Column{ FieldName="ForMonth", HeaderText="Month", AutoFit=true, DateFormat="MMM yyyy" },
+                        new Column{ FieldName="DueDate", HeaderText="Due Date", AutoFit=true, DateFormat="dd/MM/yyyy" },
+                        new Column{ FieldName="Total", HeaderText="Total", AutoFit=true },
+                        new Column{ FieldName="Received", HeaderText="Received", AutoFit=true },
+                        new Column{ FieldName="Balance", HeaderText="Balance", AutoFit=true },
+},
+                    GridAggregateColumns=new List<GridAggregateColumn> {
+
+                    new GridAggregateColumn() { Field="StudentName", Type="none", GroupFooterTemplate= "Total",FooterTemplate="Total"},
+                        new GridAggregateColumn() { Field="Total", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}" },
+                        new GridAggregateColumn() { Field="Received", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}"},
+                        new GridAggregateColumn() { Field="Balance", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}" },
+                        new GridAggregateColumn() { Field="ForMonth", Type="Count", GroupFooterTemplate= "${Count} Month(s)",FooterTemplate="" }
+                    },
+                    GroupSettings=new GridGroupSettings { Columns=new string[] { "AdmissionID" }, ShowDropArea=false, ShowGroupedColumn=false }
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_fee-dues-statement").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Template("#sno").HeaderText("S.No").Width("140").TextAlign(TextAlign.Left).Add();
+           col.Field("AdmissionID").HeaderText("Registration No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("StudentName").HeaderText("Student Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("ClassName").HeaderText("Class Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("ForMonth").HeaderText("For Month").AutoFit(true).TextAlign(TextAlign.Left).Format(new { type = "dateTime", format = "MMM yyyy" }).Add();
+           col.Field("DueDate").HeaderText("Due Date").AutoFit(true).TextAlign(TextAlign.Left).Format(new { type = "dateTime", format = "dd/MM/yyyy" }).Add();
+           col.Field("Total").HeaderText("Total").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Received").HeaderText("Received").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Balance").HeaderText("Balance").AutoFit(true).TextAlign(TextAlign.Left).Add();
+       }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+                { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Aggregates(a => a.Columns(new List<GridAggregateColumn>
+                        () {
+                        new GridAggregateColumn() { Field="StudentName", Type="none", GroupFooterTemplate= "Total",FooterTemplate="Total"},
+                        new GridAggregateColumn() { Field="Total", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}" },
+                        new GridAggregateColumn() { Field="Received", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}"},
+                        new GridAggregateColumn() { Field="Balance", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}" },
+                        new GridAggregateColumn() { Field="ForMonth", Type="Count", GroupFooterTemplate= "${Count} Month(s)",FooterTemplate="" }
+
+                        }).Add()).AllowGrouping(true).GroupSettings(new GridGroupSettings { Columns=new string[] { "AdmissionID" }, ShowDropArea=false, ShowGroupedColumn=false }).Render();
+
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_fee-dues-statement").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_fee-dues-statement_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_fee-dues-statement_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+    $(function() {
+        $('.date').inputmask({ mask: '99/99/9999' });
+        $(".date").datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            showAnim: "clip",
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            yearRange: "-50:+0"
+        });
+
+        $(".date").on('change', function() {
+            var val = $(this).val();
+            try {
+                var mo = moment(val, 'YYYY-MM-DD');
+                if (mo._d == 'Invalid Date') {
+                    $(this).closest('div').append('<span class="nosubmit conversion-error text-danger">Please select a valid date</span>');
+                } else {
+                    $(this).closest('div').find('.conversion-error').remove();
+                }
+                //console.log(mo)
+                //alert('converted',mo);
+            } catch{
+                alert('conversion error');
+        };
+    }); });
+
+    $('#range').on('click',
+        function() {
+            if ($(this).is(':checked')) {
+                $('#fromdate').attr('readonly', false);
+                $('#todate').attr('readonly', false);
+            } else {
+                $('#fromdate').attr('readonly', true);
+                $('#todate').attr('readonly', true);
+            }
+        });
+    $('#btnSearch').on('click',
+        function() {
+            var fromdate = $('#fromdate').val();
+            var regno = $('#regno').val();
+            if (regno == null) {
+                regno = "";
+            }
+            var todate = $('#todate').val();
+            if ($('#fromdate').val() == "") {
+                $('#fromdate').focus();
+            }
+            if ($('#todate').val() == "") {
+                $('#todate').focus();
+            }
+            var range = "false";
+            if ($('#range').is(':checked')) {
+                range = "true";
+            }
+
+            var url1 = '@Url.Action("GetDuesStatementList")';
+            url1 += '?CampusId=' + $('#Campus').val() + '&fromdate=' + fromdate + '&todate=' + todate + '&clasId=' + $('#Classes').val() + '&regno=' + regno + '&category=' + $('#category').val() + '&range=' + range;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0]
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+
+   
+</script>
+@Html.EJS().ScriptManager()

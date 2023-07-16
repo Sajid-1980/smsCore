@@ -1,0 +1,120 @@
+﻿@model ApplicationLeave
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "ApproveApp";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Approve Application
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>
+                    Approve Application List <a href="https://www.youtube.com/watch?v=qnCNefvfqfg&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=360s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a>
+                </h3>
+
+            </div>
+            <div class="card-body">
+              @*  @Html.EJS().Grid("list_app").DataSource(s => { s.Url("/School/UnAproveApplicationList").Adaptor("UrlAdaptor"); }).Columns(col =>
+               {
+                   col.Field("employeeName").HeaderText("Applicant").Format("MMM, yyyy").TextAlign(TextAlign.Left).Add();
+                   col.Field("DateFrom").HeaderText("From").Format("MMM, yyyy").TextAlign(TextAlign.Left).Add();
+                   col.Field("DateTo").HeaderText("To").Format("MMM, yyyy").TextAlign(TextAlign.Left).Add();
+                   col.Template("#action").HeaderText("Action").TextAlign(TextAlign.Center).Add();
+               }).Height("auto").Width("auto").Render()*@
+
+
+            @{
+                var gridmodel = new GridModel()
+            {
+                GridId = "list_app",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+
+
+
+                Columns = new List<Column>
+            {
+            new Column{FieldName="employeeName",HeaderText="Applicant",DateFormat="MMM, yyyy",TextAlign=TextAlign.Left},
+            new Column{FieldName="DateFrom",HeaderText="From",DateFormat="MMM, yyyy",TextAlign=TextAlign.Left},
+            new Column{FieldName="DateTo",HeaderText="To",DateFormat="MMM, yyyy",TextAlign=TextAlign.Left},
+            new Column{Template="#action",HeaderText="Action",TextAlign=TextAlign.Left},
+            },
+            };
+            }
+            @await Html.PartialAsync("_grid",gridmodel)
+            </div>
+           
+            <script id="action" type="text/x-jsrender">
+                ${if(Status==null)}
+                <span></span>
+                ${else if(Status)}
+                <i class="badge badge-info">Approved</i>
+                ${else}
+                <i class="badge badge-danger">Not Approved</i>
+                ${/if}
+            </script>
+        </div>
+</section>
+
+<script @resources.JavaScript>
+    function getid(id) {
+        return id.toString() + '    ';
+    }
+    function reloadGridData() {
+        document.getElementById('list_app').ej2_instances[0].refresh();
+    }
+    
+     function Approve(element, id) {
+        if ($(element).is(':checked')) {
+            var url = '@Url.Action("AdminApproveApp")';
+            var descr = $('#desc').val();
+            url += '?id=' + id + '&status=' + "true" + '&descr=' + descr;
+
+            $.get(url,
+                function (data) {
+                    swal.fire("Approved", "Application is Approved.", "info");
+                    reloadGridData();
+                });
+        } else {
+            var url = '@Url.Action("AdminApproveApp")';
+            var descr = $('#desc').val();
+            url += '?id=' + id + '&status=' + "false" + '&descr=' + descr;
+            $.get(url,
+                function (data) {
+                    swal.fire("Oops!!", "Application is not accepted.", "info");
+                    reloadGridData();
+                });
+         }
+
+    }
+</script>
+
+@Html.EJS().ScriptManager()
+

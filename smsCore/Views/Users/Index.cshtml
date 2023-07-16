@@ -1,0 +1,334 @@
+﻿@using sms.Models
+@model RegisterViewModel
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Index";
+   
+    bool formonly = (bool)ViewBag.formonly;
+}
+@if (!formonly)
+{<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Users
+        </li>
+
+    </ul>
+</div>
+}
+<section class="content" id="userIndex-container">
+    <div class="row">
+        <div class="col-md col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Users <a href="https://www.youtube.com/watch?v=LcG_cpH1AkU#t=400s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+                <div class="card-body">
+                  @*  @using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "classFeeIndexmainForm" }))
+                    {*@
+
+
+                    <form asp-action="Create" asp-controller="Users" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+                        <div class="row">
+                            <div class="col-12 ">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "userIndex-container", ColCssClass = "col-12 pt-2 has-feedback", ForSearch = true, ShowCampus = true })
+
+
+                            <div class="col-12 has-feedback">
+                                <label>Role</label>
+                                <div class="controls">
+                                    @Html.DropDownList("Roles", null, new { @class = "form-control" })
+                                    <span class="fa fa-user-secret form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Roles")
+                                </div>
+                            </div>
+
+                            <div class="col-12 has-feedback" id="StudentsContainer">
+                                <label>Select Student</label>
+                                <div class="controls">
+                                    @*@Html.DropDownList("Students", null, new { @class = "form-control" })*@
+                                    <select name="Students" id="Students" class="form-control"></select>
+                                    <span class="fa fa-user-secret form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Students")
+                                </div>
+                            </div>
+
+                            <div class="col-12 has-feedback" id="ParentsContainer">
+                                <label>Select Parent</label>
+                                <div class="controls">
+                                    @* @Html.DropDownList("Parents", null, new { @class = "form-control" })*@
+                                    <select name="Parents" id="Parents" class="form-control"></select>
+                                    <span class="fa fa-user-secret form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Parents")
+                                </div>
+                            </div>
+
+                            <div class="col-12 has-feedback" id="EmployeesContainer">
+                                <label>Select Employee</label>
+                                <div class="controls">
+                                    @* @Html.DropDownList("Employees", null, new { @class = "form-control" })*@
+                                    <select name="Employees" id="Employees" class="form-control"></select>
+                                    <span class="fa fa-user-secret form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Employees")
+                                </div>
+                            </div>
+
+                            <div class="col-12 has-feedback">
+                                <label>Email</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.Email)
+                                </div>
+                            </div>
+                            <div class="col-12 has-feedback">
+                                <label>Username</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.UserName, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-user-secret form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.UserName)
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 has-feedback">
+                                <label>Password</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Password, new { @class = "form-control has-feedback-left", type = "password" })
+                                    <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.Password)
+                                </div>
+                            </div>
+
+
+                            <div class="col-12 col-md-6 has-feedback">
+                                <label>Confirm Password</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.ConfirmPassword, new { @class = "form-control has-feedback-left", type = "password" })
+                                    <span class="fa fa-lock form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                                </div>
+                            </div>
+
+
+                            <div class="form-group col-12 pb-2 mt-3">
+
+
+                                <button type="submit" value="Create" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        @if (!formonly)
+        {
+            <div class="col-md-8 col-12">
+                <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">User List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="col-12">
+
+                 @*       @Html.EJS().Grid("list_users").DataSource(s => { s.Url("/Users/UserList").Adaptor("UrlAdaptor"); }).Columns(col =>
+                   {
+                       col.Field("UserName").HeaderText("User Name").TextAlign(TextAlign.Left).Add();
+                       col.Field("campus").HeaderText("Campus").TextAlign(TextAlign.Left).Add();
+                       col.Field("role").HeaderText("Role").TextAlign(TextAlign.Left).Add();
+                       col.Field("action").Template("#action").HeaderText("Action").Width("170").TextAlign(TextAlign.Center).Add();
+                   }).Height("auto").Width("auto").Render()*@
+                            @{
+                                var gridmodel = new GridModel()
+                {
+                    GridId = "list_users",
+                    AllowExcelExport = true,
+                    AllowPdfExport = true,
+                    AllowGrouping = true,
+                    Width = "auto",
+                    Height = "auto",
+                    //AddSerialN = true;
+
+
+
+                    Columns = new List<Column>
+                        {
+                        new Column{FieldName="UserName",HeaderText="User Name",TextAlign=TextAlign.Left},
+                        new Column{FieldName="campus",HeaderText="Campus",TextAlign=TextAlign.Left},
+                        new Column{FieldName="role",HeaderText="Role",TextAlign=TextAlign.Left},
+                        new Column{FieldName="action",HeaderText="#action",TextAlign=TextAlign.Left},
+
+                        },
+                };
+                            }
+                            @await Html.PartialAsync("_grid",gridmodel)
+                    </div>
+                    <script type="text/x-jsrender" id="action">
+                        <a title="Edit" href="/Users/Edit?username=${UserName}" class="edit ajax ml-1"><i class="fa fa-edit"></i></a>
+                        <a title="Delete" href="/Users/Delete?username=${UserName}" class="edit ajax ml-1"><i class="fa fa-trash"></i></a>
+                    </script>
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+</section>
+<script @resources.JavaScript>
+      function reloadGridData() {
+          if (!document.getElementById('list_users'))
+              return;
+        let grid = document.getElementById('list_users').ej2_instances[0];
+        grid.refresh();
+    }
+      $('#list_users').on('click',
+        'a',
+        function (e) {
+            e.preventDefault();
+            var title = 'Payment Method';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+          });
+
+      $('#Roles').on('change', function () {
+          var role = $(this).val();
+          //StudentsContainer ParentsContainer EmployeesContainer
+          $('#StudentsContainer, #ParentsContainer, #EmployeesContainer').removeAttr('required').hide();
+          if (role == 'Parent') {
+              $('#ParentsContainer').attr('required', true).show();
+          }
+          else if (role == "Student") {
+              $('#StudentsContainer').attr('required', true).show();
+          }
+          else if (role == "Teacher") {
+              $('#EmployeesContainer').attr('required', true).show();
+          }
+      });
+      $('#Roles').trigger('change');
+     $('#Students').select2({
+          placeholder: "Search Students",
+          allowClear: true,
+        minimumInputLength: 1,
+          width:'100%',
+          ajax: {
+              url:  '/api/students/getdataforrole',
+              //headers: {
+              //    'Access-Control-Allow-Headers': 'Authorization',
+              //    'Authorization': 'Bearer ' + token
+              //},
+              data: function (params) {
+                  var query = {
+                      keyword: params.term,
+                      role: $('#Roles').val()
+                  }
+                  // Query parameters will be ?SearchTerm=[term]&type=public
+                  return query;
+              },
+              processResults: function (data) {
+                  // {s.ID, s.RegistrationNo, s.StudentName, s.FName,s.Email }
+                  var data6 = data.data.map(function (v) { return { id: v.ID, text: v.StudentName + ' S/D/O ' + v.FName, email:v.Email, registrationNo :v.RegistrationNo}; });//
+                  console.log(data6);
+ return {
+                      results: data6//.map(function (v) { return { id: v.ID, text: v.StudentName + ' S/D/O ' + v.FName }; })
+                  }
+              }
+          }
+      });
+      $('#Students').on('select2:select', function (e) {
+          var selected = e.params.data;// $(this).select2('data')[0];
+         
+      });
+
+      $('#Parents').select2({
+          placeholder: "Search Parents",
+          allowClear: true,
+          minimumInputLength: 1, width: '100%',
+          ajax: {
+              url: '/api/students/getdataforrole',
+              data: function (params) {
+                  var query = {
+                      keyword: params.term,
+                      role: $('#Roles').val()
+                  }
+                  // Query parameters will be ?SearchTerm=[term]&type=public
+                  return query;
+              },
+              processResults: function (data) {
+                  //{s.ID, s.CNIC, s.FName, s.RegistrationNo, s.Email }
+                  var data6 = data.data.map(function (v) { console.log(v); return { id: v.ID, text: v.FName + " F/O " + v.StudentName, cnic:v.CNIC, email: v.Email }; });//
+                  console.log(data6);
+ return {
+                      results: data6//.map(function (v) { return { id: v.ID, text: v.StudentName + ' S/D/O ' + v.FName }; })
+                  }
+              }
+          }
+      });
+      $('#Parents').on('select2:select', function (e) {
+          var selected = e.params.data;// $(this).select2('data')[0];
+
+      });
+
+      $('#Employees').select2({
+          placeholder: "Search Employees",
+          allowClear: true,
+          minimumInputLength: 1, width: '100%',
+          ajax: {
+              url: '/api/students/getdataforrole',
+              //headers: {
+              //    'Access-Control-Allow-Headers': 'Authorization',
+              //    'Authorization': 'Bearer ' + token
+              //},
+              data: function (params) {
+                  var query = {
+                      keyword: params.term,
+                      role: $('#Roles').val()
+                  }
+                  // Query parameters will be ?SearchTerm=[term]&type=public
+                  return query;
+              },
+              processResults: function (data) {
+                  //{s.Id, s.employeeCode, s.employeeName, s.FatherName, s.CNIC ,s.email}
+                  var data6 = data.data.map(function (v) {  return { id: v.Id, text: v.employeeName + ' S/D/O ' + v.FatherName, cnic:v.CNIC, email: v.email }; });//
+                  console.log(data6);
+                  return {
+                      results: data6//.map(function (v) { return { id: v.ID, text: v.StudentName + ' S/D/O ' + v.FName }; })
+                  }
+              }
+          }
+      });
+      $('#Employees').on('select2:select', function (e) {
+          var selected = e.params.data;// $(this).select2('data')[0];
+
+      });
+
+</script>
+@Html.EJS().ScriptManager()

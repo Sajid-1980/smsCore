@@ -1,0 +1,212 @@
+﻿@{
+    ViewBag.Title = "Vendor Pay Bill";
+}
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Accounts
+            </li>
+            <li class="active">
+                Account Transactions
+            </li>
+            <li class="active">
+                Vendor Pay Bill
+            </li>
+
+        </ul>
+    </div>
+}
+<style>
+    select.form-control {
+        max-height: 30px;
+    }
+
+    #_fieldset {
+        min-width: 0;
+        padding: 10px;
+        margin: 0;
+        border-color: #f7f1f1;
+        border: groove;
+    }
+
+    legend {
+        display: block;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+    }
+</style>
+
+<section class="content">
+    @*@using (Ajax.BeginForm("VendorPayBill", "AccountTransaction", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "VendorPayBillForm #server-progress", OnBegin = "begin" }, new { id = "VendorPayBillForm", enctype = "multipart/form-data" }))
+    {*@
+
+    <form asp-action="VendorPayBill" asp-controller="AccountTransaction"
+          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="VendorPayBillForm" data_reset="true">
+       
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h3 class="card-title">Vendor Details</h3>
+                    </div><!-- /.box-header -->
+
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 ">
+                                <label>Vendors</label>
+                                @Html.DropDownList("vendors", (SelectList)ViewBag.LedgerLists, new { @class = "form-control has-feedback-left select2" })
+                                <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Vendors")
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label>Date</label>
+                                <input type="date" name="date" class="form-control has-feedback-left small" required />
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("date")
+                            </div>
+
+                            <div class="col-6 col-md-6">
+                                <label>Voucher No</label>
+                                <input type="number" name="voucherNo" class="form-control has-feedback-left small" required />
+                                <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("voucherNo")
+                            </div>
+                            <div class="col-6 col-md-6">
+                                <label>Amount</label>
+                                <input type="text" name="Amount" class="form-control has-feedback-left small" required />
+                                <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Amount")
+                            </div>
+
+                            <div class="col-6 col-md-6">
+                                <label>PaymentMode</label>
+                                @Html.DropDownList("PaymentMode", (SelectList)ViewBag.LedgerLists, new { @class = "form-control has-feedback-left select2" })
+                                <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Bank/Cash")
+                            </div>
+                            <div class="col-6 col-md-6">
+                                <label>Reference/Check#</label>
+                                <input type="text" name="Reference" class="form-control has-feedback-left" required />
+                                <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Reference")
+                            </div>
+                            <div class="col-6 col-md-6">
+                                <label>Memo</label>
+                                <input type="text" name="Memo" class="form-control has-feedback-left" required />
+                                <span class="fa fa-file-text-o form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Memo")
+                            </div>
+                            <div class="col-6 col-md-6 mt-4">
+                                <label><input type="checkbox" name="Auto" />Auto Apply</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h3 class="card-title">Invoices Details</h3>
+                    </div><!-- /.box-header -->
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover table-sm" border="1">
+
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    Select
+                                                </th>
+                                                <th>
+                                                    Invoice#
+                                                </th>
+
+                                                <th>
+                                                    Orig Amount
+                                                </th>
+                                                <th>
+                                                    Pending
+                                                </th>
+                                                <th>
+                                                    Amount
+                                                </th>
+                                                <th>
+                                                    Currency
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablebody"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-sm-4 col-md-8"></div>
+                            <div class="col-12 col-sm-8 col-md-4 float-right">
+                                <fieldset id="_fieldset">
+                                    <legend>
+                                        Amount For Selected Invoice
+                                    </legend>
+                                    <span class="float-right mr-2">0</span><label class="mr-2">Amount Due:</label><br />
+                                    <span class="float-right mr-2">0</span><label class="mr-2">Remaining:</label><br />
+                                    <span class="float-right mr-2">0</span><label class="mr-2">Applied:</label>
+                                </fieldset>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="form-group col-12 pb-2 mt-3">
+                                <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>
+                                <button type="submit" value="Create" class="btn btn-info pull-right">
+                                    <i class="fa fa-save mr-2"></i> <span>
+                                        <i id="server-progress" style="display:none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </form>
+</section>
+
+

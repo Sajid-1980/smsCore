@@ -1,0 +1,137 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Accounts Report";
+}
+<section id="ReportSection" class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Accounts Reports</h4>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Reports</h4>
+                </div>
+                <div class="card-body">
+                    <ul class="menu-reports">
+                        <li>
+                            <a href="@Url.Action("ContraReport", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/reports/contract report.png" alt=""/>
+                                <label>Contra Report</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("PaymentReport", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/reports/payment report.png" alt=""/>
+                                <label>Payment Report</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ReceiptReport", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/reports/receipt report.png" alt=""/>
+                                <label>Receipt Report</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("JournalReport", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/reports/journal report.png" alt=""/>
+                                <label> Journal Report</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("PDCPayableReport", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/reports/pdc payable reprt.png" alt=""/>
+                                <label>PDC Payable Report</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("PDCReceiveableReport", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/reports/pdc recieveable report.png" alt=""/>
+                                <label>PDC Receiveable Report</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("PDCClearanceReport", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/reports/clearance report.png" alt=""/>
+                                <label> PDC Clearance Report</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ExpenseReport", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/reports/expense report.png" alt=""/>
+                                <label>Expense Report</label>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Financial Report</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a href="@Url.Action("TrialBalance", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/financial reports/trial balance.png" alt=""/>
+                                <label>Trial Balance</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("WorkingTrialBalance", "AccountsReport") ">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/financial reports/working trial balance.png" alt=""/>
+                                <label>Working Trial Balance</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("BalanceSheet", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/financial reports/balance sheet.png" alt=""/>
+                                <label>Balance Sheet</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ProfitAndLoss", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/financial reports/profit loss.png" alt=""/>
+                                <label> Profit And Loss</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("CashFlow", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/financial reports/cash flow.png" alt=""/>
+                                <label> Cash Flow</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("FundFlow", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/financial reports/fund flow.png" alt=""/>
+                                <label>Fund Flow</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ChartOfAccount", "AccountsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/accounts/financial reports/chart of account.png" alt=""/>
+                                <label>Chart Of Account</label>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<script @resourse.JavaScript>
+
+    $('#ReportSection a.ajax-load').on('click', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+
+    });
+
+</script>

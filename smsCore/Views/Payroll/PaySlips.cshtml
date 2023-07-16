@@ -1,0 +1,81 @@
+﻿@{
+    ViewBag.Title = "PaySlips";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Pay Slip
+            </li>
+
+        </ul>
+    </div>
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    Pay Slip
+                </div>
+                <div class="card-body">
+                  @*  @using (Ajax.BeginForm("Payslips", "Payroll", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+                    {*@
+                    <form asp-action="Payslips" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+  
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 form-group has-feedback">
+                                <label>Month</label>
+                                <div class="controls">
+                                    <input type="month" name="Month" class="form-control" />
+                                    <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-12"></div>
+                            <div class="col-4 form-group has-feedback">
+                                <label> Employee</label>
+                                <div class="controls">
+
+                                    @Html.DropDownList("ClassId", ViewBag.EmployeeList as SelectList, "...Select...", new { @class = "form-control ", required = "required" })
+                                    <span class="fa fa-group form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="form-group col-12 pb-2 mt-3">
+                               
+                                <button type="reset" value="New" class="btn btn-primary float-right "><i class="fa fa-refresh mr-1"></i>New</button>
+                                <button type="button" value="Create" class="btn btn-primary float-right">
+                                    <i class="fa fa-print mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Print
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

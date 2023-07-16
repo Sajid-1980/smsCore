@@ -1,0 +1,199 @@
+﻿@model System.Data.DataTable
+@{
+    ViewBag.Title = "PaymentVoucherEdit";
+}
+<style>
+    select.form-control {
+        max-height: 30px;
+    }
+</style>
+   @* @using (Ajax.BeginForm("PaymentVoucherEdit", "AccountTransaction", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "PaymentVoucherEditForm #server-progress", OnBegin = "begin" }, new { id = "PaymentVoucherEditForm" }))
+    {*@
+
+<form asp-action="PaymentVoucherEdit" asp-controller="AccountTransaction"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="PaymentVoucherEditForm" data_reset="true">
+       
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        <div class="row no-gutters sico-form-col">
+            <div class="col-12">
+                <h4>Payment Voucher Edit</h4><hr />
+
+                @{int j = 1;
+                }
+                @foreach (System.Data.DataRow item in Model.Rows)
+                {
+                    if (j == 1)
+                    {<input type="hidden" name="MasterId" value="@item["Masterid"]" class="form-control has-feedback-left" />
+
+                        <div class="row">
+                            <div class="col-6 col-md-4">
+                                <label>Voucher No</label>
+                                <input type="number" name="voucherNo" value="@item["VoucherNo"]" class="form-control has-feedback-left" required />
+                                <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("voucherNo")
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <label>Date</label>
+                                <input type="date" name="date" value="@item["Date"]" class="form-control has-feedback-left" required />
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("date")
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <label>Bank/Cash</label>
+                                @Html.DropDownList("Legers", (SelectList)ViewBag.LedgerLists, new { @class = "form-control has-feedback-left" })
+                                <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Legers")
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <label>Narration</label>
+                                <input type="text" name="Narration" value="@item["Narration"]" class="form-control has-feedback-left" />
+                                <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Narration")
+                            </div>
+                        </div>
+                    }
+                    j++;
+                }
+            </div>
+        </div>
+        <div class="row no-gutters sico-form-col mt-1">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover table-sm" border="1">
+
+                        <thead>
+                            <tr>
+                                <th>
+                                    S. No
+                                </th>
+                                <th>
+                                    Bank/Cash
+                                </th>
+                                <th></th>
+                                <th>
+                                    Amount
+                                </th>
+                                <th>
+                                    Currency
+                                </th>
+                                <th>
+                                    Cheque No
+                                </th>
+                                <th>
+                                    Cheque Date
+                                </th>
+                                <th>
+                                    <button type="button" class="float-right" id="add" style="border:none; background-color:transparent;"> <i class="fa fa-plus-circle"></i> </button>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablebody">
+                            @{int i = 1;}
+                            @foreach (System.Data.DataRow item in Model.Rows)
+                            {
+
+                                <tr>
+                                    <td>
+                                        <input type="hidden" name="DetailsId" value="@item["DetailsId"]" class="form-control has-feedback-left" />
+                                        <input type="hidden" name="LedgerPostingId" value="@item["LedgerPostingId"]" class="form-control has-feedback-left" />
+
+                                        @i
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("LegerId", (SelectList)ViewBag.LedgerLists, new { @class = "form-control has-feedback-left" })
+                                    </td>
+                                    <td>
+                                        <input type="text" name="Against" id="Against" value="Against" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="text" name="Amount" id="Amounts" value="@item["Amount"]" class="form-control" />
+                                    </td>
+                                    <td>
+                                        @Html.DropDownList("Currency", (SelectList)ViewBag.currncylist, new { @class = "form-control has-feedback-left" })
+                                    </td>
+                                    <td>
+                                        <input type="text" name="ChequeNumber" value="@item["ChequeNo"]" class="form-control" />
+                                    </td>
+                                    <td>
+                                        <input type="date" name="ChequeDate" value="@item["ChequeDate"]" class="form-control" />
+                                    </td>
+                                    <td><a href="#" onclick="removeRow(this)" class="danger">x</a></td>
+                                </tr>
+                                i++;
+                            }
+                        </tbody>
+                    </table>
+                    <div class="col-sm-12 ">
+                        <label class="float-right m-l-40">
+                            Total Amount
+                            <input type="text" id="totalAmount" value="0" name="totalAmount" class="m-l-20" readonly />
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-12 mt-2">
+                <button type="submit" class="btn btn-info float-right mr-2" name="save"><i class="fa fa-save mr-2"></i> Save</button>
+            </div>
+
+        </div>
+    </form>
+<script>
+
+    function removeRow(selector) {
+        if ($('#tablebody tr').length > 1) {
+            var clickedA = $(selector);
+            var CurrentRow = clickedA.closest('tr');
+            var amount = CurrentRow.find("#Amounts").val();
+            total = $('#totalAmount').val() - amount;
+            $(selector).closest('tr').remove();
+            $('#totalAmount').val(total);
+        }
+    }
+
+    $(document).ready(function () {
+        var Total = 0;
+        $('#tablebody tr').each(function () {
+            Total += parseFloat($(this).find('#Amounts:first').val());
+        });
+        $('#totalAmount').val(Total);
+
+        $('#add').on('click', function () {
+            var i = $('#tablebody tr').length + 1;
+            var select = $('select[name="LegerId"]:first').html();
+            var Currency = $('select[name = "Currency"]:first').html();
+            var html = '<tr><td>' + i + '</td><td class="tdGroupid"><select name="LegerId" id="LegerId" class="form-control" > ' + select + '</select></td><td><input type="text" name="Against" id="Against" value="Against" class="form-control" /></td><td><input type="text" id="Amounts" class="form-control _Amount" name="Amount" value="0" /></td><td class="Currency"><select name="Currency" id="Currency" class="form-control" > ' + Currency + '</select></td> <td><input type="text"  class="form-control " name="ChequeNumber" value="" /></td><td><input type="date"  class="form-control " name="ChequeDate" value="" /></td><td><a href="#" onclick="removeRow(this)">x</a></td></tr>';
+            $('#tablebody').append(html);
+            $('#tablebody tr #Amounts').each(function () {
+
+                $(this).unbind('change');
+
+                $(this).on('change', function () {
+                    var grantTotal = 0;
+                    $('#tablebody tr').each(function () {
+                            grantTotal += parseFloat($(this).find('#Amounts:first').val().trim());
+
+                    });
+                    $('#totalAmount').val(grantTotal);
+
+                });
+            });
+        });
+
+        $('#Amounts').on('change', function () {
+            var grantTotal = 0;
+                $('#tablebody').find('#Amounts').each(function () {
+                    grantTotal += parseFloat($(this).val().trim());
+                });
+        $('#totalAmount').val(grantTotal);
+        });
+    });
+</script>

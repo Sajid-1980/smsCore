@@ -1,0 +1,175 @@
+﻿@using Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Received Fee By Users";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Fee Report</a>
+        </li>
+        <li class="active">
+            Received Fee By Users
+        </li>
+    </ul>
+</div>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+                      {
+                          Label = "From Date",
+                          ParentContainerID = "to-date",
+                          ColCssClass = "col-12 col-sm-3 col-md-2",
+                          ShowAltField = false,
+                          DateFieldId = "fromdate",
+                          DateFieldName = "fromdate",
+                          KeepDataFieldReadOnly = true
+                      })
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+                   {
+                       Label = "To Date",
+                       ParentContainerID = "to-date",
+                       ColCssClass = "col-12 col-sm-3 col-md-2",
+                       ShowAltField = false,
+                       DateFieldId = "todate",
+                       DateFieldName = "todate",
+                       KeepDataFieldReadOnly = true
+                   })
+                        
+                        <div class="col-12 col-sm-3 col-md-2">
+                            <label>User</label>
+                            @Html.DropDownList("user", (SelectList)ViewBag.userlist, new { @class = "form-control" })
+
+                        </div>
+                        <div class="col-12 col-sm-3 col-md-2 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent  btn-primary  pull-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_classwise_rfbu",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Received Fee By User",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+                        new Column{ FieldName="Received", HeaderText="Received", AutoFit=true }
+},
+                    GridAggregateColumns=new List<GridAggregateColumn> {
+
+                    new GridAggregateColumn() { Field="ClassName", Type="none", GroupFooterTemplate= "Total",FooterTemplate="Total"},
+                        new GridAggregateColumn() { Field="Received", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}"}
+                    },
+
+                };
+            }
+            @Html.Partial("_grid", grid)
+            @*@Html.EJS().Grid("list_rpt_fee-received-byuser").AllowGrouping().Height("auto").Width("auto").ToolbarClick("toolbarClick").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Template("#sno").HeaderText("S.No").Width("100").TextAlign(TextAlign.Left).Add();
+           col.Field("AdmissionID").HeaderText("Admission Id").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("StudentName").HeaderText("Student Name").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("ClassName").HeaderText("Class Name").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("Received").HeaderText("Received").Width("150").TextAlign(TextAlign.Left).Add();
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+  { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Aggregates(agg =>
+  {
+      agg.Columns(
+          new List<Syncfusion.EJ2.Grids.GridAggregateColumn>() { 
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "ClassName", Type = "Custom", FooterTemplate = "Total" },
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Received", Type = "Sum", FooterTemplate = "${Sum}" }
+      }).Add();
+  }).Render();
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_fee-received-byuser").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_fee-received-byuser_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_fee-received-byuser_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+    $(function() {
+        $('.date').inputmask({ mask: '99/99/9999' });
+        $(".date").datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            showAnim: "clip",
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            yearRange: "-50:+0"
+        });
+
+        $(".date").on('change', function() {
+            var val = $(this).val();
+            try {
+                var mo = moment(val, 'YYYY-MM-DD');
+                if (mo._d == 'Invalid Date') {
+                    $(this).closest('div').append('<span class="nosubmit conversion-error text-danger">Please select a valid date</span>');
+                } else {
+                    $(this).closest('div').find('.conversion-error').remove();
+                }
+                //console.log(mo)
+                //alert('converted',mo);
+            } catch{
+                alert('conversion error');
+        };
+    }); });
+    $('#btnSearch').on('click',
+        function() {
+            var fromdate = $('#fromdate').val();
+            var todate = $('#todate').val();
+            if ($('#fromdate').val() == "") {
+                $('#fromdate').focus();
+            }
+            if ($('#todate').val() == "") {
+                $('#todate').focus();
+            }
+            var url1 = '@Url.Action("GetReceivedFeeByUsersList")';
+            url1 += '?fromdate=' + fromdate + '&todate=' + todate + '&user=' + $('#user').val();
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0]
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+
+  
+</script>
+@Html.EJS().ScriptManager()

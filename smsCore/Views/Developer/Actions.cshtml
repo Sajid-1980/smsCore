@@ -1,0 +1,84 @@
+﻿@model MenuAction
+@inject StaticResources resources
+
+
+
+@{
+    
+       ViewBag.Title = "Roles"; Layout = null;
+     
+        resources.JavaScript = string.Empty;
+     
+    }
+@* @using (Ajax.BeginForm("Actions", "Developer", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed1", LoadingElementId = "Frm_role #server-progress", OnBegin = "begin" }, new { id = "Frm_role" }))
+    {*@
+
+<form asp-action="Actions" asp-controller="Developer"
+      data-ajax="true" data-ajax-method="post" data-ajax-complete="completed1" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="Frm_role" data_reset="true">
+   
+        <div class="card">
+            <div class="card-header">
+                <h4 class="page-header">Developers <small>Actions</small></h4>
+            </div>
+            <div class="card-body">
+                <div class="row mt-2 mb-2">
+                        <div class="form-group col-md-3 mt-2">
+                            <label>Type:  </label>
+                            <select Name="_Type" class="form-control ml-2">
+                                <option value="menu">Menu Item</option>
+                                <option value="parent">Parent</option>
+                                <option value="action">Action</option>
+                                <option value="report">Reports</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-3 mt-2">
+                            <label>Controller: </label>
+                            <div class="controls">
+                                @Html.DropDownListFor(model => model.Controller, (SelectList)ViewBag.Controllers, new { @class = "form-control ml-1" })
+                            </div>        </div>
+                        <div class="form-group col-md-3 mt-2">
+                            <label>Action Name:  </label>
+                            <div class="controls">
+                                <input type="text" Name="Name" class="form-control" id="exampleInputEmail2" placeholder="Action Name" />
+                            </div>           </div>
+                        <div class="form-group col-md-3 mt-2">
+                            <label>Display Text:  </label>
+                            <div class="controls">
+                                <input type="text" Name="DisplayText" class="form-control" id="exampleInputEmail2" placeholder="Display Text" />
+                            </div>      </div>
+
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="submit" id="BtnSubmit" value="Save" class="btn btn-sm btn-primary">
+                    <i id="spinner" class="fas fa-spinner fa-pulse mr-2" style="display:none"></i>
+                    Save<i class="icon-paperplane ml-2"></i>
+                </button>
+                <button id="BtnClear" type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+  
+        </form>
+<script>
+
+@*    function DismissAction() {
+        $('#modal-container_action').modal('hide');
+        MenuPopup();
+    }*@
+
+    function completed1(response) {
+        response = response.responseJSON;
+        $('#spinner').hide();
+        $('#BtnSubmit').attr('disabled', false);
+        $('#BtnSubmit').removeAttr('disabled');
+
+        if (response.status) {
+          $('#modal-container_action').modal('hide');
+            LoadActions();
+        }
+        else {
+            Errors(response.message);
+        }
+    }
+
+</script>

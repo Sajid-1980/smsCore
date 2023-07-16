@@ -1,0 +1,275 @@
+﻿@model tbl_AccountGroup
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Account group";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Accounts
+        </li>
+        <li class="active">
+            Account Group
+        </li>
+
+    </ul>
+</div>
+
+<style>
+    /*select.form-control { max-height: 30px; }*/
+</style>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-header with-border px-2">
+                    <h3 class="card-title">Account Group Creation</h3>
+                </div><!-- /.box-header -->
+              @*  @using (Ajax.BeginForm("Accountgroup", "AccountGroup", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "AccountGroupmainForm #server-progress", OnBegin = "begin"}, new {id = "AccountGroupmainForm", data_reset = "true" }))
+                {*@
+
+                <form asp-action="Accountgroup" asp-controller="Accountgroup"
+                      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" OnSuccess="reloadGridData" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="AccountGroupmainForm" data_reset="true">
+                   
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 col-md-7">
+                                <label>GroupName</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.AccountGroupName, new { @class = "form-control has-feedback-left", required = true })
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("GroupName")
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-5">
+                                <label>Nature</label>
+                                <div class="controls">
+@*                                    @Html.TextBoxFor(model => model.Nature, new { @class = "form-control has-feedback-left", readOnly = true })
+*@
+                                    @Html.DropDownList("Nature", new SelectList(new string[] { "Assets", "Income", "Liabilities", "Expenses" }, Model == null ? null : "Nature"), new { @class = "form-control has-feedback-left"})
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Nature")
+                                </div>
+                                </div>
+                            <div class="col-6 col-md-7">
+                                <label>Under</label>
+                                <div class="controls">
+                                    @Html.DropDownListFor(model => model.GroupUnder, (SelectList)ViewBag.groupUnder, new { @class = "form-control select2" })
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("underGroupId")
+                                </div>
+                                </div>
+                            <div class="col-6 col-md-5">
+                                <label>Affect Gross profit</label>
+                                <div class="controls">
+                                    @Html.DropDownListFor(model => model.AffectGrossProfit, new SelectList(new[] { "No", "Yes" }, Model == null ? null : Model.AffectGrossProfit), new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("AfeectGrossprofit")
+                                </div>
+                                </div>
+
+                            <div class="col-6 col-md-12">
+                                <label>Narration</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Narration, new { @class = "form-control has-feedback-left" })
+
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Narration")
+                                </div>
+                                </div>
+                            </div>
+
+                    </div>
+                    <div class="px-2 card-footer">
+                        <div class="row">
+                            <div class="text-right col-12">
+                               @* <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>*@
+                                <button type="submit" value="Create" class="btn btn-primary pull-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-7">
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Chart of Accounts</h3>
+                </div><!-- /.box-header -->
+                @{
+                    var modelgrid = new GridModel()
+            {
+                GridId = "jqgAccountGroup",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                DataUrl = "/AccountGroup/GetAccountGroupForJq",
+            
+                Columns = new List<Column>
+                {
+                new Column{FieldName="id",HeaderText="Id",HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="accountGroupName",HeaderText="Group Name" ,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="groupUnder",HeaderText="Under",HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="action",HeaderText="Action",HeaderTextAlign=TextAlign.Left},
+
+                },
+
+            };
+                }
+                @await Html.PartialAsync("_grid",modelgrid)
+
+
+
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script @resources.JavaScript>
+    //$('#example').DataTable();
+    $(function() {
+        setTimeout(function() {
+            $('#GroupUnder').trigger('change');
+            },
+            100);
+        $('#GroupUnder').on('change',
+            function() {
+                var groupid = $(this).val();
+                var url = ('@Url.Action("changeUndergroup", "AccountGroup", new {groupid = 0})').replace('0', groupid);
+                $.get(url,
+                    function(data) {
+                        $('#Nature').val(data);
+                    });
+            });
+    });
+</script>
+<script @resources.JavaScript>
+
+    function reloadGridData() {
+        $('#jqgAccountGroup').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+
+    $(document).ready(function () {
+        $('.select2').select2();
+        var url1 = '@Url.Action("GetAccountGroupForJq")';
+
+        $('#jqgAccountGroup').jqGrid({
+            //url from wich data should be requested
+            url: url1,
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'Post',
+            //columns names sr, dname, ccode, address1, phone, tname, aname,dcode,ntn,holiday
+
+            //            colNames: ['sr','aname','tname', 'ccode', 'dcode','dname', 'address1', 'phone','ntn','holiday'],
+            //columns model
+            colModel: [
+                { label: 'Id', name: 'Id', index: 'Id', align: 'left', width: 30 },
+                { label: 'Group Name', name: 'accountGroupName', index: 'accountGroupName', align: 'left' },
+                { label: 'Under', name: 'groupUnder', index: 'groupUnder', align: 'left' },
+                { label: 'Action', name: 'action', index: 'action', align: 'center', width: 50 }
+                //s.Id, s.EmployeeName,s.Cnic,s.Address,s.MobileNo,s.Email,
+            ],
+            //caption: 'Account Group List',
+            //enable footer
+            footerrow: false,
+            userDataOnFooter: false,
+            //expect object instead of flat array
+            jsonReader: { repeatitems: false, id: 'Id' },
+            //pager for grid
+            pager: $('#jqgpAccountGroup'),
+            //number of rows per page
+            rowNum: 10,
+            //initial sorting column
+            sortname: 'Id',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            height: 'auto',
+            editable: true,
+            //height:500,
+
+            loadComplete: function() {
+                var table = this;
+                setTimeout(function() {
+                        updatePagerIcons(table);
+                    },
+                    0);
+            },
+            gridComplete: function() {
+                $('.ajax').on('click',
+                    function(e) {
+                        e.preventDefault();
+                        var title = $(this).attr('title');
+                        var url = $(this).attr('href');
+
+                        BootstrapDialog.show({
+                            title: title,
+                            message: $('<div />').load(url),
+                            onhide: function(dialogRef) {
+
+                                reloadGridData();
+                            }
+                        });
+                        return false;
+                    });
+            }
+        });
+
+        function updatePagerIcons(table) {
+            var replacement =
+            {
+                'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+                'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+                'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+                'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+            };
+            $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function() {
+                var icon = $(this);
+                var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+                if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+            });
+        }
+
+        $('#jqgAccountGroup').jqGrid('setGridParam', { url: url1 });
+        var DataGrid = $('#jqgAccountGroup');
+
+        //sets the grid size initially
+        DataGrid.jqGrid('setGridWidth', parseInt($('#AccountGroup-gridContainer').width()));
+
+        //handles the grid resize on window resize
+        $(window).resize(function() {
+            DataGrid.jqGrid('setGridWidth', parseInt($('#AccountGroup-gridContainer').width()));
+        });
+        $('#jqgAccountGroup').trigger('reloadGrid', { current: true, fromserver: true });
+    });
+</script>

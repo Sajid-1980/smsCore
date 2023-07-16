@@ -1,0 +1,194 @@
+﻿@model System.Data.DataTable
+@inject StaticResources resources
+
+@{
+    /**/
+
+    ViewBag.Title = "Budget Variance";
+}
+<section class="content">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-body">
+                   @* @using (Html.BeginForm("BudgetVariance", "Budget", FormMethod.Get, new {enctype = "multipart/form-data", @class = "form-horizontal form-label-left "}))
+                    {*@
+
+                    <form asp-action="BudgetVariance" asp-controller="Budget"
+          data-ajax="true" data-ajax-method="get" enctype="multipart/form-data"  class="form-horizontal form-label-left input_mask"   >
+              
+
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Budget</label>
+                                <div class="controls">
+                                    @Html.DropDownList("budgetMasterId", (SelectList)ViewBag.budgetMasterId, "Select", new { @class = "form-control" })
+                                    @*<input type="number" name="budgetMasterId" />*@
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("budgetMasterId")
+                                </div>
+                            </div>
+                            <div class="form-group col-12 mt-3">
+                                <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>
+
+                                <button type="button" id="seacrh" onclick="searchs()" class="btn btn-primary float-right" name="save">
+                                    <i class="fa fa-search mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> search
+
+                                </button>
+
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Budget List</h3>
+                </div>
+                @{
+                    var modelgrid = new GridModel()
+            {
+                GridId = "jqgbudgetvariance",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                AddSerialNo=true,
+                
+                Columns = new List<Column>
+                {
+                new Column{FieldName="name",HeaderText="Particular",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="budgetDr",HeaderText="Budget Dr",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="actualDr",HeaderText="Actual Dr",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="varianceDr",HeaderText="Variance Dr",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="budgetCr",HeaderText="Variance Cr",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="actualCr",HeaderText="Actual Cr",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{FieldName="varianceCr",HeaderText="Variance Cr",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                new Column{Template="action",HeaderText="Action",HeaderTextAlign=TextAlign.Left , AutoFit=true},
+
+                },
+
+            };
+                }
+                @await Html.PartialAsync("_grid",modelgrid)
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script @resources.JavaScript>
+    searchs();
+
+    function searchs() {
+        var url = '@Url.Action("GetBudgetvarianceListForJq")';
+        var budgetMasterId = $('#budgetMasterId').val();
+
+        url += '?budgetMasterId=' + budgetMasterId;
+        $('#jqgbudgetvariance').jqGrid({
+            //url from wich data should be requested
+            url: url,
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'Post',
+            //columns names sr, dname, ccode, address1, phone, tname, aname,dcode,ntn,holiday
+
+            //          Narration   colNames: ['sr','aname','tname', 'ccode', 'dcode','dname', 'address1', 'phone','ntn','holiday'],
+            //columns model
+            colModel: [
+                { label: 'S.No', name: 'sno', index: 'sno', align: 'left', width: 40, search: true, stype: 'text', searchoptions: { attr: { title: 'Select Date' } } },
+                { label: 'Particular ', name: 'Name', index: 'Name', align: 'left', width: 60 },
+                { label: 'Budget Dr', name: 'budgetDr', index: 'budgetDr', align: 'right', width: 60 },
+                { label: 'Actual Dr', name: 'actualDr', index: 'actualDr', align: 'right', width: 60 },
+                { label: 'Variance Dr', name: 'varianceDr', index: 'varianceDr', align: 'right', width: 60 },
+                { label: 'Budget Cr', name: 'budgetCr', index: 'budgetCr', align: 'right', width: 60 },
+                { label: 'Actual Cr', name: 'actualCr', index: 'actualCr', align: 'right', width: 60 },
+                { label: 'Variance Cr', name: 'varianceCr', index: 'varianceCr', align: 'right', width: 60 },
+
+                //s.Id, s.EmployeeName,s.Cnic,s.Address,s.MobileNo,s.Email,
+            ],
+            // caption: 'Budget List',
+            //enable footer
+            footerrow: false,
+            userDataOnFooter: false,
+            //expect object instead of flat array
+            jsonReader: { repeatitems: false, id: 'sr' },
+            //pager for grid
+            pager: $('#jqgPbudgetvariance'),
+            //number of rows per page
+            rowNum: 10,
+            //initial sorting column
+            sortname: 'Id',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            height: 'auto',
+
+
+            loadComplete: function() {
+                var table = this;
+                setTimeout(function() {
+                        updatePagerIcons(table);
+                    },
+                    0);
+            },
+            gridComplete: function() {
+                $('.ajax').on('click',
+                    function(e) {
+                        e.preventDefault();
+                        var title = $(this).attr('title');
+                        var url = $(this).attr('href');
+
+                        BootstrapDialog.show({
+                            title: title,
+                            message: $('<div />').load(url),
+                            onhide: function(dialogRef) {
+
+                                reloadGridData();
+                            }
+                        });
+                        return false;
+                    });
+            }
+        });
+
+        $("#jqgbudgetvariance").jqGrid("clearGridData", true);
+        $('#jqgbudgetvariance').jqGrid('setGridParam', { url: url });
+        $('#jqgbudgetvariance').trigger('reloadGrid', { current: true, fromserver: true });
+        var DataGrid = $('#jqgbudgetvariance');
+
+        //sets the grid size initially
+        DataGrid.jqGrid('setGridWidth', parseInt($('#budgetvariance-gridContainer').width()));
+
+        //handles the grid resize on window resize
+        $(window).resize(function() {
+            DataGrid.jqGrid('setGridWidth', parseInt($('#budgetvariance-gridContainer').width()));
+        });
+
+        function updatePagerIcons(table) {
+            var replacement =
+            {
+                'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+                'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+                'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+                'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+            };
+            $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function() {
+                var icon = $(this);
+                var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+                if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+            });
+        }
+
+    }
+</script>

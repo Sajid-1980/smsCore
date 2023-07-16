@@ -1,0 +1,80 @@
+﻿@model  HostelAttendance
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Delete";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+
+
+}
+
+<h5>Are you sure you want to delete?</h5>
+
+<div>
+
+    <hr/>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Hostel.HostelName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Hostel.HostelName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.HostelAdmission.Admission.Student.StudentName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HostelAdmission.Admission.Student.StudentName)
+        </dd>
+        <dt>
+        @Html.DisplayNameFor(model => model.StudentAttendanceType.AttendanceName)
+
+        <dd>
+            @Html.DisplayFor(model => model.StudentAttendanceType.AttendanceName)
+
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+
+    </dl>
+   @* @using (Ajax.BeginForm("HostelAttendanceDelete", "Hostel", new AjaxOptions {HttpMethod = "POST", OnSuccess = "disablebutton", OnComplete = "completed", LoadingElementId = "DeletemainForm #server-progress", OnBegin = "begin"}, new {id = "DeletemainForm"}))
+    {*@
+
+    <form asp-action="HostelAttendanceDelete" asp-controller="Hostel"
+          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="DeletemainForm" data_reset="true">
+                   
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        <input type="hidden" asp-for="Id"/>
+        <button asp="Index" data-dismiss="modal" aria-label="Close" class="btn btn-danger float-right btn-sm"> <i class="fa fa-chevron-circle-left mr-2"></i> Cancel</button>
+        <button type="submit" value="Create" id="submitbuttom" class="btn btn-primary float-right btn-sm ml-2">
+            <i class="fa fa-save mr-2"></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+
+            </span> Delete
+        </button>
+    </form>
+</div>
+<script @resources.JavaScript>
+    function disablebutton() {
+        $('#submitbuttom').hide();
+    }
+</script>

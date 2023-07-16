@@ -1,0 +1,115 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Result Summary";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("ExamReports", "Reports")">Exam Report</a>
+        </li>
+        <li class="active">
+            Result Summary
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="resultsummary">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "resultsummary", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ShowCampus = true, ShowExams = true})
+
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new GridModel()
+                {
+                    GridId="list_result_summary",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Result Summary",
+                    Columns=new List<Column> {
+            new Column{ FieldName="CampusName", HeaderText="Campus", Width="80" },
+            new Column{ FieldName="ClassName", HeaderText="Class", Width="70" },
+            new Column{ FieldName="SectionName", HeaderText="Section", Width="60" },
+            new Column{ FieldName="Enrollment", HeaderText="Enrollment", Width="70" },
+            new Column{ FieldName="Appeared", HeaderText="Appeared", Width="70" },
+            new Column{ FieldName="Success", HeaderText="Success", Width="70" },
+            new Column{ FieldName="Fail", HeaderText="Fail", Width="50" },
+            new Column{ FieldName="Percentage", HeaderText="Percentage", Width="70" }
+            }
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_exam-resultsummary").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                {
+                        col.Template("#sno").HeaderText("S.No").Width("140").TextAlign(TextAlign.Left).Add();
+                        col.Field("CampusName").HeaderText("Campus").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("ClassName").HeaderText("Class").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("SectionName").HeaderText("Section").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("Enrollment").HeaderText("Enrollment").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("Appeared").HeaderText("Appeared").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("Success").HeaderText("Success").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("Fail").HeaderText("Fail").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("Percentage").HeaderText("Percentage").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                  }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+                    { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_exam-resultsummary").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_exam-resultsummary_pdfexport') {
+    //        gridObj.pdfExport();
+    //    } else if (args.item.id === 'list_rpt_exam-resultsummary_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+    $('#btnSearch').click(function() {
+        var examsid = 0;
+        var campusid = 0;
+        if ($("#Exams").val() != null) {
+            examsid = $("#Exams").val();
+        }
+        if ($('#Campus').val() !== null) {
+            campusid = $('#Campus').val();
+        }
+        var url1 = '@Url.Action("GetResultSummaryblank")';
+        url1 += '?exams=' + examsid + '&campusid=' + campusid;
+        var messageTop = 'Result Summary' + 'Exams:' + $('#Exams :selected').html();
+        var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    });
+</script>
+@Html.EJS().ScriptManager()

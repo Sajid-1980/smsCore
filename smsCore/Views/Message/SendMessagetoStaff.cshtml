@@ -1,0 +1,163 @@
+﻿@model System.Data.DataTable
+@inject StaticResources resourse;
+
+@{
+    ViewBag.Title = "Send Message to Staff";
+}
+
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Message To Staff
+            </li>
+
+        </ul>
+    </div>
+
+
+@*@using (Ajax.BeginForm("SendMessagetoStaff", "Message", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "SendMessagetoStaffmainForm #server-progress", OnBegin = "begin"}, new {id = "SendMessagetoStaffmainForm"}))
+    {*@
+<form asp-action="SendMessagetoStaff" asp-controller="Message" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SendMessagetoStaffmainForm" data_reset="true">
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Staff List</h3>
+                </div>
+                <div class="card-body" id="staff-message">
+
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {CampusLoadCallBack= "reloadGridData();", ParentContainerID = "staff-message", ColCssClass = "col-12 col-sm-6 col-md-3", ShowCampus = true })
+
+                        <div class="col-12 mt-2">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div id="SendMessagetoStaff-gridContainer" class="my-3 col-12">
+                           @* @Html.EJS().Grid("list_emp_message").SelectionSettings(sel => { sel.CheckboxOnly(true); }).Columns(col =>
+                          {
+                              col.Type("checkbox").Width("50").Add();
+                              col.Field("employeeCode").HeaderText("Code").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                              col.Field("Title").HeaderText("Title").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                              col.Field("employeeName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                              col.Field("FatherName").HeaderText("Father Name").TextAlign(TextAlign.Left).Add();
+                              col.Field("mobileNumber").HeaderText("Mobile").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                              }).Render()*@
+
+                                @{
+                                    var modelgrid = new GridModel()
+            {
+                GridId = "list_emp_message",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                                {
+                                new Column{Type="checkbox",Width="50"},
+                                new Column{FieldName="employeeCode",HeaderText="Code",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="Title",HeaderText="Title",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="employeeName",HeaderText="Name",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="FatherName",HeaderText="Father Name",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="mobileNumber",HeaderText="Mobile",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+
+                                },
+                AllowFiltering = true,
+            };
+                                }
+                                @await Html.PartialAsync("_grid",modelgrid)
+
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-6">
+                            <label>Message</label><br />
+                            <textarea id="txtmessage" name="message" class="form-control"></textarea>
+                        </div>
+                        <div class="col-12 col-md-6 ">
+                            <button type="button" onclick="Save()" class="btn btn-primary float-right" name="save"><i class="fa fa-send mr-2"></i>Sent Message</button>
+                            <label class="float-right mr-2"><input type="checkbox" name="SaveMessage" class="" checked />Save Message </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@*}*@
+</form>
+<script @resourse.JavaScript>
+    function loaded() {
+        let grid = document.getElementById("list_emp_message").ej2_instances[0];
+        grid.dataSource = [];
+    }
+</script>
+@Html.EJS().ScriptManager()
+<script @resourse.JavaScript>
+    function reloadGridData() {
+        let campus = $('#Campus').val();
+        if (!campus) {
+            return false;
+        }
+        let url = '/Message/StaffListForMessage?campusId=' + campus;
+        var grid = document.getElementById("list_emp_message").ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    $('#Campus').on('change', function () {
+        reloadGridData();
+    })
+
+    function Save() {
+        let Message = $('#txtmessage').val();
+        if (!Message) {
+            sweetalert("Plaese type message before continue", '', 'error');
+            $('#txtmessage').focus();
+            return false;
+        }
+        let url = `/Message/SendMessagetoStaff`;
+        
+        let grid = document.getElementById('list_emp_message').ej2_instances[0];
+        var selected = grid.getSelectedRecords();
+        if (selected.length==0) {
+            sweetalert("Plaese select atleast one employee before continue", '', 'error');
+             return false;
+        }
+        
+        let regnos = selected.map(function (v, i, a) { return { Id: v.Id, Mobile: v.mobileNumber } });
+        regnos[0].Message = Message;
+        block('#staff-message');
+        $.post(url, { data: regnos }, function (response) {
+            if (response.status) {
+                $('#message').html('<span class="float-left alert alert-info w-100">Messages sent successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            else {
+                $('#message').html('<span class="float-left alert alert-danger w-100">' + response.message + '.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            $('#staff-message').unblock();
+        }).error(function () {
+            $('#message').html('<span class="float-left alert alert-danger w-100">Unknow network error occured..<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            $('#staff-message').unblock();
+        });
+
+    }
+</script>

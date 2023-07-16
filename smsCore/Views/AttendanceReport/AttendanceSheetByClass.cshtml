@@ -1,0 +1,137 @@
+﻿@using Models
+@inject StaticResources resources
+
+
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                <a href="@Url.Action("AttendanceReports", "Reports")">Attendance Report</a>
+            </li>
+            <li class="active">
+                Attendance Sheet By Class
+            </li>
+        </ul>
+    </div>
+
+<section class="content" id="attendanceSheetByClass-container">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "attendanceSheetByClass-container", ColCssClass = "col-sm-3  form-group has-feedback", ShowCampus = true })
+                      
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+                               {
+                                   Label = "Date",
+                                   ParentContainerID = "adm-date",
+                                   ColCssClass = "col-12 col-sm-3",
+                                   ShowAltField = false,
+                                   DateFieldId = "selectdate",
+                                   DateFieldName = "Date",
+                                   KeepDataFieldReadOnly = true,
+                                   DefaultDate = DateTime.Now
+                               })
+                        <div class="col-sm-3 mt-2">
+                            <label><input type="checkbox" id="bymonth" class="mt-3" /> By Month</label>
+                        </div>
+                        <div class="col-sm-6 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @*@{
+                    var grid = new sms.Models.GridModel
+                    {
+                        GridId="list_rpt_attendance",
+                        AddSerialNo=true,
+                        AllowPdfExport=true,
+                        ReportTitle="Attendance Sheet By Class",
+                        Columns=new List<Column> {
+                        new Column{ FieldName="CampusName", HeaderText="Campus", AutoFit=true },
+                        new Column{ FieldName="Attendance", HeaderText="Attendance", AutoFit=true },
+                        new Column{ FieldName="EntryDate", HeaderText="Date", AutoFit=true },
+                    }
+                    };
+                }
+                @Html.Partial("_grid", grid)*@
+
+
+            @Html.EJS().Grid("list_rpt_attendance-sheet-byclass").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+        {
+                    col.Template("#sno").HeaderText("S.No").Width("100").TextAlign(TextAlign.Left).Add();
+                    col.Field("EntryDate").HeaderText("EntryDate").Width("80").TextAlign(TextAlign.Left).Add();
+                    col.Field("Attendance").HeaderText("Attendance").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                    col.Field("CampusName").HeaderText("CampusName").AutoFit(true).TextAlign(TextAlign.Left).Add();
+         }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+                { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+
+    function reloadGridData() {
+        var gird = document.getElementById('list_rpt_attendance-sheet-byclass').ej2_instances[0];
+        gird.refresh();
+    }
+    $('#btnSearch').on('click',
+        function() {
+            var campus = $('#Campus').val();
+            var selectdate = $('#selectdate').val();
+            var bymonth = "false";
+            if ($('#bymonth').is(':checked')) {
+                bymonth = "true";
+            }
+            if (selectdate == "") {
+                return $('#selectdate').focus();
+            }
+            var url1 = '@Url.Action("GetAttendanceSheetByClass")';
+            url1 += '?campus=' + campus + '&date=' + selectdate + '&rdobyMonth=' + bymonth;
+            $.ajax({
+                url: url1,
+                type: "GET",
+                success: function (data) {
+                    if (data) {
+                        var gridObj = document.getElementById("list_rpt_attendance-sheet-byclass").ej2_instances[0];
+
+                        gridObj.columns.splice(4, gridObj.columns.length);
+                        gridObj.refresh();
+
+                        $(data.classNames).each(function (index, className) {
+                            gridObj.columns.push({ field: className, headerText: className, Width: 60 });
+                        });
+                        gridObj.refreshColumns();
+                        gridObj.dataSource = (data.Items);
+                        gridObj.refresh();
+                    }
+                }
+            });
+        });
+
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("list_rpt_attendance-sheet-byclass").ej2_instances[0];
+        if (args.item.id === 'list_rpt_attendance-sheet-byclass_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'list_rpt_attendance-sheet-byclass_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+
+</script>
+@Html.EJS().ScriptManager()

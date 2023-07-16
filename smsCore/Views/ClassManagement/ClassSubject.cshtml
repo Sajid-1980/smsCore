@@ -1,0 +1,275 @@
+﻿@inject StaticResources resources
+
+@using Models
+@{
+    //ViewBag.Title = "Add New Exam";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Class Management
+        </li>
+        <li class="active">
+            New Class Subject
+        </li>
+    </ul>
+</div>
+<section class="content" id="classubject-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"> <a href="https://www.youtube.com/watch?v=oEQiT2G9uPQ&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=165s" target="_blank" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+                <div class="card-body">
+                   @* @using (Html.BeginForm("ClassSubject", "ClassManagement", null, FormMethod.Post, new { id = "newCreateForm" }))
+                    {*@
+
+                    <form asp-action="ClassSubject" asp-controller="ClassManagement" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="newCreateForm" data_reset="true">
+                   
+
+                        <div class="row sico-form-col">
+                            @Html.AntiForgeryToken()
+                            <div class="col-12">
+                                <div id="newCreateMessage">
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="col-md-3 col-sm-3 col-6">
+                                <div class="row" id="subject-container">
+                                    @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {CampusLoadCallBack= "$('ul#classes li.active').trigger('click');", ParentContainerID = "subject-container", ColCssClass = "col-12", ShowCampus = true })
+
+                                </div>
+                                <h5 class="heading">Classes<a href="@Url.Action("Create", "ClassManagement", new {type = EnumManager.newgroupEntry.Classes})" class="float-right">new</a></h5>
+                                <ul id="classes" class="list">
+                                </ul>
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-6">
+
+                                <h5 class="heading">Existing Subjects</h5>
+                                <ul id="existingSection" class="list listc">
+                                </ul>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-6" style="padding-top: 20%;">
+
+                                <button type="button" id="btnAdd" class="btn btn-block"><i class="fa fa-chevron-left"></i> Add</button>
+
+                                <button type="button" id="btnRemove" class="btn btn-block">Remove <i class="fa fa-chevron-right"></i> </button>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-6">
+
+                                <h5 class="heading">New Subjects<a href="@Url.Action("Create", "ClassManagement", new {type = EnumManager.newgroupEntry.Subject})" class="float-right">new</a></h5>
+                                <ul id="newSections" class="list listc">
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+
+    function LoadClasses() {
+
+        $.get('/api/selector/classes/false?employeeId=-1',
+            function (classes) {
+                loader('show');
+                var classes = JSON.parse(classes);
+                $('ul#existingSection').html('');
+                html = '';
+                var i = 0;
+                $.each(classes,
+                    function (key, value) {
+                        let cls = i == 0 ? 'active' : '';
+                        html += '<li id="' + value.id + '" class="' + cls + '">' + value.text + '</li>'; i++;
+                    });
+                $('ul#classes').html(html);
+
+                $('ul#classes li').click(function () {
+                    loader('show');
+                    $.getJSON('@Url.Action("GetSubjectInClass", "ClassManagement")',
+                        { classid: $(this).attr('id'), campusId: $('#Campus').val() },
+                        function (data) {
+                            var html = '';
+                            $.each(data.existing,
+                                function (key, value) {
+                                    html += '<li id="' + value.id + '">' + value.subjectName + '</li>';
+
+                                });
+
+                            $('ul#existingSection').html(html);
+                            html = '';
+                            $.each(data.newsubject,
+                                function (key, value) {
+                                    html += '<li id="' + value.id + '">' + value.subjectName + '</li>';
+                                });
+                            $('ul#newSections').html(html);
+
+                            $('ul.listc li').click(function () {
+                                $(this).closest('ul').find('li').each(function () { $(this).removeClass('active'); });
+                                $(this).addClass('active');
+                            });
+                            loader('hide');
+                        });
+                    $(this).closest('ul').find('li').each(function () { $(this).removeClass('active'); });
+                    $(this).addClass('active');
+
+                });
+                loader('hide');
+            });
+    }
+
+    function loader(type) {
+        if (type == 'hide') {
+            $('#classubject-container').unblock();
+        }
+        else {
+            block('#classubject-container');
+
+        }
+    }
+    $(document).ready(function() {
+
+        LoadClasses();
+
+        $('#Campus').on('change',
+            function() {
+                $('ul#classes li.active').trigger('click');
+            });
+
+
+
+        $('#btnAdd').click(function () {
+            loader('show');
+            var selectedSection = $('ul#newSections li.active');
+            var selectedClass = $('ul#classes li.active');
+            if (selectedClass.length == 0) {
+                loader('hide');
+                alert('Please select a class.');
+            } else {
+                if (selectedSection.length != 0) {
+                    var classid = selectedClass.attr('id');
+                    var subjectid = selectedSection.attr('id');
+                    $.post('@Url.Action("AddClassSubject", "ClassManagement")',
+                        { classid: classid, subjectid: subjectid, campusId: $('#Campus').val() },
+                        function(data) {
+                            if (data == 'true') {
+                                selectedSection.remove();
+                                $('ul#existingSection').append(selectedSection.clone().removeClass('active'));
+
+                                $('ul.listc li').unbind('click');
+                                $('ul.listc li').click(function() {
+                                    $(this).closest('ul').find('li').each(function() { $(this).removeClass('active'); });
+                                    $(this).addClass('active');
+                                });
+
+                                $('ul#existingSection li').each(function() { $(this).removeClass('active'); });
+                                var existingIndex = $('ul#existingSection li').length - 1;
+                                $('ul#existingSection li').eq(existingIndex).addClass('active');
+
+                                var index = $('ul#newSections').find('li').length;
+                                $('ul#newSections li').eq(index - 1).addClass('active');
+                                loader('hide');
+                            } else if (data == 'invalid') {
+                                loader('hide');
+                                alert('Invalid data request');
+                            }
+                        });
+                } else {
+                    loader('hide');
+                    alert('Please select a section.');
+                }
+            }
+        });
+        $('#btnRemove').click(function () {
+            loader('show');
+            var selectedSection = $('ul#existingSection li.active');
+            var selectedClass = $('ul#classes li.active');
+            if (selectedClass.length == 0) {
+                loader('hide');
+                alert('Please select a class.');
+            } else {
+                if (selectedSection.length != 0) {
+                    var classid = selectedClass.attr('id');
+                    var subjectid = selectedSection.attr('id');
+                    var succesCallBack = function () {
+                        //if (data == 'true') {
+                            selectedSection.remove();
+                            $('ul#newSections').append(selectedSection.clone().removeClass('active'));
+                            $('ul.listc li').unbind('click');
+                            $('ul.listc li').click(function () {
+                                $(this).closest('ul').find('li').each(function () { $(this).removeClass('active'); });
+                                $(this).addClass('active');
+                            });
+
+                            $('ul#newSections li').each(function () { $(this).removeClass('active'); });
+                            var existingIndex = $('ul#newSections li').length - 1;
+                            $('ul#newSections li').eq(existingIndex).addClass('active');
+
+                            var index = $('ul#existingSection').find('li').length;
+                            $('ul#existingSection li').eq(index - 1).addClass('active');
+                        //} else if (data == 'invalid') {
+                        //    alert('Invalid data request');
+                        //}
+                    };
+                    var url = '@Url.Action("RemoveClassSubject", "ClassManagement")?classsubjectid=' + subjectid;
+                    sweetalertWithUrl('Are you sure to remove selected subject?', url, true, succesCallBack);
+
+                    @*$.post('@Url.Action("RemoveClassSubject", "ClassManagement")',
+                        { classsubjectid: subjectid },
+                        function(data) {
+                            if (data == 'true') {
+                                selectedSection.remove();
+                                $('ul#newSections').append(selectedSection.clone().removeClass('active'));
+                                $('ul.listc li').unbind('click');
+                                $('ul.listc li').click(function() {
+                                    $(this).closest('ul').find('li').each(function() { $(this).removeClass('active'); });
+                                    $(this).addClass('active');
+                                });
+
+                                $('ul#newSections li').each(function() { $(this).removeClass('active'); });
+                                var existingIndex = $('ul#newSections li').length - 1;
+                                $('ul#newSections li').eq(existingIndex).addClass('active');
+
+                                var index = $('ul#existingSection').find('li').length;
+                                $('ul#existingSection li').eq(index - 1).addClass('active');
+                            } else if (data == 'invalid') {
+                                alert('Invalid data request');
+                            }
+                        });*@
+                    loader('hide');
+                } else {
+                    loader('hide');
+                    alert('Please select a section.');
+                }
+
+            }
+        });
+
+        $('.heading a').click(function(e) {
+            e.preventDefault();
+            url = $(this).attr('href');
+            BootstrapDialog.show({
+                title: 'Create New',
+                message: $('<div><img src="/Uploads/images/site/loader.gif"></div>').load(url)
+
+            });
+        });
+    }); //end body
+</script>

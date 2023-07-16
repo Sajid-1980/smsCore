@@ -1,0 +1,91 @@
+﻿
+@*@model List<K2TechSmsClient.PackageModel>*@
+@inject StaticResources resourse;
+@{
+    ViewBag.title = "My Pakages";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            My Pakages
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="feeSlipIndex-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    @foreach (var p in Model)
+                    {
+                        <div class="col-lg-3">
+                            <div class="card mb-5 mb-lg-0">
+                                <div class="card-body">
+                                    <h5 class="card-title text-muted text-uppercase text-center">@p.Name</h5>
+                                    <h6 class="card-price text-center">
+                                        @p.TotalCost<span class="period">PKR</span>
+                                    </h6>
+                                    <hr>
+                                    <ul class="fa-ul">
+                                        <li>
+                                            <span class="fa-li">
+                                                <i class="fa fa-check"></i>
+                                            </span>Brand: @p.Branding
+                                        </li>
+                                        <li>
+                                            <span class="fa-li">
+                                                <i class="fa fa-check"></i>
+                                            </span>@p.TotalMessages SMS
+                                        </li>
+                                        <li>
+                                            <span class="fa-li">
+                                                <i class="fa fa-check"></i>
+                                            </span>@p.PerSmsCost / SMS
+                                        </li>
+                                        <li>
+                                            <span class="fa-li">
+                                                <i class="fa fa-check"></i>
+                                            </span>Expiry @p.ExpiryInDays days
+                                        </li>
+                                        <li class="text-muted">
+                                            <span class="fa-li">
+                                                <i class="fa fa-times"></i>
+                                            </span>Dedicated Phone Support
+                                        </li>
+                                        <li class="text-muted">
+                                            <span class="fa-li">
+                                                <i class="fa fa-times"></i>
+                                            </span>No Free Mask
+                                        </li>
+                                        <li class="text-muted">
+                                            <span class="fa-li">
+                                                <i class="fa fa-times"></i>
+                                            </span>Monthly Status Reports
+                                        </li>
+                                        <li class="text-muted">
+                                            <span class="fa-li">
+                                                <i class="fa fa-times"></i>
+                                            </span>Dedicated Logs
+                                        </li>
+                                    </ul>
+                                    <a href="#" class="btn btn-block btn-primary text-uppercase">Select and Continue</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+
+</script>

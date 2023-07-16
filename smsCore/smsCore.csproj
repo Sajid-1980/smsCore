@@ -1,0 +1,66 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-smsCore-d962ca92-c66d-4bcf-bb85-04112ff149d9</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\BoldReports\**" />
+    <Compile Remove="Views\Manage\**" />
+    <Content Remove="Controllers\BoldReports\**" />
+    <Content Remove="Views\Manage\**" />
+    <EmbeddedResource Remove="Controllers\BoldReports\**" />
+    <EmbeddedResource Remove="Views\Manage\**" />
+    <None Remove="Controllers\BoldReports\**" />
+    <None Remove="Views\Manage\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Controllers\AccountController.cs" />
+    <Compile Remove="Controllers\AccountTransactionController.cs" />
+    <Compile Remove="Controllers\ManageController.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Views\Reports\ReportDesigner - Copy.cshtml" />
+    <Content Remove="Views\Reports\ReportDesigner.cshtml" />
+    <Content Remove="Views\Reports\Viewer.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Views\FeeReports\ReceivedFee.cshtml~RF2514c4be.TMP" />
+    <None Remove="Views\Payroll\PayheadDelete.cshtml~RF2531c6a5.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\ej2\scripts\ej2.bootstrap.20.4.49.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="Hangfire" Version="1.7.33" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.33" />
+    <PackageReference Include="LazZiya.ImageResize" Version="4.1.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.2" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.3" />
+    <PackageReference Include="MyExtensionMethods" Version="1.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+    <PackageReference Include="Syncfusion.EJ2.AspNet.Core" Version="20.4.0.49" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\smsCore.Data\smsCore.Data.csproj" />
+  </ItemGroup>
+
+</Project>

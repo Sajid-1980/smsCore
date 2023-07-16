@@ -1,0 +1,104 @@
+﻿@using Utilities;
+@using smsCore.Data.Helpers;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+
+@*@using (Ajax.BeginForm("AccountSetting", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "AccountSettingmainForm #server-progress", OnBegin = "begin" }, new { id = "AccountSettingmainForm" }))
+{
+  *@
+
+<form asp-action="AccountSetting" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post"  data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="AccountSettingmainForm" data_reset="true">
+      
+  
+  
+  <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-3">
+            <label class=""> <input type="checkbox" name="cbxPayroll" id="cbxPayrollId" />Payroll</label><br />
+            <label class=""> <input type="checkbox" name="cbxBudget" id="cbxBudgetId" />Budget</label><br />
+            <label class=""> <input type="checkbox" name="cbxTax" id="cbxTaxId" />Tax</label><br />
+            <label class=""> <input type="checkbox" name="cbxMultiCurrency" id="cbxMultiCurrencyId" />Multi Currency</label><br />
+            <label class=""> <input type="checkbox" name="cbxBillByBill" id="cbxBillByBillId" />Bill By Bill</label><br />
+            <label class=""> <input type="checkbox" name="cbxAllowZeroValueEntry" id="cbxAllowZeroValueEntryId" />Allow Zero Value Entry</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowCurrencySymbol" id="cbxShowCurrencySymbolId" />Show Currency Symbol</label><br />
+            <label class=""> <input type="checkbox" name="cbxTickPrintAfterSave" id="cbxTickPrintAfterSaveId" />Tick Print After Save</label><br />
+            <label class=""> <input type="checkbox" name="cbxAutomaticProductCodeGeneration" id="cbxAutomaticProductCodeGenerationId" />Automatic Product Code Generation</label><br />
+            <label class=""> <input type="checkbox" name="cbxBarcode" id="cbxBarcodeId" />Barcode</label><br />
+            <label class=""> <input type="checkbox" name="cbxAllowBatch" id="cbxAllowBatchId" />Allow Batch</label><br />
+            <label class=""> <input type="checkbox" name="cbxAllowSize" id="cbxAllowSizeId" />Allow Size</label><br />
+            <label class=""> <input type="checkbox" name="cbxAllowModelNo" id="cbxAllowModelNoId" />Allow Model No</label><br />
+
+        </div>
+        <div class="col-12 col-md-3">
+            <label class=""> <input type="checkbox" name="cbxAllowGodown" id="cbxAllowGodownId" />Allow Godown</label><br />
+            <label class=""> <input type="checkbox" name="cbxAllowRack" id="cbxAllowRackId" />Allow Rank</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowSalesRate" id="cbxShowSalesRateId" />Show Sales Rate</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowMRP" id="cbxShowMRPId" />Show MRP</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowPurchaseRate" id="cbxShowPurchaseRateId" />Show Purchase Rate</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowUnit" id="cbxShowUnitId" />Show Unit</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowSize" id="cbxShowSizeId" />Show Size</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowModelNo" id="cbxShowModelNoId" />Show Model No</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowDiscountAmount" id="cbxShowDiscountAmountId" />Show Discount Amount</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowProductCode" id="cbxShowProductCodeId" />Show Product Code</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowBrand" id="cbxShowBrandId" />Show Brand</label><br />
+            <label class=""> <input type="checkbox" name="cbxShowDiscountPercentage" id="cbxShowDiscountPercentageId" />Show Discount Percentage</label><br />
+        </div>
+        <div class="col-12 col-md-4">
+            <label class=""> <input type="checkbox" name="cbxAddConfirmationFor" id="cbxAddConfirmationFor" />Add Confirmation</label><br />
+            <label class=""> <input type="checkbox" name="cbxAdd" id="cbxAddId" />Add</label><br />
+            <label class=""> <input type="checkbox" name="checkBox2" id="checkBox2Id" />Edit</label><br />
+            <label class=""> <input type="checkbox" name="checkBox1" id="checkBox1Id" />Delete</label><br />
+            <label class=""> <input type="checkbox" name="cbxClose" id="cbxCloseId" />Close</label><br />
+
+            <label>Printer:</label>
+            <div class="controls">
+                <input type="text" name="cmbPrinter" id="cmbPrinter" class="form-control has-feedback-left" maxlength="17" value="@existings.Where(w => w.PropertyName == "Printer").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-print form-control-feedback left" aria-hidden="true"></span><br />
+            </div>
+
+            <label class=""> <input type="checkbox" name="cbxDirectPrint" id="cbxDirectPrintId" />Direct Print</label><br />
+
+            <label>Default Sale Invoice</label>
+            <div class="controls">
+                <input type="text" name="cmbDefualtInvoiceType" id="cmbDefualtInvoiceType" class="form-control has-feedback-left" maxlength="17" value="@existings.Where(w => w.PropertyName == "DefualtInvoiceType").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+            </div>
+
+            <label>Negative Cash Transaction</label>
+            <div class="controls">
+                <input type="text" name="cmbNegativeCashTransaction" id="cmbNegativeCashTransaction" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "NegativeCashTransaction").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+            </div>
+
+            <label>Stock Value Calculation Method</label>
+            <div class="controls">
+                <input type="text" name="cmbStockValueCalculationMethod" id="cmbStockValueCalculationMethod" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "StockValueCalculationMethod").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-calculator form-control-feedback left" aria-hidden="true"></span>
+            </div>
+
+            <label>Negative Stock Status</label>
+            <div class="controls"><input type="text" name="cmbNegativeStockStatus" id="cmbNegativeStockStatus" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "NegativeStockStatus").Select(s => s.PropertyValue).FirstOrDefault()" /></div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12 float-right">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,155 @@
+﻿@using Utilities;
+@using smsCore.Data.Helpers;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Setting
+        </li>
+        <li class="active">
+            Application Configuration
+        </li>
+
+    </ul>
+</div>
+@*@using (Ajax.BeginForm("MessagingEmailSetup", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "MessageSubscribtionmainForm #server-progress", OnBegin = "begin" }, new { id = "MessageSubscribtionmainForm" }))
+{*@
+
+<form asp-action="MessagingEmailSetup" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="MessageSubscribtionmainForm" data_reset="true">
+  
+
+
+
+    <div class="row">
+        <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-12 form-group ">
+                    <h3>SMS Configuration</h3>
+                    <hr />
+                </div>
+                <div class="col-12 col-md-8 form-group ">
+                    <label>SMS Server Url</label>
+                    <div class="controls">
+                        <input type="text" name="txtSMSServerUrl" id="SMSServerUrlid" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "SMSServerUrl").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-link form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 form-group ">
+                    <label>SMS Rate</label>
+                    <div class="controls">
+                        <input type="text" name="txtSmsRate" id="SMSRateid" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "SMSRate").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class=" fa fa-sms form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 form-group ">
+                    <label>User Name</label>
+                    <div class="controls">
+                        <input type="text" name="txtMsisdn" id="UserNameid" class="form-control has-feedback-left" minlength="3" value="@existings.Where(w => w.PropertyName == "MSISDN").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 form-group ">
+                    <label>Password</label>
+                    <div class="controls">
+                        <input type="Password" name="txtSmsPassword" id="Passwordid" class="form-control has-feedback-left" minlength="7" value="@existings.Where(w => w.PropertyName == "password").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-key form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 form-group ">
+                    <label>Mask/Brand</label>
+                    <div class="controls">
+                        <input type="text" name="txtMask" id="MaskBrandid" class="form-control has-feedback-left" minlength="3" maxlength="11" value="@existings.Where(w => w.PropertyName == "Mask").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-chevron-right form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <br />
+                @* Sms Configuraation End
+                    Email Configration Start *@
+
+                <div class="col-12 mt-4">
+                    <h3>Email Configration</h3>
+                    <hr />
+                </div>
+                <div class="col-12 col-md-6 form-group ">
+                    <label>SMTP Server (Outgoing)</label>
+                    <div class="controls">
+                        <input type="text" name="txtSmtpServer" id="SMTPServerid" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "smtpServer").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-server form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 mt-4 ">
+                    <label class="mr-2"> <input type="checkbox" name="cbxUseSSlForMail" id="EnableSSLcheckboxid" />Enable SSL</label>
+                </div>
+
+                <div class="col-12 col-md-3 form-group ">
+                    <label>Port</label>
+                    <div class="controls"> <input type="text" name="txtPort" id="Portid" class="form-control has-feedback-left" maxlength="10" value="@existings.Where(w => w.PropertyName == "Port").Select(s => s.PropertyValue).FirstOrDefault()" /></div>
+                </div>
+                <div class="col-12 col-md-6 form-group ">
+                    <label>Email Address</label>
+                    <div class="controls">
+                        <input type="text" name="txtSchoolEmail" id="EmailAddressid" class="form-control has-feedback-left" minlength="7" maxlength="30" value="@existings.Where(w => w.PropertyName == "SchoolEmail").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 form-group ">
+                    <label>Email Password</label>
+                    <div class="controls">
+                        <input type="Password" name="txtEmailPassword" id="EmailPasswordid" class="form-control has-feedback-left" minlength="7" maxlength="30" value="@existings.Where(w => w.PropertyName == "EmailPassword").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-key form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <br />
+
+                @* Email Configuration end
+                    MEssage Template Start *@
+                <div class="col-12 mt-4">
+                    <h3>Messages Template</h3>
+                    <hr />
+                </div>
+                <div class="col-12 form-group">
+                    <label>Absent /Fail Remarks</label>
+                    <div class="controls"><textarea type="text" name="txtRemarks" id="AbsentFailRemarksid" class="form-control has-feedback-left" maxlength="30" value="@existings.Where(w => w.PropertyName == "Remarks").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "Remarks").Select(s => s.PropertyValue).FirstOrDefault()</textarea></div>
+                </div>
+                <div class="col-12 form-group">
+                    <label>Staff Waiting List Message</label>
+                    <div class="controls">
+                        <textarea type="text" name="txtStaffWaitingListMessage" id="StaffWaitingListMessageid" class="form-control has-feedback-left" maxlength="50" value="@existings.Where(w => w.PropertyName == "StaffWaitingListMessage").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "StaffWaitingListMessage").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-2"></div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 float-right">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+
+    </div>
+</form>

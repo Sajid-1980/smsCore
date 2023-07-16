@@ -1,0 +1,71 @@
+﻿@model  tbl_Designation
+@{
+    ViewBag.Title = "Designation Delete";
+    Layout = null;
+}
+<div class="col-12">
+    <h5>Are You Sure You Want To Delete</h5>
+</div>
+<div class="col-12">
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(m => m.designationName)
+        </dt>
+        <dd>
+            @Html.DisplayFor(m => m.designationName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(m => m.advanceAmount)
+        </dt>
+        <dd>
+            @Html.DisplayFor(m => m.advanceAmount)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(m => m.leaveDays)
+        </dt>
+        <dd>
+            @Html.DisplayFor(m => m.leaveDays)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(m => m.narration)
+        </dt>
+        <dd>
+            @Html.DisplayFor(m => m.narration)
+        </dd>
+    </dl>
+
+</div>
+
+@*@using (Ajax.BeginForm("DesignationDelete", "Payroll", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{*@
+<form asp-action="DesignationDelete" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+  
+                   
+
+
+    @Html.HiddenFor(m => m.Id, new {@class = "form-control has-feedback-left"})
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="col-12">
+        <div class="row">
+
+            <div class="form-group col-12 pb-2 mt-3">
+                <a href="@Url.Action("Designation", "Payroll")" aria-label="Back to List" class="btn btn-primary float-right" > <i class="fa fa-chevron-circle-left mr-2"></i> Back to List</a>
+                <button type="submit" value="Create" class="btn btn-danger float-right">
+                    <i class="fa fa-trash mr-2"></i>
+                    <span>
+                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                    </span> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</form>

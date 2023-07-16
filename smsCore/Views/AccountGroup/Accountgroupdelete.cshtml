@@ -1,0 +1,72 @@
+﻿ 
+@model  AccountGroupInfo
+@{
+    ViewBag.Title = "Account group delete";
+     
+        Layout = null;
+    
+}
+
+<style>
+    select.form-control {
+        max-height: 30px;
+    }
+</style>
+<h5>Are you sure you want to delete it?</h5>
+<hr />
+<dl class="dl-horizontal">
+    <dt>
+        GroupName
+    </dt>
+    <dd>
+        @Model.AccountGroupName
+    </dd>
+    <dt>
+        Nature
+    </dt>
+    <dd>
+        @Model.Nature
+    </dd>
+    <dt>
+        Affect Gross Profit
+    </dt>
+    <dd>
+        @*@{var val = "No";}
+      @if(Model.AffectGrossProfit=="1")
+      {
+          val = "Yes";
+      }*@
+     @Model.AffectGrossProfit
+    </dd>
+    <dt>
+        Narration
+    </dt>
+    <dd>
+        @Model.Narration
+    </dd>
+</dl>
+       @* @using (Ajax.BeginForm("AccountgroupDelete", "AccountGroup", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "AccountgroupDeletemainForm #server-progress", OnBegin = "begin" }, new { id = "AccountgroupDeletemainForm" }))
+        {*@
+
+<form asp-action="AccountgroupDelete" asp-controller="AccountGroup"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="AccountgroupDeletemainForm" data_reset="true">
+                   
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <div class="row">
+                <div class="col-12">
+                    <div id="message">
+
+                    </div>
+                </div>
+            </div>
+            @Html.HiddenFor(m => m.AccountGroupId)
+            @Html.HiddenFor(m => m.IsDefault)
+
+            <div class="col-12 col-md-12">
+                <a href="@Url.Action("AccountGroup","AccountGroup")" aria-label="Back to Fee Slip" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back</a>
+
+                <button type="submit" class="btn btn-danger float-right mr-2" name="save"><i class="fa fa-trash mr-2"></i> Delete</button>
+            </div>
+
+        </form>

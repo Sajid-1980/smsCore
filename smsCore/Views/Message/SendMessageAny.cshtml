@@ -1,0 +1,202 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "SentComplaints";
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Send Complaint
+            </li>
+
+        </ul>
+    </div>
+}
+
+<section class="content" id="page-content">
+    <div class="row">
+        <div class="col-12">
+           @* @using (Ajax.BeginForm("SentComplaints", "Message", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "SentComplaintsmainForm #server-progress", OnBegin = "begin" }, new { id = "SentComplaintsmainForm" }))
+            {*@
+            <form asp-action="SentComplaints" asp-controller="Message" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SentComplaintsmainForm" data_reset="true">
+             
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="card">
+                            <div class="card-body">
+                                
+                                <div class="row" id="info">
+                                    <div class="col-12 col-md-6">
+                                        <label>RegNo</label>
+                                        <div class="controls">
+                                            <input type="text" name="regno" class="form-control" id="regno" />
+                                            <span class="fa fa-neuter form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("RegNo")
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <label>Message</label>
+                                        <div class="controls">
+                                            <input type="text" name="remark" class="form-control" id="remark" />
+                                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("Remark")
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <button type="button" class="btn btn-primary float-right" name="view" id="add"><i class="fa fa-plus mr-2"></i>Add</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-8" id="grid-container">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>
+                                    Complain Send List <a href="https://www.youtube.com/watch?v=Qf-M08OGFwU&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=150s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right mr-5"><i class="fa fa-question-circle"></i> Help </a>
+                                </h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div id="message">
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div id="SentComplaints-gridContainer" class="col-12">
+                                        @Html.EJS().Grid("list").Columns(col =>
+                                   {
+                                       col.Field("SNO").HeaderText("S.No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                                       col.Field("RegNo").HeaderText("Reg No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                                       col.Field("Name").HeaderText("Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                                       col.Field("Class").HeaderText("Class").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                                       col.Field("Campus").HeaderText("Campus").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                                       col.Field("Message").HeaderText("Message").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                                       col.Template("#action").HeaderText("Action").Width(120).TextAlign(TextAlign.Center).Add();
+                                   }).Load("loaded").Render()
+
+                                        <script type="text/x-jsrender" id="action">
+                                            <a href="javascript:void(0)" onclick="remove(${index})">
+                                                <i class="fa fa-close" style="color:red"></i>
+                                            </a>
+                                        </script>
+                                    </div>
+
+
+                                    <div class="col-12 mt-2">
+                                        <button type="button" id="sendmessage" class="btn btn-primary float-right mr-2" name="Sent"><i class="fa fa-send mr-2"></i>Sent Message</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+    function loaded() {
+        let grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = [];
+    }
+</script>
+@Html.EJS().ScriptManager()
+<script @resourse.JavaScript>
+   
+    let grid = document.getElementById("list").ej2_instances[0];
+
+    $('#add').on('click',
+        function() {
+            var regno = $('#regno').val();
+            var remark = $('#remark').val();
+            if (!regno || !remark) {
+                
+                return false;
+            }
+
+            var found = (grid.dataSource).find(function (v, i) { return v.RegNo == regno; });
+
+
+            if (found) {
+                $('#regno').focus().select();
+                alert('This student is alread added.');
+            } else {
+                block('#info');
+                $.get('@Url.Action("StudenInfoForComplaints")',
+                        { regno: regno },
+                        function (data) {
+                            var row = {
+                                SNO: grid.dataSource.length + 1,
+                                RegNo: data.regno,
+                                Name: data.stdName,
+                                Class: data.clsName,
+                                Campus: data.cmpName,
+                                Message: remark,
+                                StudentID: data.StudentID,
+                                AdmissionID: data.ID,
+                                Mobile: data.Mobile
+                            };
+                            (grid.dataSource).unshift(row);
+                            grid.refresh();
+                            $('#regno').val('').focus();
+                            $('#info').unblock();
+                        }).error(function () {
+                            alert('Student not found.');
+                            $('#regno').select().focus();
+                            $('#info').unblock();
+                        });
+                
+            }
+        });
+
+    function remove(i) {
+        
+        (grid.dataSource).splice(i,1);
+        grid.refresh()
+    }
+ 
+    $('#sendmessage').on('click',
+        function() {
+
+            var urlsend = '@Url.Action("SentComplaints")';
+            let data = grid.getCurrentViewRecords();
+            if (data.length == 0)
+                return false;
+
+            block('#grid-container');
+            $.post(urlsend,
+                { records: data },
+                function (result) {
+                    console.log(result);
+                    if (result.status) {
+                        $('#message').html('<span class="float-left alert alert-info w-100">' + result.message +'<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                        grid.dataSource = [];
+                        $('#grid-container').unblock();
+                    }
+                    else {
+                        $('#message').html('<span class="float-left alert alert-danger w-100">' + result.message+'<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                        $('#grid-container').unblock();
+
+                    }
+                }).error(function () {
+                    $('#message').html('<span class="float-left alert alert-danger w-100">Unknow network error occured..<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                    $('#grid-container').unblock();
+                })
+
+        });
+</script>

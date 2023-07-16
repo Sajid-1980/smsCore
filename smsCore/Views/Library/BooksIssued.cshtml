@@ -1,0 +1,219 @@
+﻿@model Models.LibraryIssuedBook
+@inject StaticResources resourse;
+@{
+    ViewBag.Title = "BooksIssued";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Add Book Issued List
+        </li>
+
+    </ul>
+</div>
+
+
+<div class="container" id="BookIssued">
+   @* @using (Ajax.BeginForm("BooksIssued", "Library", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "addLibraryIssuedForm #server-progress", OnBegin = "begin" }, new { id = "addLibraryIssuedForm", enctype = "multipart/form-data", data_reset = "true" }))
+    {*@
+    <form asp-action="BooksIssued" asp-controller="Library" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="addLibraryIssuedForm" data_reset="true">
+     
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Create Book</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12 col-sm-4  has-feedback">
+                        <label>Books </label>
+                        <div  class="controls">
+                            @Html.DropDownListFor(model => model.LibraryBookRecordId, (SelectList)ViewBag.librarybookList, new { @class = "form-control has-feedback-left" })
+                                                <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.LibraryBookRecordId)
+                                            </div>
+                    </div>
+
+                    <div class="col-12 col-sm-4  has-feedback">
+                        <label>Student Name </label>
+                        <div  class="controls">
+                            @Html.DropDownListFor(model => model.StudentID, (SelectList)ViewBag.StudentID, new { @class = "form-control has-feedback-left" })
+                            <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.StudentID)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-4 has-feedback">
+                        <label>Book Condition </label><font class="text-danger">*</font>
+                                                      <div  class="controls">
+                                                          @Html.TextBoxFor(model => model.BookCondition, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                                                          <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                                          @Html.ValidationMessageFor(model => model.BookCondition)
+                                                      </div>
+                    </div>
+
+                    @Html.Partial("_PartialDate", new PartialDateViewModels
+                    {
+                        Label = "Issued Date",
+                        ParentContainerID = "adm-date",
+                        ColCssClass = "col-12 col-sm-4",
+                        ShowAltField = false,
+                        DateFieldId = "IssuedDate",
+                        DateFieldName = "IssuedDate",
+                        KeepDataFieldReadOnly = true,
+                        DefaultDate = DateTime.Now
+                    })
+                    @Html.Partial("_PartialDate", new PartialDateViewModels
+                    {
+                        Label = "Due Date",
+                        ParentContainerID = "adm-date",
+                        ColCssClass = "col-12 col-sm-4",
+                        ShowAltField = false,
+                        DateFieldId = "DueDate",
+                        DateFieldName = "DueDate",
+                        KeepDataFieldReadOnly = true
+                    })
+                    @Html.Partial("_PartialDate", new PartialDateViewModels
+                    {
+                        Label = "Return Date",
+                        ParentContainerID = "adm-date",
+                        ColCssClass = "col-12 col-sm-4",
+                        ShowAltField = false,
+                        DateFieldId = "ReturnDate",
+                        DateFieldName = "ReturnDate",
+                        KeepDataFieldReadOnly = true
+                    })
+
+
+
+                    <div class="col-12 col-sm-4 has-feedback">
+                        <label>Remarks </label><font class="text-danger">*</font>
+                                               <div  class="controls">
+                                                   @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                                                   <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                                   @Html.ValidationMessageFor(model => model.Remarks)
+                                               </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-4 mr-2 m-md-2">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Issued Book List</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+  @*                      @Html.EJS().Grid("list").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                        {
+                        col.Field("Bookname").HeaderText("Book Name").Width("60").TextAlign(TextAlign.Left).Add();
+                        col.Field("StudentID").HeaderText("Student Name").Width("120").TextAlign(TextAlign.Left).Add();
+                        col.Field("BookCondition").HeaderText("Book Condition").Width("60").TextAlign(TextAlign.Left).Add();
+                        col.Field("IssuedDate").HeaderText("Issued Date").Width("60").TextAlign(TextAlign.Left).Add();
+                        col.Field("DueDate").HeaderText("Due Date").Width("80").TextAlign(TextAlign.Left).Add();
+                        col.Field("ReturnDate").HeaderText("Return Date").Width("80").TextAlign(TextAlign.Left).Add();
+                        col.Field("Remarks").HeaderText("Remarks").Width("80").TextAlign(TextAlign.Left).Add();
+                        col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(TextAlign.Left).Add();
+                        }).AllowPaging().PageSettings(page => page.PageSize(10)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()*@
+                        @{
+                            var modelgrid = new GridModel()
+            {
+                GridId = "list",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                ShowHeader = false,
+                Columns = new List<Column>
+                        {
+                        new Column{FieldName="bookname",HeaderText="Book Name",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="studentID",HeaderText="Student Name",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="bookCondition",HeaderText="Book Condition",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="issuedDate",HeaderText="Entry Date",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="dueDate",HeaderText="Due Date",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="remarks",HeaderText="Remarks ",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="action",Template="#action",HeaderText="Action",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+
+                        },
+                AllowFiltering = true,
+            };
+                        }
+                        @await Html.PartialAsync("_grid",modelgrid)
+                    </div>
+                    <script type="text/x-jsrender" id="action">
+                        <a title="Edit" id="${ID}" href="/Library/EditBookIssue/${ID}"><i class="fa fa-edit"></i></a>                        
+                        <a title="Delete" class="delete" id="${ID}" href="/Library/DeleteBookIssue/${ID}"><i class="fa fa-trash ml-2"></i></a>
+                        
+                    </script>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+ <script @resourse.JavaScript>
+
+    $(document).ready(function () {
+        var url = '@Url.Action("GetIssuedBooks")';
+        var grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    });
+
+    function reloadGridData() {
+        var gird = document.getElementById('list').ej2_instances[0];
+        gird.refresh();
+    }
+    // Modal For Delete Issued Book List //
+    $('#list').on('click',
+        'a.delete',
+        function (e) {
+            e.preventDefault();
+            var title = 'Issued Book Delete';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+
+</script>

@@ -1,0 +1,168 @@
+﻿@using Utilities;
+@using smsCore.Data.Helpers;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+@*@using (Ajax.BeginForm("Certificates", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "CertificatesmainForm #server-progress", OnBegin = "begin" }, new { id = "CertificatesmainForm" }))
+{
+  *@  
+  
+  
+<form asp-action="Certificates" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="CertificatesmainForm" data_reset="true" enctype="multipart/form-data">
+  
+  
+  <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-2"></div>
+
+        <div class="col-12 col-md-6 form-group">
+            <div class="row">
+                <div class="col-12 form-group ">
+                    <label>Birth Certificate Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtBirhtCertificateTitle" id="BirthCertificateTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "BirhtCertificateTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group mb-2">
+                    <label>Birth Certificate</label>
+                    <div class="controls">
+                        <textarea name="txtBirhtCertificateBody" id="BirthCertificate" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "BirhtCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "BirhtCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group ">
+                    <label>No Objection Certificate Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtNoObjectionCertificateTitle" id="NoObjectionCertificateTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "NoObjectionCertificateTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group mb-2">
+                    <label>No Objection Certificate body</label>
+                    <div class="controls">
+                        <textarea name="txtNoObjectionCertificateBody" id="NoObjectionCertificate" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "NoObjectionCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "NoObjectionCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group ">
+                    <label>Experience Certificate Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtExprienceCertificateTitle" id="ExperienceCertificateTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "ExprienceCertificateTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 form-group mb-2">
+                    <label>Experience Certificate</label>
+                    <div class="controls">
+                        <textarea name="txtExprienceCertificateBody" id="ExperienceCertificate" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "ExperienceCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "ExperienceCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 form-group ">
+                    <label>Character Certificate Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtCharacterCertificateTitle" id="CharacterCertificateTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "CharacterCertificateTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 form-group mb-2">
+                    <label>Character Certificate</label>
+                    <div class="controls">
+                        <textarea name="txtCharacterCertificateBody" id="CharacterCertificate" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "CharacterCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "CharacterCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+
+                <div class="col-12 form-group ">
+                    <label>Paractical Certificate Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtParacticalCertificateTitle" id="ParacticalCertificateTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "ParacticalCertificateTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group mb-2">
+                    <label>Paractical Certificate</label>
+                    <div class="controls">
+                        <textarea name="txtParacticalCertificateBody" id="ParacticalCertificate" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "ParacticalCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "ParacticalCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group ">
+                    <label>Concern Certificate Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtConcernCertificateTitle" id="ConcernCertificateTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "ConcernCertificateTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group mb-2">
+                    <label>Concern Certificate</label>
+                    <div class="controls">
+                        <textarea name="txtConcernCertificateBody" id="ConcernCertificate" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "ConcernCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "ConcernCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group ">
+                    <label>Performance Certificate Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtPerformanceCertificateTitle" id="PerformanceCertificateTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "PerformanceCertificateTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group mb-2">
+                    <label>Performance Certificate</label>
+                    <div class="controls">
+                        <textarea name="txtPerformanceCertificateBody" id="PerformanceCertificate" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "PerformanceCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "PerformanceCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group ">
+                    <label>Relieve Certificate Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtRelieveTitle" id="RelieveCertificateTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "RelieveCertificateTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group mb-2">
+                    <label>Relieve Certificate</label>
+                    <div class="controls">
+                        <textarea name="txtRelieveBody" id="RelieveCertificate" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "RelieveCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "RelieveCertificateBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <label>Please Save The Information In This Format:</label>
+            <br /><br />
+            <label>{0} For Name</label><br />
+            <label>{1} For Father Name</label><br />
+            <label>{2} For Address</label><br />
+            <label>{3} For Joining Date</label><br />
+            <label>{4} For DOB</label><br />
+            <label>{5} For CNIC</label><br />
+            <br /><hr />
+        </div>
+        <div class="col-12 float-right mt-2">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+    </div>
+</form>

@@ -1,0 +1,130 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Award List blank";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("ExamReports", "Reports")">Exam Report</a>
+        </li>
+        <li class="active">
+            Award List blank
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="awardlistblank">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "awardlistblank", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ShowExams = true, ShowCampus = true, ShowClasses = true, ShowSections = true, ShowSubjects = true})
+                        <div class="pt-4 mt-2 col-12 col-md-2 col-sm-6 col-lg-2 form-group text-left">
+                            <button type="button" class="btn btnSearchStudent btn-primary sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div id="divReport">
+
+                </div>
+            @*@{
+            var grid = new sms.Models.GridModel
+            {
+                GridId="list_blank_awardlist",
+                AddSerialNo=true,
+                AllowPdfExport=true,
+                ReportTitle="Award List",
+                Columns=new List<Column> {
+                    new Column{ FieldName="RegNo", HeaderText="Reg No.", Width="100" },
+                    new Column{ FieldName="StudentName", HeaderText="Name", Width="200" },
+                    new Column{ FieldName="FatherName", HeaderText="Father's Name", Width="200" },
+                    new Column{ FieldName="ObtainMarks", HeaderText="Marks", Width="120" },
+                    new Column{ FieldName="Signature", HeaderText="Signature", Width="120" },
+                    }
+            };
+        }
+        @Html.Partial("_grid", grid)*@
+
+            @*@Html.EJS().Grid("list_rpt_exam-awardblank").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+        {
+            col.Template("#sno").HeaderText("S.No").Width("140").TextAlign(TextAlign.Left).Add();
+            col.Field("RegNo").HeaderText("Reg No").Width("170").TextAlign(TextAlign.Left).Add();
+            col.Field("StudentName").HeaderText("Student Name").Width("170").TextAlign(TextAlign.Left).Add();
+            col.Field("FatherName").HeaderText("Father Name").Width("170").TextAlign(TextAlign.Left).Add();
+            col.Field("ObtainMarks").HeaderText("Marks").Width("170").TextAlign(TextAlign.Left).Add();
+            col.Field("Signature").HeaderText("Signature").Width("170").TextAlign(TextAlign.Left).Add();
+        }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+                 { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+             <script id="sno" type="text/x-jsrender">
+                 ${sno(index)}
+             </script>*@
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_exam-awardblank").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_exam-awardblank_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_exam-awardblank_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+    $('#btnSearch').click(function() {
+        $('#example tbody').html('');
+        var sectionid = $("#Sections").val();
+        if ($("#Sections").val() == null) {
+            return $("#Sections").focus();
+        }
+        var Subjects = $("#Subjects").val();
+        if ($("#Subjects").val() == null) {
+            return $("#Subjects").focus();
+        }
+        var examsid = 0;
+        if ($("#Exams").val() != null) {
+            examsid = $("#Exams").val();
+        }
+        @*var url1 = '@Url.Action("GetAwardListblank")';
+        url1 += '?Classes=' + $("#Classes").val() + '&Sections=' + sectionid + '&campus=' + $('#Campus').val() + '&exams=' + examsid + '&Subject=' + Subjects;
+        var messageTop = 'Award List blank ' + 'Campus:' + $("#Campus :selected").html() + 'Class:' + $("#Classes :selected").html() + 'Section:' + $("#Sections :selected").html() + 'Subject:' + $("#Subject :selected").html();
+        var grid = document.getElementById('@grid.GridId').ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });*@
+
+
+        var src = '/Content/Reports/ReportViewer/ReportViewer.aspx?report=AwardListBlank&Classes=' + $("#Classes").val() + '&Sections=' + sectionid + '&Campus=' + $('#Campus').val() + '&Exams=' + examsid + '&Subjects=' + Subjects;
+        var iframe = '<iframe id="reportFrame" width="100%" height="800px" style="background-color:#fff;" scrolling="no" frameborder="0" src="' + src + '" allowfullscreen></iframe>';
+        $("#divReport").html(iframe);
+
+        block('#btnSearch');
+        const handleLoad = function () {
+            $('#divReport').unblock();
+            $('#btnSearch').unblock();
+        }
+        document.getElementById('reportFrame').addEventListener('load', handleLoad, true);
+        block('#divReport');
+    });
+</script>
+@Html.EJS().ScriptManager()

@@ -1,0 +1,179 @@
+﻿@using smsCore.Data.Helpers;
+@model MenuItem
+@inject StaticResources resources
+@inject MenuHelper  menu
+
+<link href="~/assets/nestable/dist/jquery.nestable.min.css" rel="stylesheet" /><!-- Bootstrap-Iconpicker -->
+<link rel="stylesheet" href="~/assets/bootstrap-iconpicker-1.10.0/dist/css/bootstrap-iconpicker.min.css" />
+<style>
+    .dd-item.dd-collapsed .dd-expand {
+        display: block;
+    }
+    .dd-item .dd-expand {
+        display: none;
+    }
+    .dd-empty, .dd-item, .dd-placeholder{
+        line-height:26px;
+    }
+    .dd-item i {
+        position: absolute;
+        z-index: 1;
+        right: 8px;
+        top: 12px;
+        cursor: pointer;
+    }
+
+        .dd-item i + i {
+            right: 30px;
+        }
+
+    #iconpicker {
+        padding: 5px;
+        border: none;
+        background-color: lightgray;
+    }
+
+    .btn-icon {
+        padding: 0 !important;
+    }
+
+    .table-icons .btn {
+        width: initial !important;
+    }
+</style>
+<div class="content">
+    <div class="row mt-2">
+
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h4>
+                        Menu Items <a href="https://www.youtube.com/watch?v=LcG_cpH1AkU" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a>
+                    </h4>
+                </div>
+                <div class="card-body" style="max-height: 60vh; overflow-y: scroll;">
+                    <div class="dd">
+                        @{
+                           // MenuHelper helper = new MenuHelper(true,true);
+                            var all = menu.GetMenuItems();
+                            Html.RenderPartial("~/Views/Shared/MenuPartial/_LeftMenu.cshtml", all);
+                        }
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <button type="button" onclick="Save();" class="btn btn-primary btn-sm"><i id="spinner" class="icomoon icon-spinner mr-2" style="display:none"></i><i class="fa fa-save mr-2"></i>Save</button>
+                </div>
+            </div>
+        </div>
+        @if (User.IsInRole("Developer") || User.IsInRole("Admin"))
+        {
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+
+                        <h4 id="form_title">
+                            Add New Menu Items
+                        </h4>
+                    </div>
+                  @*  @using (Ajax.BeginForm("MenuItems", "Developer", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed1", LoadingElementId = "resultcreate #server-progress", OnBegin = "begin" }, new { id = "Frm_menu" }))
+                    {*@
+                    <form asp-action="MenuItems" asp-controller="Developer"
+                      data-ajax="true" data-ajax-method="post" data-ajax-complete="completed1" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="Frm_menu" data_reset="true">
+   
+
+
+
+
+                        <div class="card-body">
+                            <div class="row">
+                            <input type="hidden" name="Id" id="Id" />
+                            <div class="form-group col-md-6 mt-2">
+                                <label>Parent Name:</label>
+                                <div class="controls">
+                                    <select name="ParentId" id="ParentId" class="form-control pl-2">
+                                        <option value=""> Select any option </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-6 mt-2">
+                                <label>Controller: </label>
+                                <div class="controls">
+                                    @Html.DropDownList("Controller", (SelectList)ViewBag.Controllers, new { @class = "form-control ml-1 pl-2" })
+                                </div>   </div>
+                            <div class="form-group col-md-6 mt-2">
+                                <label>Action Name: </label>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <select required name="ActionId" id="ActionId" class="form-control ml-1 pl-2">
+                                            <option value="" selected> Select any option </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-link" onclick="ActionPopup();"><i class="fa fa-plus " style="color: green;margin-left: -1px !important;position: absolute;"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group col-md-3 mt-2">
+                                <label>Sort Order: </label>
+                                <input type="number" name="SortOrder" id="SortOrder" class="form-control ml-2 pl-2" placeholder="SortOrder"
+                                       style="width: 100%;" />
+                            </div>
+                            <div class="form-group col-md-6 mt-2">
+                                <label>Icon: </label>
+                                @*<input type="text" asp-for="Icon" class="form-control ml-1" id="Icon" placeholder="Icon" role="iconpicker" />*@
+                                <div class="controls">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control pl-2" name="Icon" id="Icon">
+                                        <span class="input-group-append">
+                                            <button type="button" class="btn btn-outline-secondary" id="iconpicker" data-icon="fas fa-house"></button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 my-2"></div>
+                            <div class="form-group col-md-12 mt-2">
+                                <label>Is Active: </label>
+                                <span class="ml-2"> Yes </span><input type="radio" class="ml-1" name="IsActive" id="IsActive" value="true" checked="checked" />
+                                <span class="ml-1"> No </span><input type="radio" class="ml-1" name="IsActive" id="IsActive" value="false" />
+                            </div>
+                            <div class="col-12"></div>
+                                </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="col-12 text-right">
+                                <button type="reset" class="btn btn-danger float-left">Reset</button>
+                                <button type="submit" id="BtnSubmit" value="Save" class="btn btn-primary">
+                                    <i id="spinner" class="icomoon icon-spinner mr-2" style="display:none"></i>
+                                    Save<i class="icon-paperplane ml-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        }
+
+
+
+    </div>
+</div>
+<div class="modal fade" id="modal-container_action">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <i id="spinner" class="icomoon icon-spinner mr-2" ></i>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+
+<script @resources.JavaScript src="/assets/nestable/dist/jquery.nestable.min.js"></script>
+<script @resources.JavaScript src="/assets/js/jquery.LoadJSON.js"></script>
+<script @resources.JavaScript src="/assets/bootstrap-iconpicker-1.10.0/dist/js/bootstrap-iconpicker.bundle.min.js"></script>
+@*    <script src="/Scripts/views/dragmenu.js" asp-append-version="true"  @resources.JavaScript></script>
+*@
+

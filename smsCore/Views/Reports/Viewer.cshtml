@@ -1,0 +1,67 @@
+﻿
+@model BoldReportViewModel
+@inject StaticResources resourse;
+
+@*@{
+    Layout = Request.IsAjaxRequest() ? null : "~/Views/Shared/_LayoutNew.cshtml";
+}*@
+    Layout = Request.IsAjaxRequest() ? null : "~/Views/Shared/_LayoutNew.cshtml";
+<style>
+    #viewer {
+        min-width: 100%;
+        min-height: 600px;
+        background-color: rgba(0,0,0,.5);
+    }
+</style>
+@Styles.Render("~/Content/bold-reports/material/bold.reports.all.min.css")
+<!--Render the gauge item. Add these scripts only if your report contains the gauge report item.-->
+@Scripts.Render("~/Scripts/bold-reports/common/ej2-base.min.js")
+@*@Scripts.Render("~/Scripts/bold-reports/common/ej2-data.min.js")*@
+@Scripts.Render("~/Scripts/bold-reports/common/ej2-pdf-export.min.js")
+@Scripts.Render("~/Scripts/bold-reports/common/ej2-svg-base.min.js")
+@*   @Scripts.Render("~/Scripts/bold-reports/data-visualization/ej2-circulargauge.min.js")
+    @Scripts.Render("~/Scripts/bold-reports/data-visualization/ej2-lineargauge.min.js")*@
+<!--Renders the map item. Add this script only if your report contains the map report item.-->
+@*@Scripts.Render("~/Scripts/bold-reports/data-visualization/ej2-maps.min.js")*@
+@Scripts.Render("~/Scripts/bold-reports/common/bold.reports.common.min.js")
+@Scripts.Render("~/Scripts/bold-reports/common/ej.unobtrusive.min.js")
+
+@Scripts.Render("~/Scripts/bold-reports/common/bold.reports.widgets.min.js")
+
+<!--Renders the chart item. Add this script only if your report contains the chart report item.-->
+@*@Scripts.Render("~/Scripts/bold-reports/data-visualization/ej.chart.min.js")*@
+<!-- Report Viewer component script-->
+@Scripts.Render("~/Scripts/bold-reports/bold.report-viewer.min.js")
+@(
+Html.Bold().ReportViewer("viewer")
+.ProcessingMode(BoldReports.ReportViewerEnums.ProcessingMode.Local)
+.ReportPath(resourse.GetReportPath(Model.ReportName))//"~/Resources/product-list.rdlc"
+.ReportServiceUrl("/api/ReportViewer")
+ .DataSources(ds => ds.Name(Model.DataSetName).Value(ViewData["DataSource"]).Add()).Parameters(param=> {
+     foreach (var it in Model.Params)
+     {
+      param.Name(it.Key).Values(new List<string> { it.Value.ToString() }).Add();
+     }
+ })
+                    )
+
+@Html.Bold().ScriptManager()
+
+<script>
+    var isSubmit = true;
+    $(document.body).bind('submit', $.proxy(this.formSubmit, this));
+    function formSubmit(args) {
+        isSubmit = false;
+    }
+
+    window.onbeforeunload = function () {
+        if (isSubmit) {
+            var reportviewerObj = $("#viewer").data("boldReportViewer");
+            reportviewerObj.clearReportCache();
+            reportviewerObj.destroy();
+        }
+
+        isSubmit = true;
+
+    };
+</script>

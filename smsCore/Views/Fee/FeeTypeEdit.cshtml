@@ -1,0 +1,69 @@
+﻿ @model  FeeType
+@{
+    ViewBag.Title = "Edit Fee Type";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+    var selected = Model.AllowDiscount.HasValue && Model.AllowDiscount.Value;
+    var selectedisoptional = Model.IsOptional.HasValue && Model.IsOptional.Value;
+
+}
+@*@using (Ajax.BeginForm("FeeTypeEdit", "Fee", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "FeeTypeEditForm #server-progress", OnBegin = "begin"}, new {id = "FeeTypeEditForm"}))
+{*@
+<form asp-action="FeeTypeEdit" asp-controller="Fee"
+      data-ajax="true" data-ajax-method="post"  data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeTypeEditForm" data_reset="true">
+       
+    @Html.HiddenFor(model => Model.Id)
+    <div class="modal-body" id="feeTypeEdit-container">
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+            @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "feeTypeEdit-container", ColCssClass = "col-md-6 col-sm-6 col-12", ShowCampus = true})
+
+            <div class="col-md-6 col-sm-6 col-12 form-group has-feedback">
+                <label>Fee Type:</label><font class="text-danger">*</font>
+                                        <div class="controls">
+                                            @Html.TextBoxFor(model => Model.TypeName, new { @class = "form-control has-feedback-left", required = "required" })
+                                                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                                    </div>            
+            </div>
+            <div class="col-md-6 col-sm-6 col-12 form-group has-feedback">
+                <label>Sorted order:</label><font class="text-danger">*</font>
+                                            <div class="controls">
+                                                @Html.TextBoxFor(model => Model.SortOrder, new { @class = "form-control has-feedback-left", required = "required" })
+                                                <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-12 form-group has-feedback">
+                <label>Note/Describtion:</label>
+                <div class="controls">
+                    @Html.TextAreaFor(model => Model.Notes, new { @class = "form-control has-feedback-left" })
+                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-sm-6 col-12 form-group has-feedback">
+                <label class="mt-4">
+                    <input type="checkbox" class="mr-2" value="@(selected)" @(selected ? "checked" : "") name="AllowDiscount"/> AllowDiscount
+                </label>
+            </div>
+            <div class="col-md-6 col-sm-6 col-12 form-group has-feedback">
+                <label class="mt-4">
+                    <input type="checkbox" class="mr-2" value="@(selectedisoptional)" @(selectedisoptional ? "checked" : "") name="IsOptional"/> IsOptional
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer ">
+        <button type="submit" value="Create" class="btn btn-primary pull-right">
+            <i class="fa fa-save mr-2"></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+            </span> Save
+        </button>
+    </div>
+</form>

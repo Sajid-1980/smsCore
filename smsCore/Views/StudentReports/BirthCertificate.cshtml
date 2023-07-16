@@ -1,0 +1,87 @@
+﻿@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Birth Certificate";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("StudentReports", "Reports")">Student Report</a>
+        </li>
+        <li class="active">
+            Student Birth Certificate
+        </li>
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Reg No</label>
+                            <div class="controls">
+                                <div>
+                                    <input type="text" id="regno" class="form-control" value="1-50000" />
+                                </div>
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Remarks</label>
+                            <div class="controls">
+                                <div>
+                                    <input type="text" id="remarks" class="form-control" />
+                                </div>
+                                <span class="fa fa-paragraph form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn mt-2" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 pt-2">
+            <div id="divReport">
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    $('#btnSearch').click(function() {
+        var regno = "0";
+        if ($("#regno").val() != null) {
+            regno = $("#regno").val();
+        }
+        var remarks = "";
+        if ($("#remarks").val() != null) {
+            remarks = $("#remarks").val();
+        }
+        var src = '/Content/Reports/ReportViewer/ReportViewer.aspx?report=CertificateBirth&RegNo=' + regno + '&remarks=' + remarks;
+        var iframe = '<iframe id="reportFrame" width="100%" height="800px" style="background-color:#fff;" scrolling="no" frameborder="0" src="' + src + '" allowfullscreen></iframe>';
+        $("#divReport").html(iframe);
+        block('#btnSearch');
+        const handleLoad = function () {
+            $('#divReport').unblock();
+            $('#btnSearch').unblock();
+        }
+        document.getElementById('reportFrame').addEventListener('load', handleLoad, true);
+        block('#divReport');
+    });
+</script>

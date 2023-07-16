@@ -1,0 +1,209 @@
+﻿@inject StaticResources resources
+
+@{
+    
+        Layout = null;
+   
+    //ViewBag.Title = "Add Results";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Result Edit
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="resultedit">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="my-0 py-1">
+                        <div class="row  my-0">
+                            <div class="col-lg-12">
+                                <div id="message">
+                                </div>
+
+                            </div>
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "resultedit", ColCssClass = "col-12 col-sm-6 col-md-3", ShowCampus = true, ShowClasses = true, ShowSections = true, ShowExams = true, ShowSubjects = true})
+
+                            <div class="col-12 col-sm-6 col-md-9 pt-3">
+                                <button type="button" id="btnSearchResult" class="btn btn-primary float-right"><i class="fa fa-search mr-2"></i>search</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <span style="display: none" class="pull-left control-label pt-1" id="max-marks">No Subject selected</span>
+                    <div class="" id="resultPanel">
+                        <div class="row">
+                            <div class="col-12">
+                                <div>
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th class="d-none">ID</th>
+                                            <th>Reg ID</th>
+                                            <th>Name</th>
+                                            <th>Marks</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="newResults"></tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="button" id="btnSave" class="btn btn-primary pull-right"><i class="fa fa-save mr-2"></i>Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden" id="SubjectDetails">
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+</section>
+<script @resources.JavaScript>
+    $('#Exams').change(function() { $('#Subjects').trigger('change'); });
+    $('#Campus').change(function() { $('#Subjects').trigger('change'); });
+    $('#Classes').change(function() { $('#Subjects').trigger('change'); });
+    $('#Sections').change(function() { $('#Subjects').trigger('change'); });
+    $('#btnSearchResult').click(function() {
+        $(newResults).html('');
+        var campus = $('#Campus').val();
+        var cls = $('#Classes').val();
+        var exam = $('#Exams').val();
+        var subject = $('#Subjects').val();
+        var sectionId = $('#Sections').val();
+        var url = "@Url.Action("GetResultOfSubject", "Results")";
+        url += '?myclass=' + cls + '&campus=' + campus + '&sectionId=' + sectionId + '&exam=' + exam + '&subject=' + subject;
+
+        $.getJSON(url,
+            function(data) {
+                console.log(data);
+                if (data.type == "success") {
+                    var html = '';
+
+                    $.each(data.results,
+                        function(key, value) {
+                            let html = '<tr><td style="display:none;"><span class="ID">' + value.ID + '</span><span class="admId">' + value.AdmissionID + '</span><span class="ClassSubjectID">' + value.ClassSubjectID + '</span><span class="ExamHeldID">' + $('#Exams').val() + '</span></td><td><span class="student">' + value.RegistrationNo + '</span></td><td>' + value.StudentName + '</td><td><input class="marks form-control" id="' + value.ID + '" data-type="number" onchange="changethis(this)" value="' + (value.ObtainedMarks == 2000 ? 'A' : value.ObtainedMarks) + '" /></td><td><i class="fa fa-times" value onclick="Remove(this);"><i style="display:none">' + value.ID + '</i></td></tr>';
+                            $(newResults).append(html);
+                        });
+                } else {
+                    $('#resultPanel').enabled = false;
+                    $('#max-marks').html('No data found for the selected subjec(' + $('#Subjects').val() + ')');
+                }
+            });
+    });
+
+    $(btnSave).click(function() {
+        var results = Array();
+        var index = 0;
+        var isTrue = false;
+        var isGreater = false;
+        $(newResults).find('tr').each(function() {
+            var tr = $(this);
+            var result = {};
+            let mark = tr.find('.marks').val();
+            if (mark.toLowerCase() == 'a') {
+                mark = 2000;
+            }
+            result.ID = tr.find('.ID').html();;
+            result.AdmissionID = tr.find('.admId').html();
+            result.ClassSubjectID = tr.find('.ClassSubjectID').html();
+            result.CheckedBy = "me";
+            result.ExamHeldID = tr.find('.ExamHeldID').html(); //ExamHeldID
+            result.ObtainedMarks = mark;
+            if (result.ObtainedMarks == '') {
+                isTrue = true;
+                return tr.find('.marks').focus();
+            }
+            results[index] = result;
+            index++;
+        });
+        if (isTrue) {
+            $('#message').html('<span class="float-left alert alert-danger w-100">Enter a valid value to continue.It should not be less then Zero or greater then ' + $('#max-marks').html() + ' specified in datesheet.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            return;
+        }
+        $.ajax({
+            url: '@Url.Action("Create", new {area = "Admin"})',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: '{results:' + JSON.stringify(results) + '}',
+            success: function(data) {
+                //CreateSuccess(data);
+                $('#message').html('<span class="float-left alert alert-info w-100">Information added to database successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+
+                $(newResults).find('tr').each(function() { $(this).remove(); });
+            },
+            error: function() {
+                var data = {};
+                data.message = "Unable to store the selected configuration values.";
+                data.type = "error";
+                //CreateSuccess(data);
+                $('#message').html('<span class="float-left alert alert-danger w-100">Something went wrong while trying to store data. <a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+
+            },
+            complete: function() {
+
+            }
+        });
+    });
+
+    function Remove(element) {
+        var id = $(element).find('i').html();
+        BootstrapDialog.confirm({
+            title: 'WARNING',
+            message: 'Warning! Are you sure to delete?',
+            type: BootstrapDialog.TYPE_WARNING, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+            closable: true, // <-- Default value is false
+            draggable: true, // <-- Default value is false
+            btnCancelLabel: 'Do not drop it!', // <-- Default value is 'Cancel',
+            btnOKLabel: 'Drop it!', // <-- Default value is 'OK',
+            btnOKClass: 'btn-warning', // <-- If you didn't specify it, dialog type will be used,
+            callback: function(result) {
+                // result will be true if button was click, while it will be false if users close the dialog directly.
+                if (result) {
+                    $.post('@Url.Action("Delete", "Results")',
+                        { id: id },
+                        function(data) {
+                            $('#message').html('<span class="float-left alert alert-info w-100">Information is deleted from database successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                            $(element).closest('tr').remove();
+                        },
+                        'json');
+                }
+            }
+        });
+    }
+
+    function changethis(element) {
+        var message = '';
+        var fields = '';
+        if (parseInt($(element).val()) < 0 || parseInt($(element).val()) > parseInt($('#max-marks').html())) {
+            $(element).val('');
+            $('#message').html('<span class="float-left alert alert-danger w-100">Enter a valid value to continue.It should not be less then Zero or greater then ' + $('#max-marks').html() + ' specified in datesheet.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            return $(element).focus();
+        }
+    }
+</script>

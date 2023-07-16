@@ -1,0 +1,227 @@
+﻿@using sms.Models
+@model Models.Library
+@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Index";
+}
+<style>
+    .dtp-time + .ui-datepicker-trigger {
+        position: absolute;
+        right: 21px;
+        bottom: 15px;
+        cursor: pointer;
+    }
+
+    .small.time {
+        max-width: 230px !important;
+    }
+</style>
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Library
+        </li>
+    </ul>
+</div>
+<div class="container" id="Library">
+    @* @using (Ajax.BeginForm("Create", "Library", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "addLibraryForm #server-progress", OnSuccess = "reloadGridData", OnBegin = "begin" }, new { id = "EditLibraryForm", enctype = "multipart/form-data", data_reset = "true" }))
+    {*@
+    <form asp-action="Create" asp-controller="Library" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" data-ajax-success="reloadGridData" class="form-horizontal form-label-left input_mask" id="EditLibraryForm" data_reset="true">
+  
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Add Libraries <a href="https://www.youtube.com/watch?v=XsQkAKrpdfg&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a></h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "Library", ColCssClass = "col-12 col-sm-3 col-md-3", CampusFieldName = "CampusId", ShowCampus = true })
+
+                    <div class="col-12 col-sm-3 has-feedback">
+                        <label>Library Name </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.LibraryName, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                            <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.LibraryName)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-3  has-feedback">
+                        <label>Code </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.Code, new { @class = "form-control has-feedback-left", required = "true" })
+                                                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.Code)
+                                            </div>
+                    </div>
+                    <div class="col-12 col-sm-3  has-feedback">
+                        <label>Opening Time </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.OpeningTime, new { @class = "form-control has-feedback-left timepicker dtp-time", required = "true", type = "text", readOnly = "" })
+                            <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.OpeningTime)
+                                            </div>
+                    </div>
+
+                    <div class="col-12 col-sm-3 has-feedback">
+                        <label>Closing Time </label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.ClosingTime, new { @class = "form-control has-feedback-left timepicker dtp-time", required = "true", type = "text", readOnly = "" })
+                            <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.ClosingTime)
+                                            </div>
+                    </div>
+
+                    <div class="col-12 has-feedback">
+                        <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-3 mr-2 m-md-2">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Library List</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+         @*               @Html.EJS().Grid("list").DataSource(soure => { soure.Url("/Library/GetLibraries"); }).AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                        {
+                        col.Field("LibraryName").HeaderText("Library Name").Width("60").TextAlign(TextAlign.Left).Add();
+                        col.Field("Code").HeaderText("Code").Width("120").TextAlign(TextAlign.Left).Add();
+                        col.Field("OpeningTime").HeaderText("Opening Time").Width("60").TextAlign(TextAlign.Left).Add();
+                        col.Field("ClosingTime").HeaderText("Closing Time").Width("60").TextAlign(TextAlign.Left).Add();
+                        col.Field("CampusName").HeaderText("Campus Name").Width("80").TextAlign(TextAlign.Left).Add();
+                        col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(TextAlign.Center).Add();
+                        }).AllowPaging().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()*@
+                        @{
+                            var modelgrid = new GridModel()
+                            {
+                                GridId = "list",
+                                DataUrl = "/Library/GetLibraries",
+                                Height = "300",
+                                AllowFiltering = true,
+                                AllowGrouping = true,
+                                Width = "auto",
+                                AllowPaging = true,
+                                AllowPdfExport = true,
+                                AllowResizing = true,
+                                AllowPrint = true,
+                                AllowSorting = true,
+                                AllowExcelExport = true,
+                                Columns = new List<Column>
+                                        {
+                                        new Column{FieldName="libraryName",HeaderText="Library Name",Width="60",TextAlign=TextAlign.Left},
+                                        new Column{FieldName="code",HeaderText="Code",Width="120",TextAlign=TextAlign.Left},
+                                        new Column{FieldName="openingTime",HeaderText="Opening Time" ,Width="60",TextAlign=TextAlign.Left},
+                                        new Column{FieldName="closingTime",HeaderText="Closing Time" ,Width="60",TextAlign=TextAlign.Left},
+                                        new Column{FieldName="campusName",HeaderText="Campus Name" ,Width="80",TextAlign=TextAlign.Left},
+                                        new Column{FieldName="action",Template = "action",HeaderText="Action" ,Width="70",TextAlign=TextAlign.Center},
+                                        },
+                            };
+
+                        }
+                        @await Html.PartialAsync("_grid",modelgrid)
+                    </div>
+                    <script type="text/x-jsrender" id="action">
+                        <a title="Edit" class="editL" id="${ID}" href="/Library/EditLibrary/${ID}"><i class="fa fa-edit"></i></a>
+                        ${if(ID>0)}
+                        <a title="Delete" class="delete" id="${ID}" href="/Library/DeleteLibrary/${ID}"><i class="fa fa-trash ml-2"></i></a>
+                        ${/if}
+                    </script>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+@Html.EJS().ScriptManager();
+<script @resourse.JavaScript>
+    $('.dtp-time').timepicker({
+        buttonImage: '/assets/images/calendar.png',
+        buttonImageOnly: true,
+        showOn: 'button',
+        showAnim: "clip",
+        controlType: 'select',
+        oneLine: true,
+        timeFormat: "hh:mm TT",
+    });
+    
+    function reloadGridData() {
+        var gird = document.getElementById('list').ej2_instances[0];
+        gird.refresh();
+    }
+
+    let gridObj = document.getElementById("list").ej2_instances[0];
+
+    function Add() {
+        var title = "Add Library";
+        var url = '@Url.Action("Create", "Library")';
+        BootstrapDialog.show({
+            title: title,
+            message: $('<div />').load(url),
+            onhide: function(dialogRef) {
+                gridObj.refresh();
+
+            }
+        });
+    }
+    //*****************library delete*********************//
+    // Modal For Delete //
+    $('#list').on('click',
+        'a.delete',
+        function (e) {
+            e.preventDefault();
+            var title = 'Delete Library';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+    // Edit Library Pop Up
+    $('#list').on('click',
+        'a.editL',
+        function (e) {
+            e.preventDefault();            
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({                
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>

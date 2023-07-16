@@ -1,0 +1,199 @@
+﻿@model tbl_MonthlySalaryDetails
+
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Bonus Deduction";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Bonus/Deduction
+            </li>
+
+        </ul>
+    </div>
+}
+
+<section class="content" id="bonus-container">
+    <div class="row">
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header with-border">
+                    Bonus/Deduction
+                </div>
+              @*  @using (Ajax.BeginForm("BonusDeduction", "Payroll", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "classFeeIndexmainForm", data_reset="true" }))
+                {*@
+                <form asp-action="BonusDeduction" asp-controller="Payroll" data-ajax="true" data-ajax-method="post"  data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+                   
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels
+                       {
+                           ParentContainerID = "bonus-container",
+                           ColCssClass = "col-12 col-sm-6 has-feedback",
+                           CampusFieldName = "CampusID",
+                           EmployeeFieldName = "EmployeeId",
+                           ShowCampus = true,
+                           ShowEmployee = true
+                       })
+
+                            @Html.Partial("_PartialDate", new PartialDateViewModels
+        {
+            Label = "Month:",
+            PickerType = "month",
+            Format = "MM yy",
+            ParentContainerID = "mont-date",
+            ColCssClass = "col-12 col-sm-6 col-md-4",
+            ShowAltField = true,
+            AltFieldId = "month",
+            AltFieldName = "Month",
+            AltFieldFormat = "dd/mm/yy",
+            DateFieldId = "monthpick",
+            DateFieldName = "monthpick",
+            KeepDataFieldReadOnly = true,
+            DefaultDate = DateTime.Now
+        })
+
+                            @*<div class="col-6 col-sm-6 col-md-4">
+                                <label> Month</label>
+                                @Html.EJS().DatePickerFor(m=>m.MonthlySalary.ForMonth).Start(Syncfusion.EJ2.Calendars.CalendarView.Year).Depth(Syncfusion.EJ2.Calendars.CalendarView.Year).Format("MMMM, yyyy").Render()
+                                <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessageFor(m => m.PayHead)
+                            </div>*@
+
+                            <div class="col-6 col-sm-6 col-md-4">
+                                <label> Type</label>
+                                <div class="controls">
+                                    @Html.DropDownListFor(m => m.PayHeadId, (SelectList)ViewBag.PayHeads, new { @class = "form-control" })
+                                    <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(m => m.PayHead)
+                                </div>
+                            </div>
+                            <div class="col-6 col-sm-6 col-md-4">
+                                <label> Amount</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(m => m.Amount, new { @class = "form-control" })
+                                    <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(m => m.Amount)
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-12">
+                                <label> Narration</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(m => m.Notes, new { @class = "form-control" })
+                                    <span class="fa fa-file form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(m => m.Notes)
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="text-right">
+                            @*<a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>*@
+                            @*<button type="reset" value="New" class="btn btn-danger float-left"><i class="fa fa-refresh mr-1"></i>New</button>*@
+                            <button type="submit" value="Create" class="btn btn-primary float-right sico-btn">
+                                <i class="fa fa-save mr-2"></i>
+                                <span>
+                                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                </span> Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card">
+                <div class="card-header">
+
+                </div>
+                <div class="card-body">
+                    @*@Html.EJS().Grid("list_monthlysalary").Columns(col =>
+               {
+                   col.Template("${sno(index)}").HeaderText("S.No").Width("50").TextAlign(TextAlign.Left).Add();
+                   col.Field("Notes").HeaderText("Description").TextAlign(TextAlign.Left).Add();
+                   col.Template("#type").HeaderText("Type").TextAlign(TextAlign.Left).Add();
+                   col.Field("Amount").HeaderText("Amount").TextAlign(TextAlign.Left).Add();
+               }).AllowPaging().PageSettings(p => p.PageSize(10).PageSizes(new string[] { "10", "30", "50", "All" })).Render()*@
+
+
+                    @{
+                        var modelgrid = new GridModel()
+            {
+                GridId = "list_monthlysalary",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                ShowHeader = false,
+                AddSerialNo=true,
+                DataUrl = "MonthlySalaryDetails",
+                Columns = new List<Column>
+                    {
+                     new Column{FieldName="notes",HeaderText="Description",TextAlign=TextAlign.Left},
+                     new Column{Template="#type",HeaderText="Type",TextAlign=TextAlign.Left},
+                     new Column{FieldName="amount",HeaderText="Amount",TextAlign=TextAlign.Left},
+                   
+                    },
+            };
+                    }
+                    @await Html.PartialAsync("_grid",modelgrid)
+
+
+                   <script id="type" type="text/x-jsrender">
+                       ${if(type==1)}
+                       Addition
+                       ${else}
+                       Deduction
+                       ${/if}
+                   </script>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+    var grid = document.getElementById("list_monthlysalary").ej2_instances[0];
+    function reloadGridData() {
+        var employeeId = $('#Employee').val();
+        var month = $('#month').val();
+        var url = '/Payroll/MonthlySalaryDetails';
+
+        url += '?month=' + month + '&employeeId=' + employeeId;
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    $('#monthpick').MonthPicker({ OnAfterChooseMonth: function (selectedDate) { reloadGridData(); } });
+    $('#Employee').on('change', function () { reloadGridData(); })
+</script>

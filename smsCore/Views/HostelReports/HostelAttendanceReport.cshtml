@@ -1,0 +1,179 @@
+﻿@using Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "HostelAttendanceReport";
+}
+
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                <a href="@Url.Action("HostelReports", "Reports")">Hostel Report</a>
+            </li>
+            <li class="active">
+                Hostel Attendance Record
+            </li>
+        </ul>
+    </div>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-3 form-group has-feedback">
+                            <label>Hostel</label>
+                            <div class="controls">
+                                
+                                    @Html.DropDownList("hostel", (SelectList)ViewBag.hstlename, new { @class = "form-control " })
+                                
+                                <span class="fa fa-building small form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Reg No</label>
+                            <div class="controls">
+
+                                <input type="text" id="regno" class="form-control" value="1-50000" />
+
+
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Months</label>
+                            <div class="controls">
+                                <input type="text" id="dates" class="form-control" />
+
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            @{
+
+                var grid = new GridModel()
+                {
+                    GridId="GridS",
+                    AllowPrint=true,
+                    AllowPdfExport=true,
+                    AllowExcelExport=true,
+                    ReportTitle="Hostel Attendance Record",
+                    Columns=new List<Column>() {
+                    new Column{ FieldName="RegNo",HeaderText="Reg.No", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="Name",HeaderText="Name", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="FName",HeaderText="Father Name", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="present",HeaderText="Total Present", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="absent",HeaderText="Total Absent", Width="", TextAlign= TextAlign.Left },
+
+                    }
+
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("GridS").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnChooser().AllowResizing().Columns(col =>
+            {
+                col.Field("RegNo").HeaderText("RegNo").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Name").HeaderText("Name").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("FName").HeaderText("FName").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("present").HeaderText("Total Present").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("absent").HeaderText("Total Absent").Width("80").TextAlign(TextAlign.Left).Add();
+                //col.Field("NoOfAttendance").HeaderText("TotalAttendance").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+            }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().Aggregates(agg =>
+            {
+                agg.Columns(new List<GridAggregateColumn>
+                {
+                    new GridAggregateColumn {Field = "present", Type = "Sum", FooterTemplate = "Total Presents: ${Sum}"},
+                    new GridAggregateColumn {Field = "absent", Type = "Sum", FooterTemplate = "Total Absents: ${Sum}"}
+                }).Add();
+            }).PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "Search", "ColumnChooser" }).Render()*@
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    function reloadGridData() {
+        $('#jqgclasswisereport').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    $('#btnSearch').on('click',
+        function() {
+            var regno = $('#regno').val();
+            var dates = $('#dates').val();
+
+            var url1 = '@Url.Action("GetHostelAttendanceRecordList")';
+            url1 += '?hostel=' + $('#hostel').val() + '&regno=' + regno + '&month=' + dates;
+            var messageTop = 'Admission History' + 'List';
+            $.get(url1,
+                null,
+                function (data) {
+                    var gridObj = document.getElementById("@grid.GridId").ej2_instances[0];
+                    // Refreshes the grid data source
+                    gridObj.dataSource = (data);
+                });
+        });
+
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("GridS").ej2_instances[0];
+    //    if (args.item.id === 'GridS_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'GridS_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+</script>
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+    $(document).ready(function () {
+        MonthPicker();
+    });
+
+    function MonthPicker() {
+        $("#dates").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "MM",
+            inline: false,
+            showButtonPanel: true,
+            onChangeMonthYear: function (year, month, inst) {
+                $(this).val($.datepicker.formatDate('MM', new Date(year, month - 1, 1)));
+            },
+            onClose: function (dateText, inst) {
+                var month = $(".ui-datepicker-month :selected").val();
+                var year = $(".ui-datepicker-year :selected").val();
+                $(this).val($.datepicker.formatDate('MM', new Date(year, month, 1)));
+
+            }
+        }).focus(function () {
+            $(".ui-datepicker-calendar").hide();
+            $(".ui-datepicker-year").hide();
+            $(".ui-datepicker-title").css({ "margin-top": "-24px", "max-width": "100%" });
+            $(".ui-datepicker-year").css("width", "113px");
+            $(".ui-datepicker-month").css("width", "113px");
+        });
+    }
+</script>

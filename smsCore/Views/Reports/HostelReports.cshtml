@@ -1,0 +1,74 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Hostel Reports";
+}
+<section id="ReportSection" class="content">
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>Hostel Reports <a href="https://www.youtube.com/watch?v=oYLvq_6fZq4" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a href="@Url.Action("AdmissionRecord", "HostelReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/admin/data.png" alt="" />
+                                <label>Hostel Admission</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("RoomRecord", "HostelReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/class wise report.png" alt="" />
+                                <label>Rooms Record</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("VistorRecord", "HostelReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/admin/data.png" alt="" />
+                                <label>Visitors Report</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("HostelAttendanceReport", "HostelReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/student/attendance record.png" alt="" />
+                                <label>Hostel Attendance Report</label>
+                            </a>
+                        </li>
+
+                        @*<li>
+                                <a href="@Url.Action("HostelInformationReport", "HostelReports")">
+                                    <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/Reports/all student information.png" alt="" />
+                                    <label>Hostel Information Report</label>
+                                </a>
+                            </li>*@
+
+                        @*<li>
+                                <a href="@Url.Action("HostelFeeRecord", "HostelReports")">
+                                    <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Fee/fee record register.png" alt="" />
+                                    <label>Hostel Fee Report</label>
+                                </a>
+                            </li>*@
+
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+
+    $('#ReportSection a').on('click', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+
+    });
+
+</script>

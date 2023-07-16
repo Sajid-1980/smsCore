@@ -1,0 +1,159 @@
+﻿@inject StaticResources resources
+
+@{
+    //ViewBag.Title = "Add New Exam";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+     
+        Layout = null;
+    
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Attendance
+        </li>
+        <li class="active">
+            Staff Short Leave
+        </li>
+    </ul>
+</div>
+<style>
+    .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox], .radio input[type=radio], .radio-inline input[type=radio] { margin-left: -15px; }
+</style>
+<section class="content">
+    <div class="row ">
+        <div class="col-12">
+            <div id="message">
+            </div>
+        </div>
+        @Html.AntiForgeryToken()
+
+        <div class="col-12 col-sm-5 col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+
+                    <label>Select Staff</label>
+                    <div class="controls">
+                        @Html.DropDownList("ID", (SelectList)ViewBag.StaffList, new { @class = "form-control has-feedback-left select2" })
+                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("ID")
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-sm-7 col-md-8">
+            <div class="card">
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-12">
+
+                            <div id="clock"></div>
+                            <img class="profile-user-img img-fluid rounded mx-auto d-block" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                            <h3 class="profile-username text-center">
+                                <span class="col-md-9 col-sm-9 col-8 form-group" id="lblname">...</span>
+                            </h3>
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item listnoback">
+                                    <span>Father Name</span>
+                                    <a class="float-right text-aqua">
+                                        <span class="col-md-9 col-sm-9 col-8 form-group" id="lblfname">...</span>
+                                    </a>
+                                </li>
+
+                                <li class="list-group-item listnoback">
+                                    <span>Cnic</span>
+                                    <a class="float-right text-aqua">
+                                        <span class="col-md-9 col-sm-9 col-8 form-group" id="lblcnic">...</span>
+                                    </a>
+                                </li>
+                                <li class="list-group-item listnoback">
+                                    <span>Designation</span>
+                                    <a class="float-right text-aqua">
+                                        <span class="col-md-9 col-sm-9 col-8 form-group" id="lbldesign">...</span>
+                                    </a>
+                                </li>
+                                <li class="list-group-item listnoback">
+                                    <span>Address</span>
+                                    <a class="float-right text-aqua">
+                                        <span class="col-md-9 col-sm-9 col-8 form-group" id="lbladdress">...</span>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <button type="button" id="SaveShortLeave" class="btn btn-primary float-right"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</section>
+
+<style>
+    
+    
+</style>
+<script @resources.JavaScript>
+    $('.select2').select2();
+    clock('#clock');
+    $('#ID').change(function() {
+        var id = $(this).val();
+        $('#lblname').html('...');
+        $('#lblfname').html('...');
+        $('#lblcnic').html('...');
+        $('#lbldesign').html('...');
+        $('#lbladdress').html('...');
+        $(pbxPhoto).attr('src', '/Uploads/images/user.png');
+
+        $.getJSON('@Url.Action("GetStaffForAttendance")',
+            { id: id },
+            function(data) {
+                if (data) {
+                    $('#lblname').html(data.employeeName);
+                    $('#lblfname').html(data.fName);
+                    $('#lbldesign').html(data.designation);
+                    $('#lblcnic').html(data.cnic);
+                    $('#lbladdress').html(data.postalAddress);
+                    if (data.Photo != "") {
+                        $(pbxPhoto).attr('src', 'data:image/*;base64,' + data.Photo);
+                    }
+                }
+            }); //end getJSON
+
+
+    }); //end id change
+
+    $('#SaveShortLeave').click(function() {
+        var url = '@Url.Action("SaveStaffShortLeave", "Attendances")';
+        url += '?id=' + $('#ID').val();
+        $.get(url,
+            function(data) {
+                if (data == "success") {
+                    $('#message').html('<span class="float-left alert alert-info w-100">Information added to database successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                } else if (data == "Already") {
+                    $('#message').html('<span class="float-left alert alert-info w-100">Information Already Added To Database.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                } else {
+
+                    $('#message').html('<span class="float-left alert alert-danger w-100">' + data + '<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+
+                }
+            }); //end of post
+    }); //end button save click
+
+</script>

@@ -1,0 +1,109 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Class Wise List";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("StudentReports", "Reports")">Student Report</a>
+        </li>
+        <li class="active">
+            Class Wise List
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="classwiselist">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "classwiselist", ColCssClass = " col-sm-3 col-12 form-group has-feedback", ForSearch = true, ShowCampus = true, ShowClasses = true, ShowSections = true })
+
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn mt-2" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 ">
+            @{
+                var grid = new  GridModel
+            {
+                GridId = "list_rpt_classwise",
+                AddSerialNo = true,
+                AllowPdfExport = true,
+                ReportTitle = "Class Wise Students",
+                Columns = new List<Column> {
+            new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+            new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+            new Column{ FieldName="FName", HeaderText="Father's Name", AutoFit=true },
+            new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+
+            new Column{ FieldName="MobileNo", HeaderText="Mobile No.", AutoFit=true },
+            new Column{ FieldName="Col7", HeaderText="Father's CNIC", AutoFit=true }
+            }
+            };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_student_classwise").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+            {
+            col.Template("#sno").HeaderText("S.No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("AdmissionID").HeaderText("Admission Id").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("StudentName").HeaderText("Student Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("FName").HeaderText("Father Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("ClassName").HeaderText("Class Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("MobileNo").HeaderText("Mobile No").AutoFit(true).Visible(false).TextAlign(TextAlign.Left).Add();
+            col.Field("Col7").HeaderText("Father's CNIC").Width("275").TextAlign(TextAlign.Left).Add();
+            }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+            ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+
+    $('#btnSearch').on('click',
+        function () {
+            var campus = $('#Campus').val();
+            var section = $('#Sections').val();
+            var classId = $('#Classes').val();
+            var url1 = '@Url.Action("GetClassWiseListInfo")';
+            url1 += '?clasId=' + classId + '&sectionid=' + section + '&campusId=' + campus;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+
+        //function toolbarClick(args) {
+        //    var gridObj = document.getElementById("list_rpt_student_classwise").ej2_instances[0];
+        //    if (args.item.id === 'list_rpt_student_classwise_pdfexport') {
+        //        gridObj.pdfExport();
+        //    }
+        //    if (args.item.id === 'list_rpt_student_classwise_excelexport') {
+        //        gridObj.excelExport();
+        //    }
+        //}
+</script>
+@Html.EJS().ScriptManager()

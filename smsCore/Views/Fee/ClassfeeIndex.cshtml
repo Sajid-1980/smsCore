@@ -1,0 +1,180 @@
+﻿
+@model IEnumerable<Models.ClassFeeGroup>
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Class Fee Groups";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Class Fee
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="classfeeindex">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Horizontal Form -->
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Class Fee Group <a href="https://www.youtube.com/watch?v=-L7sM_ZtyMo&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=290s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div><!-- /.box-header -->
+
+               @* @using (Ajax.BeginForm("AddClassFeeGroups", "Fee", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "classFeeIndexmainForm", data_noreset = "false" })){*@
+
+                <form asp-action="AddClassFeeGroups" asp-controller="Fee" data-ajax="true" data-ajax-method="post" OnSuccess="reloadGridData" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_noreset="false">
+                   
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { CampusLoadCallBack= "reloadGridData();", ParentContainerID = "classfeeindex", ColCssClass = "col-12 col-sm-12", ShowClasses = true, ShowCampus = true, CampusFieldName = "CampusID", ClassesFieldName = "ClassID" })
+
+                        <div class="col-12 col-sm-12 mt-2">
+                            <label> Fee Group:</label><font class="text-danger">*</font>
+                            <a class="new float-right" href="@Url.Action("FeeGroupIndex", "Fee")" data-type="fee" title="Add New Fee Group" style="position: inherit !important;">
+                                <i class="fa fa-plus"></i>
+                            </a>
+                            <div class="controls">
+                                @Html.DropDownList("FeeGroupID", (SelectList)ViewBag.FeeGroups, new { @class = "form-control has-feedback-left", required = "required" })
+                                <span class="fa fa-object-group form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+
+                    <div class="card-footer mt-2">
+
+                        <button type="submit" value="Create" class="btn btn-primary float-right mb-2">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+               </form>
+            </div>
+
+        </div><!--/.col (right) -->
+        <!-- left column -->
+        <div class="col-md-8">
+            <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Fee Groups List</h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                   @* <div class="col-12">
+
+                        @Html.EJS().Grid("list").Columns(col =>
+                   {
+                       col.Field("ClassName").HeaderText("Class").TextAlign(TextAlign.Left).Add();
+                       col.Field("FeeGroupName").HeaderText("Fee Group").Width("100").TextAlign(TextAlign.Left).Add();
+                       col.Field("Amount").HeaderText("Amount").Width("100").TextAlign(TextAlign.Left).Add();
+                       col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(TextAlign.Center).Add();
+                   }).AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+                    </div>*@
+                    <div class="col-12">
+                  
+                        @{
+                            var gridmodel=new GridModel()
+                            {
+                GridId = "list",
+                Columns=new List<Column>
+                {
+                        new Column{FieldName="className",HeaderText="Class",TextAlign=TextAlign.Left},
+                        new Column{FieldName="feeGroupName",HeaderText="Fee Group",Width="100",TextAlign=TextAlign.Left},
+                        new Column{FieldName="amount",HeaderText="Amount",Width="100",TextAlign=TextAlign.Left},
+                        new Column{FieldName="action",Template="#action",HeaderText="Action",Width="70",TextAlign=TextAlign.Left},
+                },
+                            };
+                        }
+                        @await Html.PartialAsync("_grid",gridmodel)
+                    </div>
+                    <script type="text/x-jsrender" id="action">
+                        <a title="Delete" href="/Fee/ClassfeeDelete/${id}" class="delete ml-1"><i class="fa fa-trash"></i></a>
+                        <a title="Fee Structure" href="/Fee/FeestructIndex?feegroupid=${feeGroupID}&campId=${campusID}" class="ajax-load ml-1"><i class="fa fa-edit"></i></a>
+                    </script>
+                </div><!-- /.box-body -->
+            </div>
+        </div><!--/.col (left) -->
+        <!-- right column -->
+    </div>
+</section>
+
+<script @resources.JavaScript>
+
+    function reloadGridData() {
+        
+        var grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = [];
+        var campusId = $('#Campus').val();
+        if ( !campusId)
+            return false;
+
+       var url = '@Url.Action("ClassFeeGroupList")';
+                url += '?campusId=' + campusId;
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    $('#list').on('click', 'a.ajax-load', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+    })
+    $('#list').on('click',
+        'a.delete',
+        function (e) {
+            e.preventDefault();
+            var title = 'Class Fee Group';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+  
+        $('#Classes').on('change',
+            function() {
+                var clas = $('#Classes').val();
+                let campusid = $('#Campus').val();
+                if (!clas || !campusid)
+                    return false;
+                $.get('/api/fee/getfeeGroup/' + clas + "?campusId=" + campusid,
+                    function(data, status) {
+                        if (data != null) {
+                            $('#FeeGroupID').val(data);
+                            $('#FeeGroupID').trigger('change');
+                        }
+                    });
+            });
+
+    $('#Campus').on('change',
+        function () {
+            reloadGridData();
+        });
+</script>

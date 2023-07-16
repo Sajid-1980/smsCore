@@ -1,0 +1,96 @@
+﻿@using sms.Models
+@using Syncfusion.EJ2.Grids
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Employee Phone List";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("EmployeeReports", "Reports")">Employee Report</a>
+        </li>
+        <li class="active">
+            Employee Phone List
+        </li>
+    </ul>
+</div>
+<section class="content" id="idcard">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "idcard", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = true, ShowCampus = true})
+
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            @Html.EJS().Grid("phoneList").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().ToolbarClick("toolbarClick").Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnChooser().AllowResizing().Columns(col =>
+            {
+                col.Field("EmpCode").HeaderText("EmpCode").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Name").HeaderText("Name").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("FName").HeaderText("FName").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("MobileNo").HeaderText("MobileNo").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Email").HeaderText("Email").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("PhoneNo").HeaderText("PhoneNo").Width("80").TextAlign(TextAlign.Left).Add();
+            }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> {"PdfExport", "Print", "ExcelExport", "ColumnChooser"}).Render()
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("phoneList").ej2_instances[0];
+        if (args.item.id === 'phoneList_pdfexport') {
+            gridObj.pdfExport();
+        } else if (args.item.id === 'phoneList_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+    $('#btnSearch').click(function() {
+        var campus = $('#Campus').val();
+        if (!campus) {
+            sweetalert('Campus', 'Please select a campus to continue.', 'error');
+            return false;
+        }
+        var url1 = '@Url.Action("GetEmployeePhoneList")';
+        url1 += '?campusId=' + campus;
+
+        $.get(url1,
+            null,
+            function(data) {
+                var gridObj = document.getElementById("phoneList").ej2_instances[0];
+                // Refreshes the grid data source
+                gridObj.dataSource = (data);
+            });
+    });
+
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("phoneList").ej2_instances[0];
+        if (args.item.id === 'phoneList_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'phoneList_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+
+</script>
+@Html.EJS().ScriptManager()

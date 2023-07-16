@@ -1,0 +1,95 @@
+﻿@using sms.Models
+@using Syncfusion.EJ2.Grids
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "QualificationWiseList";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("EmployeeReports", "Reports")">Employee Report</a>
+        </li>
+        <li class="active">
+            Qualification Wise List
+        </li>
+    </ul>
+</div>
+<section class="content" id="idcard">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "idcard", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = true, ShowCampus = true})
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Emp Code</label>
+                            <div class="controls">
+                                <div>
+                                    <input type="text" id="empcode" class="form-control" />
+                                </div>
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            @Html.EJS().Grid("QualList").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnChooser().AllowResizing().Columns(col =>
+            {
+                col.Field("SNo").HeaderText("SNo").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("StaffID").HeaderText("StaffID").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Name").HeaderText("Name").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("FName").HeaderText("FName").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Qualification").HeaderText("Qualification").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Grade").HeaderText("Grade").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Year").HeaderText("Year").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Designation").HeaderText("Designation").Width("80").TextAlign(TextAlign.Left).Add();
+            }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> {"PdfExport", "Print", "ExcelExport", "ColumnChooser"}).Render()
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    $('#btnSearch').on('click',
+        function() {
+            let campus = $('#Campus').val();
+            if (!campus) {
+                sweetalert('Campus', 'Please select a campus to continue.', 'error');
+            }
+            let empcode = $('#empcode').val();
+            let url1 = '@Url.Action("GetQualificationList")';
+            url1 += '?campusId=' + campus + '&empcode=' + empcode;
+            $.get(url1,
+                null,
+                function(list) {
+                    var gridObj = document.getElementById("QualList").ej2_instances[0];
+                    gridObj.dataSource = (list);
+                });
+        });
+
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("QualList").ej2_instances[0];
+        if (args.item.id === 'QualList_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'QualList_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+</script>
+@Html.EJS().ScriptManager()

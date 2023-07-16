@@ -1,0 +1,71 @@
+﻿@model   tbl_Designation
+@{
+    ViewBag.Title = "Designation Edit";
+    Layout = null;
+}
+
+@*@using (Ajax.BeginForm("DesignationEdit", "Payroll", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{*@
+<form asp-action="DesignationEdit" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+  
+                   
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(m => m.Id, new {@class = "form-control has-feedback-left"})
+
+        <div class="row no-gutters ">
+            <div class="col-12">
+                <div class="row">
+                    <div class="col-12 col-md-12">
+                        <label>Name</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.designationName, new { @class = "form-control has-feedback-left", required = "true" })
+                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessage("designationName")
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label>Cl in month</label>
+                        <div class="controls">
+                            <input type="text" name="ClInmonth" class="form-control has-feedback-left" value="0" />
+                            <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessage("ClInmonth")
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label>Advance Amount</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.advanceAmount, new { @class = "form-control has-feedback-left" })
+                            <span class="fa fa-sort-amount-asc form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessage("advanceAmount")
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-12">
+                        <label>Narration</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(m => m.narration, new { @class = "form-control has-feedback-left" })
+                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessage("narration")
+                        </div>
+                    </div>
+                    <div class="form-group col-12 pb-2 mt-3">
+                        <a href="@Url.Action("Designation", "Payroll")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>
+
+                        <button type="submit" value="Create" class="btn btn-primary float-right">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

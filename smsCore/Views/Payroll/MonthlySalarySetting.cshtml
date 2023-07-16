@@ -1,0 +1,166 @@
+﻿@model List<MonthlySalarySettingViewModel>
+@inject StaticResources resources
+@{
+    ViewBag.Title = "Monthly Salary Setting";
+}
+
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Monthly Salary Setting
+        </li>
+
+    </ul>
+</div>
+
+@*@using (Ajax.BeginForm("MonthlySalarySetting", "Payroll", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{*@
+<form asp-action="MonthlySalarySetting" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" OnSuccess="reloadGridData" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+ 
+    <section class="content" id="monthlySalarysetting">
+        <div class="row">
+            <div class="col-12 col-md-4 ">
+                <div class="card">
+                    <div class="card-header with-border">
+                        Search Cretiria
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "monthlySalarysetting", ColCssClass = "col-6 col-md-6 has-feedback", CampusFieldName = "CampusID", ShowCampus = true })
+
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                           {
+                               Label = "Month:",
+                               PickerType = "month",
+                               Format = "MM yy",
+                               ParentContainerID = "mont-date",
+                               ColCssClass = "col-12 col-sm-6 col-md-6",
+                               ShowAltField = true,
+                               AltFieldId = "month",
+                               AltFieldName = "[0].Month",
+                               AltFieldFormat = "dd/mm/yy",
+                               DateFieldId = "monthpick",
+                               DateFieldName = "monthpick",
+                               KeepDataFieldReadOnly = true,
+                               DefaultDate = DateTime.Now
+                           })
+                        </div>
+
+
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" class="btn btn-primary float-right" onclick="reloadGridData()">
+                            Search
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-header with-border">
+                        Monthly Salary Setting
+                    </div>
+                    <div class="card-body">
+                        <div class=" row">
+                            <div class="col-12">
+                                <div class="row mt-3">
+                                    <div id="monthlysalarysetting-gridContainer" class="col-12">
+                                       @* @Html.EJS().Grid("list_monthlysalary").Columns(col =>
+                                        {
+                                           col.Template("${sno(index)}").HeaderText("S.No").Width("70").TextAlign(TextAlign.Left).Add();
+                                           col.Field("employeeCode").HeaderText("Code").TextAlign(TextAlign.Left).Add();
+                                           col.Field("employeeName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                                           col.Template("#package").HeaderText("Package").TextAlign(TextAlign.Center).Add();
+                                        }).RowDataBound("rowbound").AllowPaging().PageSettings(p => p.PageSize(10).PageSizes(new string[] { "10", "30", "50", "All" })).Render()*@
+                                       
+                                         @{
+                                            var gridModel = new GridModel()
+                                            {
+                                                GridId = "list_monthlysalary",
+                                                AddSerialNo=true,
+                                                Columns = new List<Column>
+                                                        {
+                                                        new Column{FieldName="employeeCode", HeaderText = "Code", TextAlign = TextAlign.Left    } ,
+                                                        new Column{FieldName="employeeName" ,HeaderText="Name" ,TextAlign=TextAlign.Left},
+                                                        new Column{FieldName="amount",HeaderText="Amount",TextAlign=TextAlign.Left },
+                                                        new Column{Template="#package",HeaderText="Package",TextAlign = TextAlign.Center},
+                                                        new Column{Template="#action",HeaderText="Actions",TextAlign = TextAlign.Center},
+                                                        },
+
+
+                                            };
+
+
+                                           }
+
+                                           @await Html.PartialAsync("_grid",gridModel)
+                                        
+                                        <script id="package" type="text/x-jsrender">
+                                            @Html.DropDownList("SalaryPackage", (SelectList)ViewBag.Packages, new { name = "[${index}].SalaryPackageId", id = "SalaryPackage", @class = "form-control", onchange = "salaryPackagechanged(${index})" })
+                                            <input type="hidden" name="[${index}].EmployeeId" value="${Id}" />
+                                        </script>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                    <div id="message">
+
+                                    </div>
+                                </div>
+                            <div class="form-group col-12 pb-2 mt-3">
+                                <button type="submit" value="Create" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+<script @resources.JavaScript>
+    function rowbound(arg) {
+        console.log(arg);
+        $(arg.row).find('select:first').val(arg.data.defaultPackageId);
+        let index = $(arg.row).attr('aria-rowindex');
+        $(arg.row).find('select:first').attr('name', '[' + index + '].SalaryPackageId');
+    }
+</script>
+ <script @resources.JavaScript>
+    var grid = document.getElementById("list_monthlysalary").ej2_instances[0];
+    function reloadGridData() {
+        debugger
+        var campusId = $('#Campus').val();
+        var month = $('#month').val();
+        var url = '/Payroll/MonthlySalaryList';
+        
+        url += '?month=' + month + '&campusId=' + campusId;
+        
+
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    reloadGridData();
+    $('#month').on('change', function () {
+        reloadGridData()
+    });
+   function salaryPackagechanged(i){
+       //var records = grid.getCurrentViewRecords()[i];
+       //var row = grid.getRowByIndex(i);
+    }
+
+</script>

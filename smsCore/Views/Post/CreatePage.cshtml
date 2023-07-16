@@ -1,0 +1,96 @@
+﻿@model smsCore.Data.Models.PublicSite.PublicPageViewModel
+@{ 
+    string pagename = string.Empty;
+    if(Model!=null)
+    {
+        pagename=Model.PageName;
+    }
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+@*@using (Ajax.BeginForm("CreatePage", "Post", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "postCreateForm #server-progress", OnBegin = "begin" }, new { enctype = "multipart/form-data", id = "postCreateForm" }))
+{*@
+
+<form asp-action="CreatePage" asp-controller="CreatePage" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="postCreateForm" data_reset="true">
+                   
+
+
+    @Html.HiddenFor(m => m.Id)
+    @Html.AntiForgeryToken()
+    <div class="container" >
+        <p><h4>Page Content</h4></p>
+        <div class="row">
+            <div class="col-12">
+                <div id="message"></div>
+            </div>
+            <div class="col-12 col-sm-12  col-md-4 has-feedback">
+                <label class="control-label">Page name</label>
+                <div class="controls">
+                    @Html.EditorFor(model => model.PageName, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="fa fa-sticky-note form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.PageName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="col-12 col-sm-9 col-md-6  has-feedback">
+                <label class="control-label">Title</label>
+                <div class="controls">
+                    @Html.EditorFor(model => model.PageTitle, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="fa fa-sticky-note form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.PageTitle, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            @if (pagename!="home" && pagename!="about" && pagename!="contact")
+            {<div class="col-12 col-sm-3  col-md-2  has-feedback">
+                    <label class="control-label">Include In</label>
+                    <div class="controls">
+                        @Html.DropDownListFor(model => model.Description, new SelectList(new List<string> { "None", "Header Menu", "Footer Menu", "Both" }), new { @class = "form-control" })
+                        <span class="fa fa-sticky-note form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            }
+            <div class="col-12 has-feedback">
+                <label class="control-label">Tags</label>
+                <div class="controls">
+                    @Html.EditorFor(model => model.Tags, new { htmlAttributes = new { @class = "form-control" } })
+                    <span class="fa fa-sticky-note form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.Tags, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-12 has-feedback">
+                <label class="control-label">
+                    Content
+                </label>
+                <div class="controls">
+                    <textarea name="test" id="texts" class="d-none"></textarea>
+                    @Html.TextAreaFor(model => model.PageContent, htmlAttributes: new { @class = "form-control", rows = "20" })
+                    @Html.ValidationMessageFor(model => model.PageContent, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-12 col-md-12">
+                <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary sico-btn pull-right my-2 ">
+                    Save
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    </form>
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+
+<script>
+    $('#PageContent').summernote(
+        {
+            height: 300,                 // set editor height
+            minHeight: 300,             // set minimum height of editor
+            maxHeight: 300,             // set maximum height of editor
+            focus: true                  // set focus to editable area after initializing summernote
+        });
+
+</script>
+

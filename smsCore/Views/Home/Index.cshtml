@@ -1,0 +1,280 @@
+﻿@model PublicPage
+@inject SchoolEntities context
+@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_LayoutBlank.cshtml";
+
+    var sliders = context.PublicSliders.Where(w => w.IsActive &&  w.SliderGroup=="home").ToList();
+
+    var posts = context.PublicPosts.Where(w=>w.IsActive).OrderByDescending(d => d.ModifiedOn).Take(4).Select(s => new
+    {
+        s.Id,
+        Name = s.PostTitle,
+        PreviewImage= s.PreviewImage.Replace("~",""),
+        ShortDescription = s.PostContent.Remove(40)
+    }).ToList();
+}
+<!-- Start Banner -->
+<div class="ulockd-home-slider">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="pogoSlider" id="js-main-slider">
+                @if (sliders.Count>0)
+                {
+                    foreach (var s in sliders)
+                    {<div class="pogoSlider-slide" style="background-image:url(@s.ImagePath);">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="slide_text">
+                                            <h3><span span class="theme_color">@s.FirstLine</span><br>@s.SecondLine</h3>
+                                            <h4>@s.ThirdLine</h4>
+                                            <br>
+                                            <div class="full center">
+                                                <a class="contact_bt" href="@s.ButtonUrl">@s.ButtonText</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="pogoSlider-slide" style="background-image: url(/publicsite/images/banner_img.png); ">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="slide_text">
+                                        <h3><span span class="theme_color">You only have know one thing</span><br>you can learn anything</h3>
+                                        <h4>Free Educations</h4>
+                                        <br>
+                                        <div class="full center">
+                                            <a class="contact_bt" href="courses.html">Start a Course</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pogoSlider-slide" style="background-image: url(/publicsite/images/banner_img.png); ">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="slide_text">
+                                        <h3><span span class="theme_color">You only have know one thing</span><br>you can learn anything</h3>
+                                        <h4>Free Educations</h4>
+                                        <br>
+                                        <div class="full center">
+                                            <a class="contact_bt" href="courses.html">Start a Course</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <!-- .pogoSlider -->
+        </div>
+    </div>
+</div>
+<!-- End Banner -->
+<!-- section -->
+<div class="section tabbar_menu">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="tab_menu">
+                    <ul>
+                        <li><a href="#"><span class="icon"><img src="~/publicsite/images/i1.png" alt="#" /></span><span>University Life</span></a></li>
+                        <li><a href="#"><span class="icon"><img src="~/publicsite/images/i2.png" alt="#" /></span><span>Graduation</span></a></li>
+                        <li><a href="#"><span class="icon"><img src="~/publicsite/images/i3.png" alt="#" /></span><span>Athletics</span></a></li>
+                        <li><a href="#"><span class="icon"><img src="~/publicsite/images/i4.png" alt="#" /></span><span>Social</span></a></li>
+                        <li><a href="#"><span class="icon"><img src="~/publicsite/images/i5.png" alt="#" /></span><span>Location</span></a></li>
+                        <li><a href="#"><span class="icon"><img src="~/publicsite/images/i6.png" alt="#" /></span><span>Call us</span></a></li>
+                        <li><a href="#"><span class="icon"><img src="~/publicsite/images/i7.png" alt="#" /></span><span>Email</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end section -->
+@if (Model!=null)
+{
+    <text>
+    @Html.Raw(Model.PageContent);
+</text>
+}
+<!-- end section -->
+<!-- section -->
+<div class="section layout_padding padding_bottom-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="full">
+                    <div class="heading_main text_align_center">
+                        <h2><span>News</span></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="demo" class="carousel slide" data-ride="carousel">
+
+                    <!-- The slideshow -->
+                    <div class="carousel-inner">
+                        @if (posts.Count()>0)
+                        {
+                           for(int i=0;i<posts.Count();i++) {
+                               var p = posts.ElementAt(i);
+
+                               var p2 = (i+1)<posts.Count() ? posts.ElementAt(i+1) : null;
+                               <div class="carousel-item active">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="full blog_img_popular">
+                                            <img class="img-responsive" src="@p.PreviewImage" alt="#" />
+                                            <h4>@p.Name</h4>
+                                            <p>@p.ShortDescription</p>
+                                        </div>
+                                    </div>
+                                    @if (p2!=null)
+                                    {<div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="full blog_img_popular">
+                                            <img class="img-responsive" src="@p2.PreviewImage" alt="#" />
+                                            <h4>@p2.Name</h4>
+                                            <p>@Html.Raw(p2.ShortDescription)</p>
+                                        </div>
+                                    </div>
+                                        i++;
+                                    }
+                                </div>
+                            </div>}
+                        }
+                        else
+                        {<div class="carousel-item active">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="full blog_img_popular">
+                                            <img class="img-responsive" src="~/publicsite/images/img9.png" alt="#" />
+                                            <h4>Technology</h4>
+                                            <p>Pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="full blog_img_popular">
+                                            <img class="img-responsive" src="~/publicsite/images/img8.png" alt="#" />
+                                            <h4>Education</h4>
+                                            <p>Pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="full blog_img_popular">
+                                            <img class="img-responsive" src="~/publicsite/images/img9.png" alt="#" />
+                                            <h4>Technology</h4>
+                                            <p>Pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-12">
+                                        <div class="full blog_img_popular">
+                                            <img class="img-responsive" src="~/publicsite/images/img8.png" alt="#" />
+                                            <h4>Education</h4>
+                                            <p>Pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Left and right controls -->
+                    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#demo" data-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </a>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- end section -->
+<!-- section -->
+<div class="section layout_padding padding_bottom-0">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="full">
+                    <div class="heading_main text_align_center">
+                        <h2><span>Contact</span></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end section -->
+<!-- section -->
+<div class="section contact_section" style="background:#12385b;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12">
+                <div class="full float-right_img">
+                    <img src="~/publicsite/images/img10.png" alt="#">
+                </div>
+            </div>
+            <div class="layout_padding col-lg-6 col-md-6 col-sm-12">
+                <div class="contact_form">
+                    @*<form action="/SendEmail">*@
+                        <fieldset>
+                            <div class="full field">
+                                <input type="text" placeholder="Your Name" name="fullname" />
+                            </div>
+                            <div class="full field">
+                                <input type="email" placeholder="Email Address" name="email" />
+                            </div>
+                            <div class="full field">
+                                <input type="number" placeholder="Phone Number" name="phonenumber" />
+                            </div>
+                            <div class="full field">
+                                <textarea placeholder="Massage" name="message"></textarea>
+                            </div>
+                            <div class="full field">
+                                <div id="contat_messge" class="my-2 alert alert-info">Your Message sent successfully.</div>
+                                <div class="center" id="btnsendmessage"><button>Send</button></div>
+                            </div> 
+                        </fieldset>
+                    @*</form>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end section -->
+
+@section scripts{
+    <script>
+        $('#btnsendmessage').on('click', function () {
+            var name = $('input[name="fullname"]').val();
+            var email = $('input[name="email"]').val();
+            var phone = $('input[name="phonenumber"]').val();
+            var message = $('input[name="message"]').val();
+
+            $.post('/post/sendemail', {name,email,phone,message}, function () {
+                $('#contat_messge').html('Your message sent successfully.').show();
+            })
+
+        })
+    </script>
+} 

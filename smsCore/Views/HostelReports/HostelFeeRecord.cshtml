@@ -1,0 +1,135 @@
+﻿@using Models
+@inject StaticResources resources
+
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@{
+    ViewBag.Title = "HostelFeeRecord";
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                <a href="@Url.Action("HostelReports", "Reports")">Hostel Report</a>
+            </li>
+            <li class="active">
+                Hostel Fee Record
+            </li>
+        </ul>
+    </div>
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-3 form-group has-feedback">
+                            <label>Hostel</label>
+                            <div class="controls">
+                                @Html.DropDownList("hostel", (SelectList) ViewBag.hstlename, new {@class = "form-control "})
+                            
+                            <span class="fa fa-building small form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                        </div>
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Reg No</label>
+                            <div class="controls">
+                                <input type="text" id="regno" class="form-control" value="1-50000"/>
+                           
+                            <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                        </div>
+
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            @{
+
+                var grid = new GridModel()
+                {
+                    GridId="listHostelFee",
+                    AllowPrint=true,
+                    AllowPdfExport=true,
+                    AllowExcelExport=true,
+                    ReportTitle="Hostel Attendance Record",
+                    Columns=new List<Column>() {
+                    new Column{ FieldName="RegNo",HeaderText="Reg.No", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="Name",HeaderText="Name", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="FName",HeaderText="Father Name", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="mobile",HeaderText="Mobile No", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="cnic",HeaderText="CNIC", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="date",HeaderText="Date", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="timeIn",HeaderText="Time In", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="timeOute",HeaderText="Time Out", Width="", TextAlign= TextAlign.Left },
+
+                    }
+
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("GridS").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnChooser().AllowResizing().Columns(col =>
+            {
+                col.Field("RegNo").HeaderText("RegNo").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Name").HeaderText("Name").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("FName").HeaderText("FName").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("mobile").HeaderText("MobileNo").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("cnic").HeaderText("CNIC").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("date").HeaderText("Date").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("timeIn").HeaderText("Time_In").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("timeOut").HeaderText("Time_Out").Width("80").TextAlign(TextAlign.Left).Add();
+            }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "Search", "ColumnChooser" }).Render()*@
+    
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    function reloadGridData() {
+        $('#jqgclasswisereport').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    $('#btnSearch').on('click',
+        function() {
+            var regno = $('#regno').val();
+            var url1 = '@Url.Action("GetHostelFeeRecordList")';
+            url1 += '?hostel=' + $('#hostel').val() + '&regno=' + regno;
+            var messageTop = 'Admission History' + 'List';
+            $.get(url1,
+                null,
+                function (data) {
+                    var gridObj = document.getElementById("@grid.GridId").ej2_instances[0];
+                    // Refreshes the grid data source
+                    gridObj.dataSource = (data);
+                });
+        });
+
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("GridS").ej2_instances[0];
+    //    if (args.item.id === 'GridS_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'GridS_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+</script>
+@Html.EJS().ScriptManager()

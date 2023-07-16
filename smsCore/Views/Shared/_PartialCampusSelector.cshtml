@@ -1,0 +1,669 @@
+﻿@using Models
+@using smsCore.Data.Helpers;
+
+@inject CurrentUser CurrentUser;
+@inject ClaimHelper _chelper;
+@inject StaticResources rec;
+
+
+@{
+    var userTypes = CurrentUser.BasicUserType;
+    Layout = null;
+    Model.ParentContainerID = Model.ParentContainerID.StartsWith("#") ? Model.ParentContainerID : "#" + Model.ParentContainerID;
+    Model.ParentContainerID = Model.ParentContainerID.EndsWith(" ") ? Model.ParentContainerID : Model.ParentContainerID + " ";
+   // string rocketLoader = Request.IsAjaxRequest() ? "type=text/javascript" : StaticResources.JavaScript;// ;
+}
+<div id="invisible-control">
+    @if (userTypes == EnumManager.BasicUserType.Campus)
+    {
+        Model.ShowCampus = false;
+        <text>
+            <input type="hidden" value="@CurrentUser.GetCampusIds().FirstOrDefault()" name="@Model.CampusFieldName" id="Campus"  />
+        </text>
+    }
+    else if (userTypes == EnumManager.BasicUserType.Employee)
+    {
+        Model.ShowCampus = false;
+        Model.ShowEmployee = false;
+
+        <text>
+            <input type="hidden" value="@CurrentUser.GetCampusIds().FirstOrDefault()" name="@Model.CampusFieldName" id="Campus" />
+            <input type="hidden" value="@CurrentUser.primaryId" name="@Model.EmployeeID" id="Employee" />
+        </text>
+    }
+</div>
+
+
+@{
+    if (Model.ShowSession)
+    {
+        <div class="@Model.ColCssClass" id="session-control">
+            <label for="basicinput">Session</label>
+            @if (Model.AddNew)
+            {
+                <a class="new" href="@Url.Action("Create", "ClassManagement", new { type = EnumManager.newgroupEntry.Campus })" data-type="ses" title="Add New Campus">
+                    <i class="fa fa-plus"></i>
+                </a>
+            }
+            <div class="controls">
+                <select name="@Model.SessionFieldName" id="Session" class=" form-control" required></select>
+                <span class="fa fa-calendar-alt form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+
+    if (Model.ShowCampus && userTypes == EnumManager.BasicUserType.User)
+    {
+        <div class="@Model.ColCssClass" id="campus-control">
+            <label for="basicinput">Campus</label>
+            @if (Model.AddNew)
+            {
+                <a class="new" href="@Url.Action("Create", "ClassManagement", new { type = EnumManager.newgroupEntry.Campus })" data-type="cmp" title="Add New Campus">
+                    <i class="fa fa-plus"></i>
+                </a>
+            }
+            <div class="controls">
+                <select name="@Model.CampusFieldName" id="Campus" class=" form-control" asp-items="ViewBag.CampusId" required></select>
+                <span class="fa fa-city form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+    if (Model.ShowClasses)
+    {
+        <div class="@Model.ColCssClass" id="class-control">
+            <label for="basicinput">Classes</label>
+            @if (Model.AddNew)
+            {
+                <a class="new" href="@Url.Action("Create", "ClassManagement", new { type = EnumManager.newgroupEntry.Classes })" data-type="cls" title="Add New Classes">
+                    <i class="fa fa-plus"></i>
+                </a>
+            }
+            <div class="controls">
+                <select name="@Model.ClassesFieldName" id="Classes" class=" form-control" asp-items="ViewBag.ClassId" required></select>
+                <span class="fa fa-door-open form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+
+    if (Model.ShowGroups)
+    {
+        <div class="@Model.ColCssClass" id="group-control">
+            <label for="basicinput">Groups</label>
+            @if (Model.AddNew)
+            {
+                <a class="new" href="@Url.Action("Create", "ClassManagement", new { type = EnumManager.newgroupEntry.Group })" data-type="grp" title="Add New Group">
+                    <i class="fa fa-plus"></i>
+                </a>
+            }
+            <div class="controls">
+                <select name="@Model.GroupsFieldName" id="Groups" class=" form-control" required></select>
+                <span class="fa fa-widnow-frame-open form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+
+    if (Model.ShowSections)
+    {
+        
+        <div class="@Model.ColCssClass" id="section-control">
+            <label for="basicinput">Sections</label>
+            @if (Model.AddNew)
+            {
+                <a class="new" href="@Url.Action("Create", "ClassManagement", new { type = EnumManager.newgroupEntry.Section })" data-type="sec" title="Add New Section">
+                    <i class="fa fa-plus"></i>
+                </a>
+            }
+            <div class="controls">
+                <select name="@Model.SectionsFieldName" id="Sections" class="form-control" asp-items="ViewBag.Sections" required></select>
+                <span class="fa fa-city form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+    if (Model.ShowExams)
+    {
+        <div class="@Model.ExamColCssClass" id="exam-control">
+            <label for="basicinput">Exams</label>
+            @if (Model.AddNew || Model.AddNewExam)
+            {
+                <a class="new" href="@Url.Action("Create", "ClassManagement", new { type = EnumManager.newgroupEntry.Exam })" data-type="cmp" title="Add New Exam">
+                    <i class="fa fa-plus"></i>
+                </a>
+            }
+            <div class="controls">
+                <select name="@Model.ExamsFieldName" id="Exams" asp-items="ViewBag.Exam" class="form-control" required></select>
+                <span class="fa fa-clipboard form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+    if (Model.ShowSubjects)
+    {
+        <div class="@Model.ColCssClass" id="subject-control">
+            <label for="basicinput">Subjects</label>
+            @if (Model.AddNew)
+            {
+                <a class="new" href="@Url.Action("Create", "ClassManagement", new { type = EnumManager.newgroupEntry.Subject })" data-type="sub" title="Add New Subject">
+                    <i class="fa fa-plus"></i>
+                </a>
+            }
+            <div class="controls">
+                <select name="@Model.SubjectsFieldName" id="Subjects" class="" required></select>
+                <span class="fa fa-book form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+    if (Model.ShowFeeGroup)
+    {
+        <div class="@Model.ColCssClass" id="feeGroup-control">
+            <label for="basicinput">Fee Group</label>
+            @if (Model.AddNew)
+            {
+                <a class="new" href="@Url.Action("Create", "ClassManagement", new { type = EnumManager.newgroupEntry.FeeGroup })" data-type="fgrp" title="Add New Fee Group">
+                    <i class="fa fa-plus"></i>
+                </a>
+            }
+            <div class="controls">
+                <select name="@Model.FeeGroupFieldName" id="FeeGroup" asp-items="ViewBag.Fee" class="form-control"></select>
+                <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+
+    if (Model.ShowEmployee)
+    {
+        <div class="@Model.ColCssClass" id="employee-control">
+            <label for="basicinput">Employee</label>
+            @if (Model.AddNew)
+            {
+                <a class="new" href="@Url.Action("EmployeeCreation", "Payroll")" title="Add New Employee">
+                    <i class="fa fa-plus"></i>
+                </a>
+            }
+            <div class="controls">
+                <select name="@Model.EmployeeFieldName" id="Employee" class="form-control"></select>
+                <span class="fa fa-user-friends form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+    }
+}
+
+<script @rec.JavaScript>
+    var modul = (function () {
+        $(function () {
+            @if (Model.ShowSession) //if class controls exist then load class data to dropdown list.
+            {
+                <text> LoadSessions();</text>
+            }
+
+            @if (Model.ShowCampus && userTypes == EnumManager.BasicUserType.User) //if class controls exist then load class data to dropdown list.
+            {
+                <text>
+                    LoadCampus();
+                </text>
+            }
+            else if (userTypes == EnumManager.BasicUserType.Campus)
+            {
+                {
+                    if (Model.ShowClasses) //if class controls exist then load class data to dropdown list.
+                    {
+                        <text>
+                            LoadClasses();
+                        </text>
+                    }
+
+                    if (Model.ShowExams) //if exam controls exist then load exam data to dropdown list.
+                    {
+                        <text>
+                            LoadExams($('#Campus').val());
+                        </text>
+                    } //end exam id check
+
+                    if (Model.ShowEmployee)
+                    {
+                            <text>
+                            LoadEmployees($('#Campus').val());
+                        </text>
+
+                    }
+                }
+            }
+            else if (userTypes == EnumManager.BasicUserType.Employee)
+            {
+                {
+                    if (Model.ShowClasses) //if class controls exist then load class data to dropdown list.
+                    {
+                        <text>
+                            LoadClasses('@_chelper.GetIdFromClaims()');
+                        </text>
+                    }
+
+                    if (Model.ShowExams) //if exam controls exist then load exam data to dropdown list.
+                    {
+                        <text>
+                            LoadExams($('#Campus').val());
+                        </text>
+                    } //end exam id check
+                }
+            }
+            @if (Model.ShowClasses && userTypes == EnumManager.BasicUserType.User)
+            {
+                <text>
+                    LoadClasses();
+
+                </text>
+            }
+        }); //end body load
+
+        @if (Model.AddNew || Model.AddNewExam)
+        {
+            <text>
+                $(function() {
+                    $('@Model.ParentContainerID' + '.new').on('click',
+                        function(e) {
+                            e.preventDefault();
+                            var title = $(this).attr('title');
+                            var url = $(this).attr('href');
+                            var type = $(this).data('type');
+
+                            BootstrapDialog.show({
+                                title: title,
+                                message: $('<div />').load(url),
+                                onhide: function(dialogRef) {
+                                    if (type == 'cmp') {
+                                        LoadCampus();
+                                    } else if (type == 'cls' || type == 'sec' || type == 'fgrp' || type == 'ses') {
+                                        LoadClasses();
+                                    } else if (type == 'ses') {
+                                        LoadSessions();
+                                    }
+                                }
+                            });
+                            return false;
+                        });
+                });
+            </text>
+        }
+
+        @if (Model.ShowSession)
+        {
+            <text>
+        function LoadSessions() {
+
+            block('#session-control .select2-container');
+                    $.get('/api/selector/sessions?search=' + '@Model.ForSearch',
+                        function(session) {
+                            var sessions = JSON.parse(session);
+                            var sessionCombo = $('@Model.ParentContainerID#Session').html('').select2({
+                                data: sessions,
+                                width: '100%'
+                            });
+
+                            $('#session-control .select2-container').unblock();
+                            @if (Model.SessionID != -1)
+                            {
+                                <text>
+                                    sessionCombo.val('@Model.SessionID').trigger('change');
+                                </text>
+                            }
+                            $('@Model.ParentContainerID#invisible-control').children('#Session').remove();
+                        });
+                }
+            </text>
+        }//END OF SESSION LOAD
+
+        @if (Model.ShowCampus && userTypes == EnumManager.BasicUserType.User)
+        {
+            <text>
+        function LoadCampus() {
+            let cmpHtml = '<input type="hidden" value="@CurrentUser.SelectedCampusId" name="@Model.CampusFieldName" id="Campus" />';
+            $('@Model.ParentContainerID#invisible-control').children('#Campus').remove();
+            $('@Model.ParentContainerID#campus-control').remove();
+            $('@Model.ParentContainerID#invisible-control').append(cmpHtml);
+
+            let campusId = @CurrentUser.SelectedCampusId;
+    @if (Model.ShowEmployee)
+                            {
+                                <text>
+
+            LoadEmployees(campusId);
+
+                                </text>
+                            }
+            @if (Model.ShowSections || Model.ShowSubjects)
+                            {
+                                <text>
+            $('@Model.ParentContainerID#Classes').trigger('change');;
+
+                                </text>
+                            }
+
+            @if (Model.ShowExams)
+                            {
+                                <text>
+            LoadExams(campusId);
+                                </text>
+                            }
+
+             @(string.IsNullOrEmpty(Model.CampusLoadCallBack)?null:Html.Raw( Model.CampusLoadCallBack))
+
+        }
+
+                function LoadCampus2() {
+                    $.get('/api/selector/campuses?search=' + '@Model.ForSearch',
+                        function(campus) {
+                            var campuses = JSON.parse(campus);
+    let length =@(Model.ForSearch?2:1);
+    if(campuses.length==length)
+    {
+
+    let cmpHtml = '<input type="hidden" value="@CurrentUser.GetCampusIds().FirstOrDefault()" name="@Model.CampusFieldName" id="Campus" />';
+                            $('@Model.ParentContainerID#invisible-control').children('#Campus').remove();
+                            $('@Model.ParentContainerID#campus-control').remove();
+                            $('@Model.ParentContainerID#invisible-control').append(cmpHtml);
+    let campusId= $('@Model.ParentContainerID#Campus').val();
+    @if (Model.ShowEmployee)
+                            {
+                                <text>
+
+        LoadEmployees(campusId);
+
+                                </text>
+                            }
+                            @if (Model.ShowSections || Model.ShowSubjects)
+                            {
+                                <text>
+        $('@Model.ParentContainerID#Classes').trigger('change');;
+
+                                </text>
+                            }
+
+                            @if (Model.ShowExams)
+                            {
+                                <text>
+        LoadExams(campusId);
+                                </text>
+                            }
+    }
+    else{
+     var campusCombo = $('@Model.ParentContainerID#Campus').html('').select2({
+                                data: campuses,
+                                width: '100%'
+                            });
+
+                            var combo = $('@Model.ParentContainerID#Campus:not(.bound)');
+
+                            @if (Model.ShowEmployee)
+                            {
+                                <text>
+                                    combo.addClass('bound').on('change',
+                                        function() {
+                                            LoadEmployees($(this).val());
+                                        });
+
+                                </text>
+                            }
+                            @if (Model.ShowSections || Model.ShowSubjects)
+                            {
+                                <text>
+                                    combo.addClass('bound').on('change',
+                                        function() {
+                                            $('@Model.ParentContainerID#Classes').trigger('change');;
+                                        });
+
+                                </text>
+                            }
+
+                            @if (Model.ShowExams)
+                            {
+                                <text>
+                                    combo.addClass('bound').on('change',
+                                        function() {
+                                            LoadExams($(this).val());
+                                        });
+                                </text>
+                            }
+
+                            @if (Model.CampusID != -1)
+                            {
+                                <text>
+                                    campusCombo.val('@Model.CampusID').trigger('change');
+                                </text>
+                            }
+                            else
+                            {
+                                <text>
+                                    campusCombo.trigger('change');
+                                </text>
+                            }
+
+                            $('@Model.ParentContainerID#invisible-control').children('#Campus').remove();
+                        }
+                        @(string.IsNullOrEmpty(Model.CampusLoadCallBack)?null:Html.Raw( Model.CampusLoadCallBack))
+
+                        });
+                }
+            </text>
+        }
+
+        @if (Model.ShowClasses)
+        {
+            <text>
+        function LoadClasses(employeeId = -1) {
+            block('#class-control .select2-container');
+            $.get('/api/selector/classes/@Model.ForSearch' + '?employeeId=' + employeeId + '&classteacher=@Model.ShowClasseForClassTeacher',
+                        function(classes) {
+                            var classes = JSON.parse(classes);
+                            var classCombo = $('@Model.ParentContainerID#Classes').html('').select2({
+                                data: classes,
+                                width: '100%'
+                            });
+                            $('#class-control .select2-container').unblock();
+                            @if (Model.ClassID != -1)
+                            {
+                                <text>
+                                    classCombo.val('@Model.ClassID').trigger('change');
+                                </text>
+                            }
+                            var combo = $('@Model.ParentContainerID#Classes:not(.bound)');
+                            $('@Model.ParentContainerID#invisible-control').children('#Classes').remove();
+                            if ($('@Model.ParentContainerID#section-control').length > 0) //if group controls exist then load exam data to dropdown list.
+                            {
+                                //$('#myButton:not(.bound)').addClass('bound')
+                                combo.addClass('bound').on('change',
+                                    function() {
+                                        @if (userTypes == EnumManager.BasicUserType.Employee)
+                                        {
+                                            <text>
+                                                LoadSections($(this).val(), '@_chelper.GetIdFromClaims()');
+                                            </text>
+                                        }
+                                        else
+                                        {
+                                            <text> LoadSections($(this).val());</text>
+                                        }
+                                    });
+                            }
+                            if ($('@Model.ParentContainerID#feeGroup-control').length > 0) //if group controls exist then load exam data to dropdown list.
+                            {
+                                combo.addClass('bound').on('change',
+                                    function() {
+                                        LoadFeeGroups($(this).val());
+                                    });
+
+                            }
+                            if ($('@Model.ParentContainerID#subject-control').length > 0) //if subject controls exist then load exam data to dropdown list.
+                            {
+                                combo.addClass('bound').on('change',
+                                    function() {
+
+                                        @if (userTypes == EnumManager.BasicUserType.Employee)
+                                        {
+                                            <text>
+                                                LoadSubjects($(this).val(), '@_chelper.GetIdFromClaims()');
+                                            </text>
+                                        }
+                                        else
+                                        {
+                                            <text> LoadSubjects($(this).val());</text>
+                                        }
+                                    });
+
+                            }
+
+                            if ($('@Model.ParentContainerID#group-control').length > 0) //if group controls exist then load exam data to dropdown list.
+                            {
+                                //load group like pre medical and engineering
+                            }
+
+                            classCombo.trigger('change');
+
+                        });
+                }
+            </text>
+        }
+
+        @if (Model.ShowSections)
+        {
+            <text>
+        function LoadSections(classid, employeeId = -1) {
+
+            block('#section-control .select2-container');
+                    var campusId = $('#Campus').val();
+                    $.get('/api/selector/sections/' + classid + '/' + campusId + '?search=' + '@Model.ForSearch' + '&employeeId=' + employeeId+ '&classteacher=@Model.ShowClasseForClassTeacher',
+                        function(classes) {
+                            var classes = JSON.parse(classes);
+
+                            var sectionCombo = $('@Model.ParentContainerID#Sections').html('').select2({
+                                data: classes,
+                                width: '100%'
+                            });
+
+                            $('#section-control .select2-container').unblock();
+                            @if (Model.SectionID != -1)
+                            {
+                                <text>
+                                    sectionCombo.val('@Model.SectionID').trigger('change');
+                                </text>
+                            }
+                            $('@Model.ParentContainerID#invisible-control').children('#Sections').remove();
+                        });
+                }
+            </text>
+        }
+
+        @if (Model.ShowSubjects)
+        {
+            <text>
+        function LoadSubjects(classid, employeeId = -1) {
+
+            block('#subject-control .select2-container');
+                    var campusId = $('@Model.ParentContainerID#Campus').val();
+                    $.get('/api/selector/subjects/' + classid + '/' + campusId + '?search=' + '@Model.ForSearch' + '&employeeId=' + employeeId,
+                        function(subject) {
+                            var subjects = JSON.parse(subject);
+
+                            var subjectCombo = $('@Model.ParentContainerID#Subjects').html('').select2({
+                                data: subjects,
+                                width: '100%'
+                            });
+
+                            $('#subject-control .select2-container').unblock();
+                            @if (Model.SubjectID != -1)
+                            {
+                                <text>
+                                    subjectCombo.val('@Model.SubjectID').trigger('change');
+                                </text>
+                            }
+                            $('@Model.ParentContainerID#invisible-control').children('#Subjects').remove();
+                        });
+                }
+            </text>
+        }
+
+        @if (Model.ShowFeeGroup)
+        {
+            <text>
+        function LoadFeeGroups(classid) {
+
+            block('#feeGroup-control .select2-container');
+                    var campusId = $('#Campus').val();
+                    $.get('/api/selector/feegroups/' + classid + '/' + campusId + '?search=' + '@Model.ForSearch'+ '&showFree=' + '@Model.ShowFreeFeeGroup',
+                        function(feegroup) {
+                            var feegroups = JSON.parse(feegroup);
+
+                            var feegroupCobmo = $('@Model.ParentContainerID#FeeGroup').html('').select2({
+                                data: feegroups,
+                                width: '100%'
+                            });
+
+                            $('#feeGroup-control .select2-container').unblock();
+                            @if (Model.CampusID != -1)
+                            {
+                                <text>
+                                    feegroupCobmo.val('@Model.FeeGroupID').trigger('change');
+                                </text>
+                            }
+                            $('@Model.ParentContainerID#invisible-control').children('#FeeGroup').remove();
+                        });
+                }
+            </text>
+        }
+
+        @if (Model.ShowExams)
+        {
+            <text>
+        function LoadExams(campusId) {
+
+            block('#exam-control .select2-container');
+                    $.get('/api/selector/exams/@Model.ForSearch/' + campusId+'?loadlist=@Model.ShowExamsList',
+                        function(exam) {
+                            var exams = JSON.parse(exam);
+
+                            var examCombo = $('@Model.ParentContainerID#Exams').html('').select2({
+                                data: exams,
+                                width: '100%'
+                            });
+
+                            $('#exam-control .select2-container').unblock();
+                            @if (Model.ExamID != -1)
+                            {
+                                <text>
+                                    examCombo.val('@Model.ExamID').trigger('change');
+                                </text>
+                            }
+                            $('@Model.ParentContainerID#invisible-control').children('#Exams').remove();
+                        });
+                }
+            </text>
+        }
+
+    @if (Model.ShowEmployee)
+        {
+            <text>
+        function LoadEmployees(campusId) {
+
+            block('#employee-control .select2-container');
+                    $.get('/api/selector/employee/@Model.ForSearch/' + campusId,
+                        function(exam) {
+                            var employees = JSON.parse(exam);
+
+                            var empCombo = $('@Model.ParentContainerID#Employee').html('').select2({
+                                data: employees,
+                                width: '100%'
+                            });
+
+                            $('#employee-control .select2-container').unblock();
+                            @if (Model.EmployeeID != -1)
+                            {
+                                <text>
+                                    empCombo.val('@Model.EmployeeID').trigger('change');
+                                </text>
+                            }
+                            $('@Model.ParentContainerID#invisible-control').children('#Employee').remove();
+                        });
+                }
+            </text>
+        }
+
+    })(); //end of moule
+
+</script>

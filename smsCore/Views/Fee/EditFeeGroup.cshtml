@@ -1,0 +1,41 @@
+﻿@model FeeGroup
+@{
+    ViewBag.Title = "Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+@*@using (Ajax.BeginForm("EditFeeGroup", "Fee", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "FeeGroupeditmainForm #server-progress", OnBegin = "begin"}, new {id = "FeeGroupeditmainForm"}))
+{*@
+<form asp-action="EditFeeGroup" asp-controller="Fee"
+      data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeGroupeditmainForm">
+                   
+
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div id="classfeeedit">
+        @*@Html.Partial("_PartialSchoolProperty", new ViewDataDictionary { { "NoSubjects", true }, { "NoSession", true }, { "NoFeeGroup", true }, { "NoClasses", true }, { "NoSections", true }, { "NoExams", true }, { "NoGroups", true }, { "ColCssClass", "col-md-8 col-sm-8 col-xs-12" } })*@
+    </div>
+    <div class="col-md-8 col-sm-8 col-xs-12 form-group has-feedback pb-3">
+        <label> Fee Group:</label><font class="text-danger">*</font>
+        @Html.TextBoxFor(Model => Model.FeeGroupName, new {@class = "form-control", required = "required"})
+    </div>
+    <div class="form-group col-12 mt-4 pb-2">
+        <a href="@Url.Action("FeeGroupIndex", "Fee")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to List</a>
+
+        <button type="submit" value="Create" id="NewExamHeld" class="btn btn-primary pull-right">
+            <i class="fa fa-save mr-2"></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+            </span> Save
+        </button>
+    </div>
+</form>

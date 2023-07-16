@@ -1,0 +1,736 @@
+﻿@using System.Data
+@using Models
+@model Models.Student
+@inject SchoolEntities db
+@{
+    ViewBag.Title = "Create";
+
+    var admission = Model.Admissions.Where(w => w.IsExpell == false).FirstOrDefault();
+    var prevEdu = admission == null ? null : admission.StudentPreviousEducations.LastOrDefault() == null ? new StudentPreviousEducation() : admission.StudentPreviousEducations.LastOrDefault();
+    var tranport = admission == null ? null : Model.StudentsTransports.Count == 0 ? new StudentsTransport() : Model.StudentsTransports.FirstOrDefault();
+    // var examList = admission == null ? null : admission.Results.LastOrDefault() == null ? new Result() : admission.Results.LastOrDefault();
+
+    var expelDetails = Model.ExpellDetails.ToList();
+    ReAdmission readmission = null;
+    if (admission != null)
+    {
+        readmission = admission.ReAdmissions.FirstOrDefault();
+    }
+    var mobiles = Model.StudentMobiles.ToList();
+
+    var fathercnic = Model.CNIC.Trim();
+
+    var sibling = fathercnic.Length < 3 ? null : db.Students.Where(w => w.RegistrationNo != Model.RegistrationNo && w.CNIC == fathercnic).ToList();
+}
+
+
+<link href="~/assets/jqueryroadmap/jquery.roadmap.min.css" rel="stylesheet" />
+<style>
+    .roadmap.roadmap--orientation-vertical .roadmap__events__event:nth-child(2n+1) .event{
+        top:0px !important;
+    }
+    #student-tabs .nav-item {
+        float: left;
+    } 
+    #student-tabs .edit {
+    
+      }
+    #student-tabs .delete {
+        color: red;
+        margin: 0 12px;
+    }
+</style>
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a class="ajax-load" href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Details Student
+        </li>
+    </ul>
+</div>
+@{
+    var studentphotos = db.StudentPhotos.Where(w => w.StudentID == Model.ID).Select(s => s.StudentImage).FirstOrDefault();
+    var studentPath = "data:image/*;base64," + (studentphotos != null ? Convert.ToBase64String(studentphotos) : "");
+
+    if (studentphotos == null)
+    {
+        studentPath = "/Uploads/images/user.png";
+    }
+
+    var fatherPath = "data:image/*;base64," + (Model.FatherPhoto != null ? Convert.ToBase64String(Model.FatherPhoto) : "");
+    if (Model.FatherPhoto == null)
+    {
+        fatherPath = "/Uploads/images/user.png";
+    }
+
+    var GuardianSignPathphoto = db.SignatureSpecimen.Where(w => w.StudentID == Model.ID).Select(s => s.GaurdianSign).FirstOrDefault();
+    var GuardianSignPath = "data:image/*;base64," + (GuardianSignPathphoto != null ? Convert.ToBase64String(GuardianSignPathphoto) : "");
+    if (GuardianSignPathphoto == null)
+    {
+        GuardianSignPath = "/Uploads/images/site/signature.png";
+    }
+    var FatherSignPathphoto = db.SignatureSpecimen.Where(w => w.StudentID == Model.ID).Select(s => s.FatherSign).FirstOrDefault();
+    var FatherSignPath = "data:image/*;base64," + (FatherSignPathphoto != null ? Convert.ToBase64String(FatherSignPathphoto) : "");
+    if (FatherSignPathphoto == null)
+    {
+        FatherSignPath = "/Uploads/images/site/signature.png";
+    }
+
+    var infocls = admission == null ? "bg-danger text-light" : "bg-info text-light";
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-body box-profile">
+                    <img class="profile-user-img img-fluid" id="profile-user-img" src="@studentPath" alt="User profile picture">
+                    <h3 class="profile-username text-center">@Model.StudentName</h3>
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item listnoback @infocls">
+                            <span>Reg Number</span> <a class="float-right text-white">@Model.RegistrationNo</a>
+                        </li>
+                        @if (admission != null)
+                        {
+                            @*<li class="list-group-item listnoback">
+                                <b>Admission Number</b> <a class="pull-right text-aqua">@admission.ID</a>
+                            </li>*@
+                            <li class="list-group-item listnoback">
+                                <span>Campus</span> <a class="float-right text-aqua">@admission.Campus.CampusName</a>
+                            </li>
+                            <li class="list-group-item listnoback">
+                                <span>Class</span> <a class="float-right text-aqua">@admission.ClassSection.Class.ClassName</a>
+                            </li>
+                            <li class="list-group-item listnoback">
+                                <span>Section</span> <a class="float-right text-aqua">@admission.ClassSection.Section.SectionName</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="list-group-item listnoback">
+                                <span>Date</span> <a class="float-right text-aqua">@expelDetails.LastOrDefault().EntryDate.ToString("dd-MMM-yyyy")</a>
+                            </li>
+                            <li class="list-group-item listnoback">
+                                <span>Last Campus</span> <a class="float-right text-aqua">@expelDetails.LastOrDefault().LastCampus</a>
+                            </li>
+                            <li class="list-group-item listnoback">
+                                <span>Last Class</span> <a class="float-right text-aqua">@expelDetails.LastOrDefault().LastClass</a>
+                            </li>
+                            <li class="list-group-item listnoback">
+                                <span>Last Section</span> <a class="float-right text-aqua">@expelDetails.LastOrDefault().LastSection</a>
+                            </li>
+                        }
+                        <li class="list-group-item listnoback">
+                            <span>Gender</span> <a class="float-right text-aqua">@Model.Sex</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            @if (sibling != null)
+            {
+                foreach (var itm in sibling)
+                {
+                    <div class=" card mt-4">
+                        <div class="card-header with-border">
+                            <h3 class="box-title">Sibling</h3>
+                        </div>
+                        <!-- /.box-header -->
+
+                        <div class="card-body">
+                            <div class="box box-widget widget-user-2">
+                                <!-- Add the bg color to the header using any of the bg-* classes -->
+                                <div class="siblingview">
+                                    @{
+                                        var siblingPath = "/Content/Photos/Students/" + itm.RegistrationNo + ".jpg";
+                                        //if (!File.Exists(Server.MapPath(siblingPath)))
+                                        //{
+                                        //    siblingPath = "/Uploads/images/user.png";
+                                        //}
+                                    }
+                                    <img class="img-circle " src="@siblingPath" alt="User Avatar" style="max-width: 110px">
+                                    <h4>
+                                        <a class="ajax-load" href="@Url.Action("Studentview", "Students", new {id = itm.ID})">@itm.StudentName</a>
+                                    </h4>
+                                </div>
+                                <div class="box-footer no-padding">
+                                    <ul class="list-group list-group-unbordered">
+                                        <li class="list-group-item">
+
+
+                                            <span>Reg Number</span> <a class="float-right text-aqua">@itm.RegistrationNo</a>
+                                        </li>
+
+                                        <li class="list-group-item">
+                                            <span>Class</span> <a class="float-right text-aqua">@db.Admissions.Where(w => w.Student.ID == itm.ID).Select(s => s.ClassSection.Class.ClassName).FirstOrDefault()</a>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <span>Section</span> <a class="float-right text-aqua">@db.Admissions.Where(w => w.Student.ID == itm.ID).Select(s => s.ClassSection.Section.SectionName).FirstOrDefault()</a>
+
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <!-- /.box-body -->
+
+                    </div>
+                }
+            }
+
+
+        </div>
+        <div class="col-md-9">
+
+            <div class="nav-tabs-custom">
+                <ul id="student-tabs" class="nav nav-tabs" style="text-align: right; float: left; display: block; width: 100%;">
+                    <li class="active nav-item">
+                        <a class="nav-link" href="#activity" data-toggle="tab" aria-expanded="true">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#session-fee" data-toggle="tab" aria-expanded="false">Fees</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#session-exam" data-toggle="tab" aria-expanded="false">Exam</a>
+                    </li>
+
+                    @*<li class="">
+            <a href="#documents" data-toggle="tab" aria-expanded="false">Documents</a>
+        </li>*@
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#timelineh" data-toggle="tab" aria-expanded="false">Timeline</a>
+                    </li>
+
+                    @if (admission != null)
+                    {
+                        <li class="float-right mt-2 edit">
+                            <a href="@Url.Action("Edit", "Students", new {Model.ID})" class="ajax-load" data-toggle="tooltip" title="Edit" data-original-title="Edit">
+                                <i class="fa fa-edit"></i>
+                            </a>
+                        </li>
+                        <li class="float-right ml-2 mt-2 delete">
+                            <a href="#" onclick="expelldetails(@Model.ID)" data-toggle="tooltip" title="Expell Student" data-original-title="Disable">
+                                <i class="fa fa-trash"></i>
+                            </a>
+
+                        </li>
+                    }
+                    else if (expelDetails.Count>0)
+                    {
+                <li class="float-right ml-2 mt-2 delete">
+                    <a title="Readmission" href="/Students/UnExpell?expellDetailID=@expelDetails.OrderByDescending(d=>d.EntryDate).Select(s=>s.ID).FirstOrDefault()" class="unexpell">
+                    <i class="fa fa-arrow-rotate-right mr-2"></i> Re admission</a>
+                </li>
+                }
+
+                    </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="activity">
+                        <div class="tshadow mb25 bozero">
+                            <div class="table-responsive around10 pt0">
+                                <table class="table tmb0">
+                                    <tbody>
+                                        <tr class="">
+                                            <td class="">Admission Date</td>
+                                            <td class="">
+                                                @Model.AdmissionDate.ToString("dd MMM yyyy")
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Date Of Birth</td>
+                                            <td>@Model.DOB.ToString("dd MMM yyyy")</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Office Telephone No</td>
+                                            <td>
+                                                @Model.OfficeTelephone
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Residance telephone</td>
+                                            <td>@Model.ResidanceTelephone</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Religion</td>
+                                            <td>@Model.Religion</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Email</td>
+                                            <td>@Model.Email</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Domicile</td>
+                                            <td>@Model.Domicile</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Missing Documents</td>
+                                            <td>@Model.MissingDocuments</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Submission Date</td>
+                                            <td>@Model.DateForSubmission</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Student CNIC</td>
+                                            <td>@Model.StudentCNIC</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Nationality</td>
+                                            <td>@Model.Nationality</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mother Tongue</td>
+                                            <td>@Model.MotherTongue</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Live With</td>
+                                            <td>@Model.LiveWith</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Games</td>
+                                            <td>@Model.Games</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Last Intitution Attended</td>
+                                            <td>@Model.LastIntitution</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Note</td>
+                                            <td>@Model.Remarks</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tshadow mb25 bozero">
+                            <h3 class="pagetitleh2">Address </h3>
+                            <div class="table-responsive around10 pt0">
+                                <table class="table  tmb0">
+                                    <tbody>
+                                        <tr>
+                                            <td>Current Address</td>
+                                            <td>@Model.PostalAddress</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Permanent Address</td>
+                                            <td>@Model.PermenantAddress</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tshadow mb25 bozero">
+                            <h3 class="pagetitleh2">Parent / Guardian Details </h3>
+                            <div class="table-responsive around10 pt10">
+                                <table class="table  tmb0">
+                                    <tbody>
+                                        <tr>
+                                            <td class="">Father Name</td>
+                                            <td>@Model.FName</td>
+
+                                            <td rowspan="3">
+                                                <img class="profile-user-img img-responsive img-circle" id="profile-user-img" src="@fatherPath" alt="User profile picture" style="width: 100px;">
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td class="">Is Live</td>
+                                            <td>
+                                                @{
+                                                    var islive = "Yes";
+                                                    if (Model.FatherAlive == "true")
+                                                    {
+                                                        islive = "No";
+                                                    }
+                                                }
+                                                @islive
+                                            </td>
+
+                                        </tr>
+                                        <tr>
+                                            <td class="">Father Cnic</td>
+                                            <td>@Model.CNIC</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>Father Qualification</td>
+                                            <td>@Model.FatherQualification</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>Father Nature Of Job</td>
+                                            <td>@Model.FatherNatureOfJob</td>
+                                            <td rowspan="3">
+                                                <img src="@FatherSignPath" class="d-block m-auto img-circle img-responsive" style="width: 100px;" />
+                                                <p class="text-center">Father Sign</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Father Profession</td>
+                                            <td>@Model.FatherProfession</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Father Department</td>
+                                            <td>@Model.FatherDepartment</td>
+
+                                        </tr>
+
+                                        <tr>
+                                            <td>Mother Name</td>
+                                            <td>@Model.MotherName</td>
+                                            <td rowspan="3"></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mother Qualification</td>
+                                            <td>@Model.MotherQualification</td>
+
+                                        </tr>
+                                        <tr>
+                                            <td>Mother Occupation</td>
+                                            <td>@Model.MotherProfession</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Guardian Name</td>
+                                            <td>@Model.GuardianName</td>
+                                            <td rowspan="3">
+                                                <img src="@GuardianSignPath" class="d-block m-auto img-circle img-responsive" style="width: 100px;" />
+                                                <p class="text-center">Guardian Sign</p>
+
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td>Student Relation With Guardian</td>
+                                            <td>@Model.StdRelation</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Mother tongue</td>
+                                            <td>@Model.MotherTongue</td>
+                                        </tr>
+                                        @*<tr>
+                                                <td>Guardian Phone</td>
+                                                <td>98654646</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Guardian Occupation</td>
+                                                <td>Lawyer</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Guardian Address</td>
+                                                <td>West Brooklyn</td>
+                                            </tr>*@
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        @if (admission != null)
+                        {
+                            <div class="tshadow mb25  bozero">
+                                <h3 class="pagetitleh2">Transport Records</h3>
+
+                                <div class="table-responsive around10 pt0">
+                                    <table class="table  tmb0">
+                                        <tbody>
+
+
+                                            <tr>
+                                                <td>pict Point</td>
+                                                <td>@tranport.PickPoint</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pick Time</td>
+                                                <td>@tranport.PickTime</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Driver Name</td>
+                                                <td>@(tranport.Driver == null ? "" : tranport.Driver.DriverName)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Trip</td>
+                                                <td>@tranport.TripNumber</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Fare</td>
+                                                <td>@tranport.Fare</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Start From</td>
+                                                <td>@tranport.Started</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Close On</td>
+                                                <td>@tranport.Closed</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                        @if (admission != null)
+                        {
+                            <div class="tshadow mb25 bozero">
+                                <h3 class="pagetitleh2">Previous Board Examination Records</h3>
+
+                                <div class="table-responsive around10 pt0">
+                                    <table class="table  tmb0">
+                                        <tbody>
+
+                                            <tr>
+                                                <td class="">Board Name</td>
+                                                <td>@prevEdu.PreviousBoard</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="">Passsing Year</td>
+                                                <td>@prevEdu.YearOfPassing</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Obtain Marks</td>
+                                                <td>@prevEdu.ObtainedMarks</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Group</td>
+                                                <td>@prevEdu.PreviousGroup</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Board Reg No</td>
+                                                <td>@prevEdu.RegNo</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Grade</td>
+                                                <td>@prevEdu.Grade</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Admisstion Date</td>
+                                                <td>@prevEdu.AdmissionDate</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Roll No</td>
+                                                <td>@prevEdu.RegNo</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Session</td>
+                                                <td>@prevEdu.Session</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                        @if (admission != null)
+                        {
+                            <div class="tshadow mb25  bozero">
+                                <h3 class="pagetitleh2">Mobile Contact Details</h3>
+                                <div class="table-responsive around10 pt0">
+                                    <table class="table  tmb0">
+                                        <thead>
+                                            <tr>
+                                                <td>Mobile Holder</td>
+                                                <td>Relation With Student</td>
+                                                <td>Mobile Number</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var itm in mobiles)
+                                            {
+                                                <tr>
+                                                    <td>@itm.MobileHolder</td>
+                                                    <td>@itm.Relation</td>
+                                                    <td>@itm.MobileNo</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="tab-pane" id="session-fee">
+                        <div class="row">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "session-fee", ColCssClass = "col-8 col-sm-4 col-md-3", ShowSession = true })
+                            
+                            <div class="col-12 pt-2">
+
+
+                                @Html.EJS().Grid("feelist").AllowSelection().Columns(col =>
+                           {
+                               col.Field("ForMonth").HeaderText("Month").Format("MMMM, yyyy").TextAlign(TextAlign.Left).Add();
+                               col.Field("Total").HeaderText("Amount").TextAlign(TextAlign.Left).Add();
+                               col.Field("Receive").HeaderText("Received").TextAlign(TextAlign.Left).Add();
+                               col.Field("Balance").HeaderText("Balance").TextAlign(TextAlign.Left).Add();
+                               col.Field("ReceivedDate").HeaderText("Payment date").TextAlign(TextAlign.Left).Add();
+                               //col.Template("#action").HeaderText("Actions").Width("140").Add();
+                           }).AllowPaging().PageSettings(page => { page.PageSize(15); }).Render()
+
+
+                                @*<script id="action" type="text/x-jsrender">
+                                        <a title="Edit" href="/Fee/FeeSlipDetailEdit/${getid(Id)}" class="edit ajax ml-1"><i class="fa fa-edit"></i></a>
+                                        <a title="Delete" href="/Fee/FeeSlipDetailDelete/${getid(Id)}" class="edit ajax ml-1"><i class="fa fa-trash"></i></a>
+                                    </script>*@
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                    <div class="tab-pane" id="session-exam">
+                        <div class="row">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "session-exam", ColCssClass = "col-8 col-sm-4 col-md-3", ShowSession = true })
+                            <div class="col-12 pt-2">
+                                @Html.EJS().Grid("examlist").AllowSelection().Columns(col =>
+                           {
+                               col.Field("ExamName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                               col.Field("TotalMarks").HeaderText("Amount").TextAlign(TextAlign.Left).Format("MMM, yyyy").Add();
+                               col.Field("ObtainedMarks").HeaderText("Received").TextAlign(TextAlign.Left).Add();
+                               col.Field("Percentage").HeaderText("Balance").TextAlign(TextAlign.Left).Add();
+                               col.Field("Status").HeaderText("Payment date").TextAlign(TextAlign.Left).Add();
+                               //col.Template("#action").HeaderText("Actions").Width("140").Add();
+                           }).AllowPaging().PageSettings(page => { page.PageSize(15); }).Render()
+
+
+                                @*<script id="action" type="text/x-jsrender">
+                                        <a title="Edit" href="/Fee/FeeSlipDetailEdit/${getid(Id)}" class="edit ajax ml-1"><i class="fa fa-edit"></i></a>
+                                        <a title="Delete" href="/Fee/FeeSlipDetailDelete/${getid(Id)}" class="edit ajax ml-1"><i class="fa fa-trash"></i></a>
+                                    </script>*@
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="documents">
+                        <div class="timeline-header no-border">
+
+                        </div>
+
+                    </div>
+
+                    <div class="tab-pane" id="timelineh">
+                        <div class="row">
+                            <div class="col-12">
+                                <h3>
+                                    Student History
+                                </h3>
+                                <table class="table tmb0">
+                                    <tbody>
+                                        @foreach (var ex in expelDetails)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    Date
+                                                </td>
+                                                <td>
+                                                    @ex.EntryDate.ToString("dd-MMM-yyyy")
+                                                </td>
+                                                <td>
+                                                    Conduct
+                                                </td>
+                                                <td>
+                                                    @ex.Conduct
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-10 col-sm-offset-1">
+
+                                <div id="my-roadmap"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@Html.EJS().ScriptManager()
+<script src="/assets/jqueryroadmap/jquery.roadmap.min.js"></script>
+<script>
+    $('a.ajax-load').on('click', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+
+    });
+    var studentId = @Model.ID;
+    function expelldetails(element) {
+        var title = "Expell Details";
+        var url = '@Url.Action("ExpellDetail", "Students")';
+        url += '?studentId=' + @Model.ID + '&expellDetailID=' + 0;
+        BootstrapDialog.show({
+            title: title,
+            message: $('<div />').load(url),
+            onhide: function() { $('.modal-dialog').hide() }
+        });
+        return false;
+    }
+
+    $('#session-fee #Session').on('change', function () {
+        let session = $('#session-fee #Session').val();
+        if (!session)
+            return false;
+        let url = '/api/fee/get-student-fee-for-session?studentId=' + studentId + '&session=' + session;
+        let grid = document.getElementById('feelist').ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    });
+
+    $('#session-exam #Session').on('change', function () {
+        let session = $('#session-exam #Session').val();
+        if (!session)
+            return false;
+        let url = '/api/exam/get-student-result-for-session?studentId=' + studentId + '&session=' + session;
+        let grid = document.getElementById('examlist').ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    });
+
+    //setTimeout(function () {
+    //    $('#session-fee #Session').trigger('change');
+    //    $('#session-exam #Session').trigger('change');
+    //    console.log('session');
+    //}, 1000);
+    
+    $.get('/api/students/get-student-timeline/' + studentId, function (response) {
+        $('#session-fee #Session').trigger('change');
+        $('#session-exam #Session').trigger('change');
+        $('#my-roadmap').roadmap(response.data, {
+            eventsPerSlide: 6,
+            slide: 1,
+            prevArrow: '<i class="fa fa-chevron-left"></i>',
+            nextArrow: '<i class="fa fa-chevron-right"></i>',
+            onBuild: function () {
+
+            },
+            // auto, horizontal, vertical
+            orientation: 'vertical'
+        });
+
+    });
+</script>

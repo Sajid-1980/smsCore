@@ -1,0 +1,176 @@
+﻿@model tbl_Designation
+
+@inject StaticResources resources
+@{
+    ViewBag.Title = "Designation";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Designation
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Designation creation</h3>
+                </div><!-- /.box-header -->
+                @*  @using (Ajax.BeginForm("Designation", "Payroll", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+                {*@
+
+
+                <form asp-action="Designation" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" LoadingElementId="classFeeIndexmainForm #server-progress" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row no-gutters ">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-12 col-md-12">
+                                        <label>Name</label>
+                                        <div class="controls">
+                                            @Html.TextBoxFor(m => m.designationName, new { @class = "form-control has-feedback-left", required = "true" })
+                                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("designationName")
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label>Cl in month</label>
+                                        <div class="controls">
+                                            <input type="text" name="ClInmonth" class="form-control has-feedback-left" value="0" />
+                                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("ClInmonth")
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label>Advance Amount</label>
+                                        <div class="controls">
+                                            @Html.TextBoxFor(m => m.advanceAmount, new { @class = "form-control has-feedback-left" })
+                                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("advanceAmount")
+                                        </div>
+                                    </div>
+                                    <div class="col-6 col-md-12">
+                                        <label>Narration</label>
+                                        <div class="controls">
+                                            @Html.TextBoxFor(m => m.narration, new { @class = "form-control has-feedback-left" })
+                                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("narration")
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-12 pb-2 mt-3">
+
+
+                                        <button type="submit" value="Create" class="btn btn-primary float-right">
+                                            <i class="fa fa-save mr-2"></i>
+                                            <span>
+                                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                            </span> Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Designation List <a href="https://www.youtube.com/watch?v=WUDqmWmgUdw" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="row">
+                        <div id="designation-gridContainer" class="col-12">
+                            @* @Html.EJS().Grid("list_deignation").DataSource(s=> { s.Url("/Payroll/DesignationList").Adaptor("UrlAdaptor"); }).Columns(col =>
+                            {
+                            col.Template("#sno").HeaderText("S.No").Width("70").TextAlign(TextAlign.Left).Add();
+                            col.Field("Name").HeaderText("Name").Width("120").TextAlign(TextAlign.Left).Add();
+                            col.Field("Narration").HeaderText("Note").Width("120").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                            col.Field("AdvanceAmount").HeaderText("Advance").Width("120").TextAlign(TextAlign.Left).Add();
+                            col.Field("LeaveDays").HeaderText("Leaves").Width("120").TextAlign(TextAlign.Left).Add();
+                            col.Field("Employees").HeaderText("Employees").Width("120").TextAlign(TextAlign.Left).Add();
+                            col.Template("#action").HeaderText("Action").Width("80").TextAlign(TextAlign.Left).Add();
+                            }).Render()*@
+
+                            @{
+                                var modelgrid = new GridModel()
+            {
+                GridId = "list_deignation",
+                ShowHeader = false,
+                DataUrl = "/Payroll/DesignationList",
+
+                Columns = new List<Column>
+                            {
+                            new Column{Template="#sno",HeaderText="S.No",Width="70",TextAlign = TextAlign.Left},
+                            new Column{FieldName = "name", HeaderText = "Name",Width="120", TextAlign = TextAlign.Left } ,
+                            new Column{FieldName = "narration", HeaderText = "Note",Width="120", TextAlign = TextAlign.Left , AutoFit=true } ,
+                            new Column{FieldName = "advanceAmount", HeaderText = "Advance",Width="120", TextAlign = TextAlign.Left } ,
+                            new Column{FieldName = "leaveDays", HeaderText = "Leaves",Width="120", TextAlign = TextAlign.Left } ,
+                            new Column{FieldName = "employees", HeaderText = "Employees",Width="120", TextAlign = TextAlign.Left } ,
+                            new Column{Template="#action", HeaderText = "Action",Width="80", TextAlign = TextAlign.Left } ,
+
+
+                            },
+            };
+
+                            }
+                            @await Html.PartialAsync("_grid",modelgrid)
+                        </div>
+
+                        <script id="sno" type="text/x-jsrender">
+                            ${sno(index)}
+                        </script>
+                        <script type="text/x-jsrender" id="action">
+                            <a title="Edit" href="/Payroll/DesignationEdit/${Id}" class="edit ajax ml-1"><i class="fa fa-edit"></i></a>
+                            <a title="Delete" href="/Payroll/DesignationDelete/${Id}" class="edit ajax ml-1"><i class="fa fa-trash"></i></a>
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    function reloadGridData() {
+        let grid = document.getElementById("list_deignation").ej2_instances[0];
+        grid.refresh();
+    }
+    $('#list_deignation').on('click',
+        'a',
+        function (e) {
+            e.preventDefault();
+            var title = 'Edit Designation';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>

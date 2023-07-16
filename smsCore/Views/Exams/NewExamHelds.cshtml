@@ -1,0 +1,358 @@
+﻿  @model ExamsRule
+@inject StaticResources resources
+
+@{
+
+    Layout = null;
+
+}
+<style>
+    form > .control-group {
+        float: left;
+        width: 45% !important;
+    }
+
+    .subject-promotion label {
+        font-size: 12px;
+    }
+</style>
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Exams
+        </li>
+
+    </ul>
+</div>
+<section class="content" id="examheld">
+    <div class="row">
+        <div class="col-12 col-sm-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Add New Exam <a href="https://www.youtube.com/watch?v=gZt3JnbKx0U" title="Watch our Youtube Video to understand" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+
+                @* @using (Ajax.BeginForm("NewExamHelds", "Exams", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "ExamHeldsmainForm #server-progress", OnBegin = "begin" }, new { id = "ExamHeldsmainForm", data_reset = "true" }))
+                {
+                *@
+
+                <form asp-action="NewExamHelds" asp-controller="Exams" data-ajax="true" OnSuccess="reloadGridData" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="ExamHeldsmainForm" data_reset="true">
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(model => model.ID)
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+                    @*    value="@ViewBag.ExamID"*@
+                        <input type="hidden" data-val="true" asp-item="@ViewBag.ExamID" name="ExamHeldID" />
+                        <div class="row" id="newexamheld-container">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "examheld",  ColCssClass = " col-12 col-sm-6 form-group has-feedback", ShowCampus = true,ShowExams=true, ShowExamsList=true, AddNewExam=true, ExamsFieldName= "examId" })
+                            @* <div class="col-12 col-md-7 form-group " id="exam-control">
+                            <label for="basicinput">Exam Name</label>
+                            <a id="newExamBtn" class="new ajax" href="@Url.Action("Create", "ClassManagement", new {type = EnumManager.newgroupEntry.Exam})" data-type="cmp" title="Add New Exam">
+                            <i class="fa fa-plus"></i>
+                            </a>
+                            <div class="controls">
+                            @Html.DropDownList("examId", (SelectList)ViewBag.ExamHeldID, new { @class = "form-control has-feedback-left" })
+                            <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                            </div>*@
+
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                            {
+                            Label = "Month:",
+                            PickerType = "month",
+                            Format = "MM yy",
+                            ParentContainerID = "mont-date",
+                            ColCssClass = "col-12 col-sm-6 col-md-5",
+                            ShowAltField = true,
+                            AltFieldId = "ExamHeld_EntryDate",
+                            AltFieldName = "ExamHeld.EntryDate",
+                            AltFieldFormat = "dd/mm/yy",
+                            DateFieldId = "monthpick",
+                            DateFieldName = "monthpick",
+                            KeepDataFieldReadOnly = true,
+                            DefaultDate = DateTime.Now
+                            })
+
+
+
+                            <div class=" col-12 has-feedback">
+                                <div class="card-header px-2">
+                                    <h3 class="card-title titlefix ">Student Promotion Rules</h3>
+
+                                </div>
+                                <div class="card-header px-2">
+
+                                    <span class="small titlefix">Enter the No of subject in the relevant fields (must be greater then zero)</span>
+                                </div>
+
+                                <div class="row subject-promotion">
+                                    <div class="col-12">
+                                        <label class="float-left mr-1"> Any Student Who Fail In</label>
+                                        @Html.TextBoxFor(model => model.CoreFail, null, new { @class = "form-control num text-center pl-1 float-left mr-1",  placeholder = "..." })
+                                        <label class="float-left"> Subjects will be considered as Fail.</label>
+                                        @Html.ValidationMessage("CoreFail")
+                                    </div>
+                                    @*<div class="col-12 py-2">
+                                    <label class="float-left mr-1"> Any Student Who Fail In</label>
+                                    @Html.TextBoxFor(model => model.CoreWithNoneCoreFail, null, new { @class = "form-control num text-center limit pl-1 float-left mr-1",  placeholder = "..." })
+                                    @Html.ValidationMessage("CoreFail")
+                                    <label class="float-left">core Subjects and</label>
+                                    @Html.TextBoxFor(model => model.NoneCoreFail, null, new { @class = "form-control num text-center limit pl-1 float-left mr-1",  placeholder = "..." })
+                                    <label class="float-left mr-1">  non core Subjects   </label>
+                                    @Html.ValidationMessage("CoreFail")
+                                    </div>*@
+                                    <div class="col-12 ">
+                                    </div>
+                                    <div class="col-md-6 col-12 has-feedback limit">
+                                        <label>Passing %age</label><font class="text-danger">*</font>
+                                        <div class="controls">
+                                            @Html.TextBoxFor(model => model.AtLeastPercentage, null, new { @class = "form-control num has-feedback-left ", required = "", minlength = "1", maxlength = "3", placeholder = "0%", max = "100" })
+                                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("AtLeastPercentage")
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-12 has-feedback">
+                                <div class="card-header px-2">
+                                    <h3 class="card-title">Grading Rules</h3>
+                                </div>
+                                <div class="card-header p-2">
+                                    <span class="small">Enter the minimum percentage in the relevant fields</span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-12"></div>
+                            <div class="col-md-3 col-sm-4 col-xs-12 has-feedback limit">
+                                <label> A+</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.APlus, null, new { @class = "form-control  text-center pl-1",  minlength = "1", maxlength = "3", placeholder = "0%" })
+                                    @Html.ValidationMessage("APlus")
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-4 col-xs-12 has-feedback limit">
+                                <label> A</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.A, null, new { @class = "form-control  text-center pl-1",  minlength = "1", maxlength = "3", placeholder = "0%" })
+                                    @Html.ValidationMessage("A")
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-4 col-xs-12 has-feedback limit">
+                                <label> B+</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.BPlus, null, new { @class = "form-control  text-center pl-1",  minlength = "1", maxlength = "3", placeholder = "0%" })
+                                    @Html.ValidationMessage("BPlus")
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-4 col-xs-12 has-feedback limit">
+                                <label> B</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.B, null, new { @class = "form-control  text-center pl-1",  minlength = "1", maxlength = "3", placeholder = "0%" })
+                                    @Html.ValidationMessage("B")
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-4 col-xs-12 has-feedback limit">
+                                <label> C</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.C, null, new { @class = "form-control  text-center pl-1",  minlength = "1", maxlength = "3", placeholder = "0%" })
+                                    @Html.ValidationMessage("C")
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-4 col-xs-12 has-feedback limit">
+                                <label> D</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.D, null, new { @class = "form-control  text-center pl-1",  minlength = "1", maxlength = "3", placeholder = "0%" })
+                                    @Html.ValidationMessage("D")
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-3 col-sm-4 col-xs-12 has-feedback limit">
+                                <label> E</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.E, null, new { @class = "form-control text-center pl-1",  minlength = "1", maxlength = "3", placeholder = "0%" })
+                                    @Html.ValidationMessage("E")
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="card-footer mt-2">
+
+
+                        <button type="submit" value="Create" class="btn btn-primary float-right mb-2">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="col-12 col-sm-7 ">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Exams List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="col-12">
+                        @{
+                            var gridmodel = new GridModel()
+            {
+                GridId = "list",
+
+                DataUrl = "/Exams/ExamHeldList",
+                Columns = new List<Column>
+                {
+                        new Column{FieldName="examName",HeaderText="ExamName",TextAlign=TextAlign.Left},
+                        new Column{FieldName="entryDate",HeaderText="Month",TextAlign=TextAlign.Left},
+                        new Column{FieldName="startDate",HeaderText="Start Date",TextAlign=TextAlign.Left},
+                        new Column{FieldName="endDate",HeaderText="End Date",TextAlign=TextAlign.Left},
+                      //  new Column{FieldName="action",HeaderText="Action",Template="#action",Width="100",TextAlign=TextAlign.Left},
+                },
+            };
+                            <script type="text/x-jsrender" id="action">
+                                <a title="Edit" href="/Exams/ExamHeldEdit/${getid(ID)}" class="ajax-load ml-1"><i class="fa fa-edit"></i></a>
+                                <a title="Delete" href="javascrpt:void(0);" onclick="deleteExam(${index})" class="ml-1"><i class="fa fa-trash"></i></a>
+                            </script>
+                        }
+                            @await Html.PartialAsync("_grid",gridmodel)
+                        
+                    </div>
+                    @*<div class="col-12">
+
+                    @Html.EJS().Grid("list").DataSource(soure=> { soure.Url("/Exams/ExamHeldList"); }).Columns(col =>
+                    {
+                    col.Field("ExamName").HeaderText("ExamName").TextAlign(TextAlign.Left).Add();
+                    col.Field("EntryDate").HeaderText("Month").Format("MMM, yyyy").TextAlign(TextAlign.Left).Add();
+                    col.Field("StartDate").HeaderText("Start Date").TextAlign(TextAlign.Left).Add();
+                    col.Field("EndDate").HeaderText("End Date").TextAlign(TextAlign.Left).Add();
+                    col.Field("action").Template("#action").HeaderText("Action").Width("100").TextAlign(TextAlign.Center).Add();
+                    }).Height("auto").Width("auto").Render()
+                    </div>
+                    <script type="text/x-jsrender" id="action">
+                    <a title="Edit" href="/Exams/ExamHeldEdit/${getid(ID)}" class="ajax-load ml-1"><i class="fa fa-edit"></i></a>
+                    <a title="Delete" href="javascrpt:void(0);" onclick="deleteExam(${index})" class="ml-1"><i class="fa fa-trash"></i></a>
+                    </script>*@
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<script @resources.JavaScript>
+
+    //let confirmCallBack = function () {
+
+    //}
+
+    function deleteExam(i) {
+        Confirm("Are your sure to delete the selected record?", true, true, "Confirm Delete", "Cancel", reloadGridData, null);
+        Swal.fire({
+            title: "Are your sure to delete the selected record?",
+            showCancelButton: true,
+            icon: 'question',
+            confirmButtonText: "Delete Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var grid = document.getElementById("list").ej2_instances[0];
+                var toRemove = grid.getCurrentViewRecords()[i];
+                if (!toRemove)
+                    return false;
+                $.post('/Exams/ExamHeldDelete/' + toRemove.ID, null, function (response) {
+                    if (response.status) {
+                        sweetalert("selected record has been deleted successfully.", "", "info");
+                        reloadGridData();
+                    }
+                    else {
+                        sweetalert(response.message, "", "error");
+                    }
+                }).error(function () {
+                    sweetalert("An unknow Network error occured.", "", "error");
+                });
+            }
+        });
+    }
+
+
+    $('#list').on('click',
+        'a.ajax-load',
+        function (e) {
+            e.preventDefault();
+            var title = $(this).attr('title');
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+
+    $('.num').keypress
+        (
+            function (event) {
+                if (event.keyCode == 46 || event.keyCode == 8) {
+                    //do nothing
+                } else {
+                    if (event.keyCode < 48 || event.keyCode > 57) {
+                        event.preventDefault();
+                    }
+                }
+            }
+        );
+
+    function reloadGridData() {
+        let grid = document.getElementById('list').ej2_instances[0];
+        grid.refresh();
+    }
+
+
+
+    $('#newExamBtn').on('click',
+        function (e) {
+            e.preventDefault();
+            var title = $(this).attr('title');
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('<div />').load(url),
+                onhide: function (dialogRef) {
+
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+
+
+</script>

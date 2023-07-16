@@ -1,0 +1,91 @@
+﻿@model FeeType
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Edit Fee Structures";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+    int feegroupId = ViewBag.FeeGroupId;
+    var isActive = Model.FeeStructures.Where(w => !w.Revised && w.FeeGroupId == feegroupId).Select(s => s.IsActive).FirstOrDefault();
+    var isDeleted = Model.FeeStructures.Where(w => !w.Revised && w.FeeGroupId == feegroupId).Select(s => s.IsDeleted).FirstOrDefault();
+    int campusId = ViewBag.campusId;
+}
+@*@using (Ajax.BeginForm("FeestructEdit", "Fee", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "FeeStructureRevisemainForm #server-progress", OnBegin = "begin"}, new {id = "FeeStructureRevisemainForm"}))
+{*@
+    
+<form asp-action="FeestructEdit" asp-controller="Fee"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeStructureRevisemainForm" data_reset="true">
+        
+
+
+
+    @Html.HiddenFor(model => Model.Id)
+    @Html.Hidden("FeeGroupId", (int) ViewBag.FeeGroupId)
+    @Html.Hidden("campusId", campusId)
+    <!-- Modal Header -->
+
+    <!-- Modal body -->
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row ">
+
+        <div class="col-12 col-md-6 form-group has-feedback">
+            <label> Fee Group:</label>
+            <div class="controls">
+                @Html.TextBox("FeeGroupName", (string)ViewBag.FeeGroupName, new { disabled = "disabled", @class = "form-control" })
+                        <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage(" FeeGroupId")
+                    </div>
+        </div>
+        <div class="col-12 col-md-6 form-group has-feedback">
+            <label> Fee Type:</label>
+            <div class="controls">
+                @Html.TextBoxFor(model => Model.TypeName, new { disabled = "disabled", @class = "form-control" })
+                <span class="fa fa-list form-control-feedback left" aria-hidden="true"></span>
+                @Html.ValidationMessage(" Feetypeid")
+            </div>        </div>
+        <div class="col-12 col-md-6 form-group has-feedback">
+            <label> Amount:</label><font class="text-danger">*</font>
+                                   <div class="controls">
+                                       <input type="text" name="Amount" value="@Model.FeeStructures.Where(w => !w.Revised && w.FeeGroupId == feegroupId && w.CampusID == campusId).Select(s => s.Amount).FirstOrDefault()" id="Amount" class="form-control has-feedback-left" required />
+                                       <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                   </div>
+            @Html.ValidationMessage("Amount")
+        </div>
+        @Html.Partial("_PartialDate", new PartialDateViewModels { Label = "Effective From:", ParentContainerID = "eff-date", DefaultDate=DateTime.Now, 
+       ColCssClass = "col-6 col-md-6", ShowAltField = false, DateFieldId = "EffectiveFrom", DateFieldName = "EffectiveFrom", KeepDataFieldReadOnly = true })
+
+        <div class="col-12 col-md-6 form-group has-feedback">
+            <label class="checkbox pt-2">
+                <input type="checkbox" name="IsActive" @(isActive ? "checked" : "") class="mr-2" /> Is Active
+            </label>
+        </div>
+        <div class="col-12 col-md-6 form-group has-feedback">
+            <label class="checkbox pt-2">
+                <input type="checkbox" name="IsDeleted" @(isDeleted ? "checked" : "") class="mr-2" />Is Deleted
+            </label>
+        </div>
+    </div>
+
+    <!-- Modal footer -->
+
+
+    <button type="submit" value="Create" class="btn btn-primary pull-right">
+        <i class="fa fa-save mr-2"></i>
+        <span>
+            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+        </span> Save
+    </button>
+</form>
+<script @resources.JavaScript>
+    function oncomplete() {
+        $('#myModal').modal('toggle');
+    }
+</script>

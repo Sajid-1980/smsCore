@@ -1,0 +1,80 @@
+/* This is a compiled file, you should be editing the file in the templates directory */
+.pace {
+    -moz-user-select: none;
+    -webkit-pointer-events: none;
+
+    -webkit-user-select: none;
+    bottom: 0;
+    height: 90px;
+
+    left: 0;
+    margin: auto;
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    top: 0;
+    user-select: none;
+    width: 90px;
+    z-index: 2000;
+}
+
+.pace.pace-inactive .pace-activity { display: none; }
+
+.pace .pace-activity {
+    -moz-animation: spin 1s linear infinite;
+    -moz-box-sizing: content-box;
+    -o-animation: spin 1s linear infinite;
+    -webkit-animation: spin 1s linear infinite;
+    -webkit-box-sizing: content-box;
+    animation: spin 1s linear infinite;
+    border-color: #22df80 transparent transparent;
+    border-radius: 50%;
+    border-style: double;
+    border-width: 30px;
+    box-sizing: content-box;
+    display: block;
+    display: block;
+
+    height: 90px;
+    left: -30px;
+    position: fixed;
+
+    position: absolute;
+    top: -30px;
+    width: 90px;
+    z-index: 2000;
+}
+
+.pace .pace-activity:before {
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+    border-color: #22df80 transparent transparent;
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 10px;
+    box-sizing: content-box;
+    content: ' ';
+    display: block;
+    height: 50px;
+    left: 10px;
+
+    position: absolute;
+    top: 10px;
+    width: 50px;
+}
+
+@-webkit-keyframes spin {
+    100% { -webkit-transform: rotate(359deg); }
+}
+
+@-moz-keyframes spin {
+    100% { -moz-transform: rotate(359deg); }
+}
+
+@-o-keyframes spin {
+    100% { -moz-transform: rotate(359deg); }
+}
+
+@keyframes spin {
+    100% { transform: rotate(359deg); }
+}

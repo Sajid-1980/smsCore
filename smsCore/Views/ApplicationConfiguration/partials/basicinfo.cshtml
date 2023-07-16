@@ -1,0 +1,101 @@
+﻿
+
+@using Utilities;
+@using smsCore.Data.Helpers;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+
+
+@*@using (Ajax.BeginForm("SchoolInfo", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "SchoolInfomainForm #server-progress", OnBegin = "begin" }, new { id = "SchoolInfomainForm" }))
+{*@
+
+<form asp-action="SchoolInfo" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SchoolInfomainForm" data_reset="true">
+        
+    <div class="row">
+        <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6 form-group ">
+            <label>Principal Mobile No</label>
+            <div class="controls">
+                <input type="text" name="txtPrincipalMobile" id="PrincipalMobileNo" class="form-control has-feedback-left" minlength="7" maxlength="17" value="@existings.Where(w => w.PropertyName == "PrincipalMobile").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 form-group ">
+            <label>Affiliated With</label>
+            <div class="controls">
+                <input type="text" name="txtAffiliatedWith" id="AffiliatedWith" class="form-control has-feedback-left" minlength="3" maxlength="50" value="@existings.Where(w => w.PropertyName == "AffiliatedWith").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 form-group ">
+            <label>Institution Code For SSC</label>
+            <div class="controls">
+                <input type="text" name="txtInstCodeSSC" id="InstitutionCodeForSSC" class="form-control has-feedback-left" minlength="3" maxlength="10" value="@existings.Where(w => w.PropertyName == "InstCodeSSC").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-terminal form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 form-group ">
+            <label>Institution Code For HSSC </label>
+            <div class="controls">
+                <input type="text" name="txtInstCodeHSSC" id="InstitutionCodeForHSSC" class="form-control has-feedback-left" minlength="3" maxlength="10" value="@existings.Where(w => w.PropertyName == "InstCodeHSSC").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-terminal form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 form-group ">
+            <label>School Established On</label>
+            <div class="controls">
+                <input type="text" name="txtSchoolEstablishedOn" id="SchoolEstablishedOn" class="form-control has-feedback-left" maxlength="30" value="@existings.Where(w => w.PropertyName == "SchoolEstablishedOn").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 form-group ">
+            <label>School Registration No</label>
+            <div class="controls">
+                <input type="text" name="txtSchoolRegistrationNo" id="SchoolRegistrationNo" class="form-control has-feedback-left" minlength="3" maxlength="10" value="@existings.Where(w => w.PropertyName == "SchoolRegistrationNo").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+
+        @if (User.IsInRole("Developer"))
+        {        <div class="col-12 col-md-6 form-group ">
+            <label>Play store Link</label>
+            <div class="controls">
+                <input type="text" name="txtPlayStoreLink" id="PlayStoreLink" class="form-control has-feedback-left" minlength="3" value="@existings.Where(w => w.PropertyName == "PlayStoreLink").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+        <div class="col-12 col-md-6 form-group ">
+            <label>Play store Link</label>
+            <div class="controls">
+                <input type="text" name="txtAppleStoreLink" id="AppleStoreLink" class="form-control has-feedback-left" minlength="3" value="@existings.Where(w => w.PropertyName == "AppleStoreLink").Select(s => s.PropertyValue).FirstOrDefault()" />
+                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+            </div>
+        </div>
+        }
+    </div>
+    <div class="row mt-4">
+        <div class="col-12 float-right">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+    </div>
+</form>
+

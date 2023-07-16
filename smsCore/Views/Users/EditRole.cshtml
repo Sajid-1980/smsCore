@@ -1,0 +1,50 @@
+﻿@model Microsoft.AspNetCore.Identity.IdentityRole
+
+@{
+    ViewBag.Title = "CreateRole";
+    @*Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";*@
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@*@using (Ajax.BeginForm("EditRole", "Users", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{*@
+
+    
+
+<form asp-action="EditRole" asp-controller="Users"  data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+    @Html.AntiForgeryToken()
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-12 col-md-6 col-sm-12 pt-2">
+@*            @Html.Label("Role", new {@class = "control-label"})<font class="text-danger">*</font>
+*@         
+
+      <label class ="control-label">Role</label>
+            <div>
+                <input type="hidden" name="role" value="@Model.Name"/>
+                @Html.TextBoxFor(m => m.Name, new {@class = "form-control ", placeholder = "Enter your Role...", required = "true"})
+            </div>
+        </div>
+        <div class="col-12"></div>
+        <div class="form-group col-12 col-md-6 col-sm-6 pb-2 mt-3">
+            <a href="@Url.Action("RoleList", "Users")" aria-label="Back to Dashboard" class="btn btn-danger float-right ml-1"> <i class="fa fa-chevron-circle-left mr-2"></i> Back</a>
+
+            <button type="submit" value="Create" class="btn btn-primary float-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Save
+            </button>
+        </div>
+    </div>
+</form>

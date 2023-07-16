@@ -1,0 +1,201 @@
+﻿@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Deduction Register";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Bonus or Deduction Registered
+        </li>
+
+    </ul>
+</div>
+<section class="content">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    Search Cretiria
+                </div>
+                <div class="card-body">
+                  @*  @using (Ajax.BeginForm("BonusDeduction", "Payroll", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+                    {*@
+
+                    <form asp-action="BonusDeduction" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+  
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label>Employee Name</label>
+                                <div class="controls">
+                                    @Html.DropDownList("employeeName", (SelectList)ViewBag.EmployeeList, "All", new { @class = "form-control", id = "employee" })
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("employeeName")
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label> Month</label>
+                                <div class="controls">
+                                    <input type="month" name="Month" class=" form-control" required id="month" />
+                                    <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Month")
+                                </div>
+                            </div>
+                            <div class="form-group col-12 pb-2 mt-3">
+                               
+                                <button type="button" value="Create" onclick="searches()" class="btn btn-primary float-right">
+                                    <i class="fa fa-search mr-1"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Search
+                                </button>
+                            </div>
+
+                        </div>
+                 </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header with-border">
+                    Bonus/Deduction List
+                </div>
+                <div class="card-body">
+                    <div id="bonusregistered-gridContainer" class="col-12">
+                        <table id="jqgbonusregidtered" cellpadding="0" cellspacing="0"></table>
+                        <div id="jqgpbonusregistered" style="text-align: center;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+<script @resources.JavaScript>
+    function reloadGridData() {
+        $('#jqgbonusregidtered').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    searches();
+
+    function searches() {
+        var employee = $('#employee').val();
+        var month = $('#month').val();
+        var url1 = '@Url.Action("GetmbonusregisteredForJq")';
+        url1 += '?employee=' + employee + '&month=' + month;
+        $('#jqgbonusregidtered').jqGrid('clearGridData');
+        $('#jqgbonusregidtered').jqGrid({
+            //url from wich data should be requested
+            url: url1,
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'Post',
+
+            colModel: [
+                { label: 'SNo', name: 'SINo', index: 'SINo', align: 'left', width: 30, search: true, stype: 'text', searchoptions: { attr: { title: 'Select Date' } } },
+                { label: 'Employee Code', name: 'employeeCode', index: 'employeeCode', align: 'left', width: 50 },
+                { label: 'Employee Name', name: 'employeeName', index: 'employeeName', align: 'left' },
+                { label: 'Month', name: 'date', index: 'date', align: 'left', width: 70 },
+                { label: 'Deduction', name: 'DeductionAmount', index: 'DeductionAmount', align: 'left', width: 60 },
+                { label: 'Bonus', name: 'bonus', index: 'bonus', align: 'left', width: 60 },
+                //s.Id, s.EmployeeName,s.Cnic,s.Address,s.MobileNo,s.Email,
+            ],
+            // caption: 'Monthly Salary Registered List',
+            //enable footer
+            footerrow: false,
+            userDataOnFooter: false,
+            //expect object instead of flat array
+            jsonReader: { repeatitems: false, id: 'sr' },
+            //pager for grid
+            pager: $('#jqgpbonusregistered'),
+            //number of rows per page
+            rowNum: 10,
+            //initial sorting column
+            sortname: 'Id',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            height: 180,
+
+
+            loadComplete: function() {
+                var table = this;
+                setTimeout(function() {
+                        updatePagerIcons(table);
+                    },
+                    0);
+            },
+            gridComplete: function() {
+                $('.ajax').on('click',
+                    function(e) {
+                        e.preventDefault();
+                        var title = $(this).attr('title');
+                        var url = $(this).attr('href');
+
+                        BootstrapDialog.show({
+                            title: title,
+                            message: $('<div />').load(url),
+                            onhide: function(dialogRef) {
+
+                                reloadGridData();
+                            }
+                        });
+                        return false;
+                    });
+            }
+        });
+
+        $('#jqgbonusregidtered').jqGrid('setGridParam', { url: url1 });
+        var DataGrid = $('#jqgbonusregidtered');
+
+        //sets the grid size initially
+        DataGrid.jqGrid('setGridWidth', parseInt($('#bonusregistered-gridContainer').width()));
+
+        //handles the grid resize on window resize
+        $(window).resize(function() {
+            DataGrid.jqGrid('setGridWidth', parseInt($('#bonusregistered-gridContainer').width()));
+        });
+        $('#jqgbonusregidtered').trigger('reloadGrid', { current: true, fromserver: true });
+
+    }
+
+    function updatePagerIcons(table) {
+        var replacement =
+        {
+            'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+            'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+            'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+            'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+        };
+        $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function() {
+            var icon = $(this);
+            var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+            if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+        });
+    }
+
+    //   });
+</script>

@@ -1,0 +1,112 @@
+﻿@using sms.Models
+@inject StaticResources resources
+
+@{
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+<style>
+    .bdrstyle {
+        border-bottom: 1px solid black;
+        border-right: 2px solid black;
+    }
+</style>
+
+@*@using (Ajax.BeginForm("Holyday", "Schedules", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{*@
+<form asp-action="Holyday" asp-controller="Schedules" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+                   
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+
+        <div class="col-12 form-group">
+            <h3 style="background-color: #dfdfe9; padding: 10px">@ViewBag.labelseesiontext</h3>
+            <h5 class="mt-3">Weekly Holydays</h5>
+        </div>
+
+    </div>
+    <div class=" row " id="holyday">
+
+        <div class="col-12 form-group col-sm-6 bdrstyle">
+            <div class="row">
+
+                <div class="col-6">
+                    <label class="checkbox "><input type="checkbox" name="Weeklyholiday" value="Sunday" class="mr-2 " checked/>Sunday</label>
+                </div>
+                <div class="col-6">
+                    <label class="checkbox"><input type="checkbox" name="Weeklyholiday" value="Friday" class="mr-2"/>Friday</label>
+                </div>
+
+                <div class="col-6">
+                    <label class="checkbox"><input type="checkbox" name="Weeklyholiday" value="Monday" class="mr-2"/>Monday</label>
+                </div>
+                <div class="col-6">
+                    <label class="checkbox"><input type="checkbox" name="Weeklyholiday" value="Saturday" class="mr-2"/>Saturday</label>
+                </div>
+                <div class="col-12">
+                    <label class="checkbox"><input type="checkbox" name="Weeklyholiday" value="Tuesday" class="mr-2"/>Tuesday</label>
+                </div>
+                <div class="col-12">
+                    <label class="checkbox"><input type="checkbox" name="Weeklyholiday" value="Wednesday" class="mr-2"/>Wednesday</label>
+                </div>
+                <div class="col-12">
+                    <label class="checkbox"><input type="checkbox" name="Weeklyholiday" value="Thursday" class="mr-2"/>Thursday</label>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 form-group col-sm-6">
+            <div class="row">
+                <div class="col-12">
+                    <label><input type="radio" value="ApplySession" name="applyFrom" checked/>Apply on Whole Session</label>
+                </div>
+                <div class="col-12">
+                    <label><input type="radio" value="ApplyFromToday" name="applyFrom"/>Apply From Today</label>
+                </div>
+                <div class="col-12">
+                    <label><input type="radio" value="ApplyFromDate" name="applyFrom" id="applyFrom"/>Apply From this date</label>
+                </div>
+                <div class="col-12">
+                    <div class="controls">
+                        <input type="date" name="ApplyFromDate" class="form-control applydate" id="aplyDate" style="display: none" />
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true" id="icons" style="display: none"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "holyday", ColCssClass = " col-sm-6 col-md-6 mb-2 ", ShowCampus = true})
+
+
+        <div class="form-group col-12 pb-2 mt-3">
+            <a href="@Url.Action("Index")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back</a>
+
+            <button type="submit" value="Create" class="btn btn-primary pull-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Save
+            </button>
+        </div>
+    </div>
+</form>
+<script @resources.JavaScript>
+    $('input[name="applyFrom"]').on('change',
+        function() {
+
+            $('#aplyDate').hide();
+            $('#icons').hide();
+
+            if ($('#applyFrom').is(':checked')) {
+                $('#aplyDate').show();
+                $('#icons').show();
+            }
+        });
+
+</script>

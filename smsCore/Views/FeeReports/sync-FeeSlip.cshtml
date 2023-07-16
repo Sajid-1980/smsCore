@@ -1,0 +1,216 @@
+﻿@using sms.Models
+@model FeeSlip
+@inject StaticResources resources
+
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action(" Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Fee Report</a>
+        </li>
+        <li class="active">
+            Fee Slip
+        </li>
+    </ul>
+</div>
+<style>
+    #_fieldset {
+        border: groove;
+        border-color: #f7f1f1;
+        margin: 0;
+        min-width: 0;
+        padding: 10px;
+    }
+
+    legend {
+        display: block;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    input[type="radio"] {
+        height: 20px;
+        width: 20px;
+    }
+</style>
+<section class="content" id="feeslip-container">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4 col-lg-3">
+                            <label>Registration No</label>
+                            <div class="controls">
+                                <input type="text" name="regno" id="regno" class="form-control" minlength="1" maxlength="15" />
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "feeslip-container", ColCssClass = "col-sm-3 col-lg-2", ShowCampus = true, ShowClasses = true })
+
+
+                        <div class="col-sm-4 col-lg-2 form-group has-feedback">
+                            <label> For Month:</label>
+                            <div class=" date-picker-container">
+                                <div class="controls">
+                                    <input type="text" class="input-month-picker form-control" readonly />
+                                    @Html.HiddenFor(Model => Model.ForMonth, new { @class = "", readOnly = true, required = "required", id = "formonth" })
+                                    <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("ForMonth")
+                                </div>
+                            </div>
+                        </div>
+                        @Html.Partial("_ReportTemplateSelector", new TemplateReportSelector {AllowDesign=true, ParentContainerID = "feeslip-template-container", ColCssClass = "col-sm-4 col-lg-2", FolderName="feeslip",FieldId="reportTemplate", FieldName= "ReportTemplate" })
+
+                        <!--<div class="col-sm-4 col-lg-2 form-group has-feedback">
+        <label> Page Orientation:</label>
+        <div class=" date-picker-container">
+            <div class="controls">-->
+                        @*<select id="orientation" class="form-control">
+            <option value="landscape">Landscape</option>
+            <option value="portrait">Portrait</option>
+        </select>*@
+
+                        <!--Html.DropDownList("orientation",new SelectList(StaticResources.GetReports("feeslip")), new { id="orientation", class="form-control" })
+                <span class="fa fa-book form-control-feedback left" aria-hidden="true"></span>
+                <a id="edit-link" target="_blank" href="#"><i class="fa fa-calendar"></i></a>
+            </div>
+        </div>
+    </div>-->
+                        <div class="col-12"></div>
+                        <div class="col-sm-6 col-lg-4 form-group has-feedback">
+                            <label> Remarks:</label>
+                            <div class="controls">
+                                <input type="text" id="remarks" class="form-control" />
+                                <span class="fa fa-book form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("remarks")
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-6 col-lg-5 form-group has-feedback mt-4">
+                            <h6 class="mb-0 border-bottom">Hide</h6>
+                            <label class="mr-2"><input type="checkbox" id="schoolcopy" />&nbsp;School Copy</label>
+                            <label class="mr-2"><input type="checkbox" id="studentcopy" />&nbsp;Student Copy</label>
+                            <label id="bankcopy-container" class="mr-2"><input type="checkbox" id="bankcopy" />&nbsp; Bank Copy</label>
+                            <label id="showadvance-container" class="mr-2"><input type="checkbox" id="showAdvance" checked />&nbsp; Show Adavance</label>
+                        </div>
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-left" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 pt-2">
+            <div id="divReport">
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    var templateCName = 'FeeReportTemplate';
+    var templateAName = 'ShowAdvanceChecked';
+    $(function () {
+        
+        $('#reportTemplate').on('change', function () {
+            let t = $(this).val();
+            if (t == 'portrait') {
+                $('#bankcopy').prop('checked', false);
+                $('#bankcopy-container').hide();
+            }
+            else {
+                $('#bankcopy-container').show();
+            }
+            $('#edit-link').attr('href', '/Reports/ReportDesigner?reportname=feeslip.' + t);
+        });
+
+        var template = getCookie(templateCName);
+        if (template || template != '') {
+            $('#reportTemplate').val(template).trigger('change');
+        };
+
+        $('#edit-link').attr('href', '/Reports/ReportDesigner?reportname=feeslip.' + $('#reportTemplate').val());
+
+        template = getCookie(templateAName);
+        if (template || template != '') {
+            $('#showAdvance').prop('checked', template);
+        }
+        $('.input-month-picker').MonthPicker({
+            changeMonth: true,
+            AltField: '#formonth',
+            AltFormat: 'dd/mm/yy',
+            changeYear: true,
+            showAnim: "clip",
+            defaultDate: new Date(),
+            showButtonPanel: true,
+            MonthFormat: 'MM yy',
+            onClose: function (dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+            }
+        });
+    });
+
+    $('#btnSearch').click(function () {
+        var emptyMonthField = false;
+        if ($("#formonth").val() == "" || $("#formonth").val() == null) {
+            emptyMonthField = true;
+            return $("#formonth").focus();
+        }
+        if (emptyMonthField) {
+            return false;
+        } else {
+            var formonth = $("#formonth").val();
+            var schoolcopy = $('#schoolcopy').is(':checked');
+            var showAdvance = $('#showAdvance').is(':checked');
+            var studentcopy = $('#studentcopy').is(':checked');
+            var bankcopy = $('#bankcopy').is(':checked');
+            //
+            //var viewerUrl = '/Reports/Viewer';
+            //
+            var template = 'feeslip.' + $("#reportTemplate").val();
+            //var src = '/Reports/Viewer?report=feeslip&formonth=' + formonth + '&classId=' + $('#Classes').val() + '&regno=' + $('#regno').val() + '&remarks=' + $('#remarks').val() + '&schoolcopy=' + schoolcopy + '&studentcopy=' + studentcopy + '&bankcopy=' + bankcopy + '&CampusId=' + $('#Campus').val() + '&template=' + template + '&showAdvance=' + showAdvance;
+            //loadReport(src);
+            var src = '/Reports/Viewer?report=' + template + '&formonth=' + formonth + '&classId=' + $('#Classes').val() + '&regno=' + $('#regno').val() + '&remarks=' + $('#remarks').val() + '&schoolcopy=' + schoolcopy + '&studentcopy=' + studentcopy + '&bankcopy=' + bankcopy + '&CampusId=' + $('#Campus').val() + '&orientation=' + template + '&showAdvance=' + showAdvance;
+            var iframe = '<iframe id="reportFrame" width="100%" height="800px" style="background-color:#fff;" scrolling="no" frameborder="0" src="' + src + '" allowfullscreen></iframe>';
+            $("#divReport").html(iframe);
+            
+            //var template = $('#orientation').val();
+            //setCookie(templateCName, template, 60);
+
+            setCookie(templateAName, showAdvance, 60);
+
+            
+            const handleLoad = function () {
+                $('#divReport').unblock();
+                $('#btnSearch').unblock();
+            }
+            document.getElementById('reportFrame').addEventListener('load', handleLoad, true);
+            block('#divReport');
+
+        }
+    });
+
+    function loadReport(url, containerid,searchbuttonid) {
+        if (!containerid)
+            containerid = 'divReport';
+        if (!searchbuttonid)
+            searchbuttonid = 'btnSearch';
+        block('#' + containerid + '');
+        block('#' + searchbuttonid + '');
+        $.get(url, function (response) {
+            $('#' + containerid + '').html(response);
+        }).always(function () {
+            $('#' + containerid + '').unblock();
+            $('#' + searchbuttonid + '').unblock();
+        })
+    }
+</script>

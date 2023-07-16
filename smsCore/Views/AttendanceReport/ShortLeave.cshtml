@@ -1,0 +1,192 @@
+﻿@inject StaticResources resources
+
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("AttendanceReports", "Reports")">Attendance Report</a>
+        </li>
+        <li class="active">
+            Staff Short Leave
+        </li>
+    </ul>
+</div>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="col-12 col-sm-4  form-group has-feedback">
+                            <label>Staff</label>
+                            <div class="controls">
+                                <div>
+                                    @Html.DropDownList("staffId", (SelectList)ViewBag.stafflist, new { @class = "form-control " })
+                                </div>
+                                <span class="fa fa-address-card form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="col-12 col-sm-3 col-md-2  form-group has-feedback mt-4">
+                            <label><input type="radio" value="date" name="checkradio" id="checkdates " class="checkradio" /> By Date</label>
+                        </div>
+
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+                          {
+                              Label = "Date From",
+                              ParentContainerID = "adm-date1",
+                              ColCssClass = "col-12 col-sm-3",
+                              ShowAltField = false,
+                              DateFieldId = "datefrom",
+                              DateFieldName = "datefrom",
+                              KeepDataFieldReadOnly = true,
+                              DefaultDate = DateTime.Now,
+
+                          })
+
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+                   {
+                       Label = "Date To",
+                       ParentContainerID = "adm-date2",
+                       ColCssClass = "col-12 col-sm-3 date",
+                       ShowAltField = false,
+                       DateFieldId = "dateto",
+                       DateFieldName = "dateto",
+                       KeepDataFieldReadOnly = true,
+                       DefaultDate = DateTime.Now
+                   })
+
+                        <div class="col-12 col-sm-3 col-md-2   form-group has-feedback mt-4">
+                            <label>
+                            <input type="radio" name="checkradio" value="month" id="checkmonth" class="checkradio" checked /> By Month</label>
+                        </div>
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+    {
+        Label = "Month",
+        Format = "MM yy",
+        ParentContainerID = "adm-date3",
+        ColCssClass = "col-12 col-sm-3",
+        ShowAltField = false,
+        DateFieldId = "monthselect",
+        DateFieldName = "Month",
+        KeepDataFieldReadOnly = true,
+        DefaultDate = DateTime.Now,
+        PickerType = "month"
+
+    })
+
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_attendance_emp_short",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Employee Short Leave",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="employeeName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="OutTime", HeaderText="Date", AutoFit=true },
+                        new Column{ FieldName="LeaveTime", HeaderText="Leave Time", AutoFit=true },
+                        new Column{ FieldName="ArrivalTime", HeaderText="Arrival time", AutoFit=true },
+                        }
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("GridS").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnChooser().AllowResizing().Columns(col =>
+            {
+                //col.Field("SNo").HeaderText("S.No").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                col.Field("employeeName").HeaderText("Name").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("OutTime").HeaderText("Date").Width("80").Format("dMy").TextAlign(TextAlign.Left).Add();
+                col.Field("ArrivalTime").HeaderText("Arrival Time").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("LeaveTime").HeaderText("Leave Time").Width("80").TextAlign(TextAlign.Left).Add();
+            }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "Search", "ColumnChooser" }).Render()*@
+        
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    function reloadGridData() {
+        $('#jqgclasswisereport').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    $('.checkradio').on('change',
+        function() {
+            if ($(this).val() == "month") {
+                $('#monthselect').attr('readonly', false);
+                $('#datefrom').attr('readonly', true);
+                $('#dateto').attr('readonly', true);
+            } else {
+                $('#monthselect').attr('readonly', true);
+
+                $('#datefrom').attr('readonly', false);
+                $('#dateto').attr('readonly', false);
+            }
+        });
+
+    $('#btnSearch').on('click',
+        function() {
+            var staffid = $('#staffId').val();
+            var checkmonth = "false";
+            if ($('#checkmonth').is(':checked')) {
+                checkmonth = "true";
+                if ($('#monthselect').val() == "") {
+                    return $('#monthselect').focus();
+                }
+            }
+            var checkdate = "false";
+            if ($('#checkdates').is(':checked')) {
+                checkdate = "true";
+                if ($('#datefrom').val() == "") {
+                    return $('#datefrom').focus();
+                }
+                if ($('#dateto').val() == "") {
+                    return $('#dateto').focus();
+                }
+            }
+            var url1 = '@Url.Action("GetShortLeaveDatatable")';
+            url1 += '?staffId=' + staffid + '&checkmonth=' + checkmonth + '&monthselect=' + $('#monthselect').val() + '&checkdate=' + checkdate + '&datefrom=' + $('#datefrom').val() + '&dateto=' + $('#dateto').val();
+           $.get(url1,
+                null,
+                function(data) {
+                    console.log(data);
+                    var gridObj = document.getElementById("@grid.GridId").ej2_instances[0];
+                    // Refreshes the grid data source
+                    gridObj.dataSource = (data);
+                });
+        });
+
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("GridS").ej2_instances[0];
+    //    if (args.item.id === 'GridS_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'GridS_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+</script>
+@Html.EJS().ScriptManager()

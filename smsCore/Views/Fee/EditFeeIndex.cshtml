@@ -1,0 +1,354 @@
+﻿@model  FeeSlipDetail
+@*@model IEnumerable<Models.FeeSlipDetail>*@
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "EditFeeIndex";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Edit Student Fee
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Student Fee <a href="https://www.youtube.com/watch?v=tWKtJDvxtT8&list=UUQFf95Tyl3o9y-DE0vvlTQg" title="Watch our Youtube Video to understand" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 form-group has-feedback">
+                            <label class="control-label">Student Id</label><font class="text-danger">*</font>
+                                                                           <div class="controls">
+                                                                               <input type="text" id="Studentid" name="Studentid" class="chosen form-control" minlength="1" maxlength="15" />
+                                                                               <span class="fa fa-neuter form-control-feedback left" aria-hidden="true"></span>
+                                                                           </div>
+                        </div>
+                        <div class="col-12 form-group has-feedback">
+                            <label> For Month:</label><font class="text-danger">*</font>
+                                                      <div class="controls">
+                                                          <select name="Month" id="Month"></select>
+                                                          <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                                          @Html.ValidationMessage("ForMonth")
+                                                      </div>
+                        </div>
+
+                        <div class="col-12 form-group has-feedback pt-4">
+                            <button type="button" id="search" name="Search" class="btn btn-primary float-right"><i class="fa fa-search pr-2"></i> Search</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="col-12 col-md-12">
+                        <div class="row no-gutters">
+                            <div class="col-4">
+
+                                <img class="profile-user-img img-responsive img-circle" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                                <h3 class="profile-username text-center">
+                                    <span class="name" id="stuName">......</span>
+                                </h3>
+                            </div>
+                            <div class="col-8">
+                                <ul class="list-group list-group-unbordered">
+                                    @*<li class="list-group-item listnoback">
+                                            <b>Address</b> <a class="pull-right text-aqua"> <span class="name address" id="lbladdress">House # 235, St 63, I-10/1 Islamabad</span></a>
+                                        </li>*@
+
+                                    <li class="list-group-item listnoback">
+                                        <b>Campus</b>
+                                        <a class="pull-right text-aqua">
+                                            <span class="campusname" id="lblcampus">...</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <b>Class</b>
+                                        <a class="pull-right text-aqua">
+                                            <span class="classname" id="lblclass">...</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <b>Section</b>
+                                        <a class="pull-right text-aqua">
+                                            <span class="sectionname" id="lblsection">..</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <b>Fee month</b>
+                                                <label id="feeMonth" class="text-center pull-right text-aqua" style="background-color: black; color: white; width: 100%;">......</label>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Student Fee List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+
+                            @Html.EJS().Grid("list").Columns(col =>
+                       {
+                           col.Field("TypeName").HeaderText("Description").TextAlign(TextAlign.Left).Add();
+                           col.Field("Amount").HeaderText("Amount").Width("150").TextAlign(TextAlign.Left).Add();
+                           col.Field("Discount").HeaderText("Discount").Width("100").TextAlign(TextAlign.Left).Add();
+                           col.Field("DiscountInAmount").HeaderText("Discount In Amount").Template("#discount").Width("170").TextAlign(TextAlign.Center).Add();
+                           col.Field("action").Template("#action").HeaderText("Action").Width("170").TextAlign(TextAlign.Center).Add();
+                       }).Height("auto").Width("auto").Render()
+                        </div>
+                        <script type="text/x-jsrender" id="action">
+                            <a title="Edit" href="/Fee/FeeSlipDetailEdit/${getid(Id)}" class="ajax-load ml-1"><i class="fa fa-edit"></i></a>
+                            <a title="Delete" href="/Fee/FeeSlipDetailDelete/${getid(Id)}" class="ajax-load ml-1"><i class="fa fa-trash"></i></a>
+
+                        </script>
+                        <script type="text/x-jsrender" id="discount">
+                            ${if(DiscountInAmount)}
+                            <i style="color:green;" class="fa fa-check"></i>
+                            ${else}
+                            <i style="color:red;" class="fa fa-times-circle"></i>
+                            ${/if}
+                        </script>
+                    </div><!-- /.box-body -->
+                    <a id="dltBtn" href="javascript:void(0)" class="btn btn-danger mt-2 float-right ajax">Delete</a>
+
+
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Payment history</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+
+                            @Html.EJS().Grid("list2").Columns(col =>
+                       {
+                           col.Field("EntryDate").Format("dd/MM/yyyy").HeaderText("Date").TextAlign(TextAlign.Left).Add();
+                           col.Field("PaymentMethodName").HeaderText("Payment Method").Width("200").TextAlign(TextAlign.Left).Add();
+                           col.Field("Amount").HeaderText("Amount").Width("170").TextAlign(TextAlign.Left).Add();
+                           col.Field("action").Template("#action1").HeaderText("Action").Width("170").TextAlign(TextAlign.Center).Add();
+                       }).Height("auto").Width("auto").Render()
+                        </div>
+                        <script type="text/x-jsrender" id="action1">
+                            <a title="Edit" href="/Fee/FeeSlipReceiptEdit/${getid(Id)}" class="ajax-load ml-1"><i class="fa fa-edit"></i></a>
+                            <a title="Delete" href="/Fee/FeeSlipReceiptDelete/${getid(Id)}" class="ajax-load ml-1"><i class="fa fa-trash"></i></a>
+
+                        </script>
+                    </div><!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+
+    function reloadGridData() {
+        resetgrid();
+        let month = $('#Month').val();
+        if (!month)
+            return false;
+        $('#dltBtn').show();
+        var url = '/api/fee/get-student-received-fee-for-month/' + month ;
+
+        var grid = document.getElementById("list2").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+        var url1 = '/api/fee/get-student-fee-for-month/' + month;
+        var grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    $('#list, #list2').on('click', 'a.ajax-load', function (e) {
+        e.preventDefault();
+        var title = 'Fee System';
+        var url = $(this).attr('href');
+
+        BootstrapDialog.show({
+            title: title,
+            message: $('#bootstrap-diallog').html('<div />').load(url),
+            onhide: function (dialogRef) {
+                $('body').append('<div id="bootstrap-diallog"></div>');
+                reloadGridData();
+            }
+        });
+        return false;
+    })
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    });
+
+    $("#dltBtn").click(function () {
+        swalWithBootstrapButtons.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, cancel!',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                var feeSlipId = $('#Month').val();
+                $.post('/Fee/FeeSlipDelete/' + feeSlipId,
+                    { id: feeSlipId },
+                    function (data) {
+                        if (data == 'success') {
+                            $('#Studentid').trigger('change');
+                            swalWithBootstrapButtons.fire(
+                                'Deleted!',
+                                'Fee Slip has been deleted.',
+                                'success'
+                            );
+                        } else {
+                            swalWithBootstrapButtons.fire(
+                                'Deleted!',
+                                'Fee Slip cannot be deleted due to an error.',
+                                'error'
+                            );
+                        }
+                    });
+            }
+        });
+    });
+    if (($('tbody').is(':empty')))
+        $('#dltBtn').hide();
+
+    $('#Month').html('<option>---Select Month---</option>').select2({
+        width: '100%'
+    });
+    $('#Month').on('change',
+        function () {
+            $('#feeMonth').html($("#Month option:selected").text());
+        });
+
+    function resetgrid() {
+        let grid = document.getElementById('list').ej2_instances[0];
+        grid.dataSource = [];
+        let grid2 = document.getElementById('list2').ej2_instances[0];
+        grid2.dataSource = [];
+        $('#dltBtn').hide();
+
+    }
+    $('#Month').on('change', function () {
+        reloadGridData();
+    })
+
+    var firstLoad = true;
+
+    $('#Studentid').on('change',
+        function () {
+
+            resetgrid();
+            var id = $(Studentid).val();
+            if (!id)
+                return false;
+            $.get('/api/fee/get-fee-month/' + id,
+                function (months) {
+                    var data = JSON.parse(months);
+                   var drpFeeMonths= $('#Month').html('').select2({
+                        data: data,
+                        width: '100%'
+                    });
+
+                    @if(ViewBag.regNo!=null)
+            {
+                <text>
+                    if (firstLoad) {
+                        drpFeeMonths.val(@ViewBag.FeeSlipId);
+                       
+                        firstLoad = false;
+                    }
+                      </text>
+            }
+                    drpFeeMonths.trigger('change');
+                });
+
+            $('#stuName').html('.......');
+            $(lblcampus).html('...');
+            $(lblclass).html('...');
+            $(lblsection).html('...');
+            $(pbxPhoto).attr('src', "/Uploads/images/user.png");
+
+            $.get('/api/students/get-student-info/' + id,
+                function (dataa) {
+                    if (dataa != false) {
+                        var data = JSON.parse(dataa);
+                        if (!data)
+                            return false;
+                        $('#stuName').html(data.StudentName);
+                        $(lblcampus).html(data.CampusName);
+                        $(lblclass).html(data.ClassName);
+                        $(lblsection).html(data.SectionName);
+                        $(pbxPhoto).attr('src', data.Photo);
+                        $('#feeMonth').html($("#Month option:selected").text());
+                    }
+                }).error(function () {
+                    $('#stuName').html('.......');
+                    $(lblcampus).html('...');
+                    $(lblclass).html('...');
+                    $(lblsection).html('...');
+                    $(pbxPhoto).attr('src', "/Uploads/images/user.png");
+                });
+        }
+    );
+    @if(ViewBag.regNo!=null)
+            {
+                <text>
+    $('#Studentid').val('@ViewBag.regNo');
+    $('#Studentid').trigger('change');
+    </text>
+            }
+
+    $('#search').on('click',
+        function () {
+        reloadGridData();
+    });
+
+</script>
+@Html.EJS().ScriptManager()

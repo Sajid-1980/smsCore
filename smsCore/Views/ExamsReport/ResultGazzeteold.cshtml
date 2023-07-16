@@ -1,0 +1,189 @@
+﻿  @using Models
+  @using sms.Models
+  @using Syncfusion.EJ2.Grids
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Result Gazzete";
+}
+
+<script @resources.JavaScript>
+    var urlDatasource = "";
+</script>
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("ExamReports", "Reports")">Exam Report</a>
+        </li>
+        <li class="active">
+            Result Gazzete
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="resultguzzert">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @*<div class="col-12 col-md-2 col-sm-6 col-lg-2  mt-2 pt-3 form-group has-feedback">
+                                <label> <input type="radio" id="rdobyclass" checked name="radiobtn" /> by Class</label>
+                            </div>*@
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "resultguzzert", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ShowExams = true, ShowCampus = true, ShowClasses = true, ShowSections = true})
+                        @*<div class="col-12"></div>
+                            <div class="col-12 col-md-2 col-sm-6 col-lg-2   mt-2 pt-3 form-group has-feedback">
+                                <label> <input type="radio" id="rdobyregno" name="radiobtn" /> By Reg No</label>
+                            </div>
+                            <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                                <label>Reg No</label>
+                                <div><input type="text" id="regno" class="form-control" value="1-50000" /></div>
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>*@
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Sort By Student</label>
+                            <select id="student"  class="controls">
+                                <option value="RegistrationNo">Registration No</option>
+                                <option value="ClassPosition">Class Position</option>
+                                <option value="SectionPosition">Section Position</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Sort By Subject</label>
+                            <select id="subject"  class="controls">
+                                <option value="Default">Default</option>
+                                <option value="SubjectName">Subject Name</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-2 col-sm-6 mt-4 col-lg-2 form-group has-feedback">
+                            <label> <input type="checkbox" id="dob"/> Include DOB</label>
+                        </div>
+                        <div class="col-12 col-md-2 col-sm-6 mt-4 col-lg-2 form-group has-feedback">
+                            <label> <input type="checkbox" id="summary"/> Include Summary</label>
+                        </div>
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div id="report-printable" class="card">
+                <div class="card-body">
+
+                    @*@{
+                        var grid = new sms.Models.GridModel
+                        {
+                            AddSerialNo=true,
+                            AllowPdfExport=true,
+                            ReportTitle="Result Gazzete",
+                            Columns=new List<Column> {
+                        new Column{ FieldName="Reg", HeaderText="Reg No.", Width="170" },
+                        new Column{ FieldName="Name", HeaderText="Name", Width="170" },
+                        new Column{ FieldName="FName", HeaderText="Father's Name", Width="170" },
+                        new Column{ FieldName="Section", HeaderText="Section", Width="170" },
+                        }
+                        };
+                    }
+                    @Html.Partial("_grid", grid)*@
+
+                    @Html.EJS().Grid("GridList").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).ShowColumnChooser().AllowSorting().EditSettings(edit => edit.AllowAdding(false).AllowEditing(false).AllowDeleting(false)).AllowFiltering().ShowColumnMenu().AllowGrouping().Height("200").Width("auto").AllowPdfExport().AllowExcelExport().AllowResizing().ToolbarClick("toolbarClick").Columns(col =>
+                    {
+                        col.Field("Reg").HeaderText("Reg.No").Width("80").TextAlign(TextAlign.Left).Add();
+                        col.Field("Name").HeaderText("Name").Width("100").TextAlign(TextAlign.Left).Add();
+                        col.Field("FName").HeaderText("Father Name").Width("100").Add();
+                        col.Field("Section").HeaderText("Sect").Width("80").TextAlign(TextAlign.Left).Add();
+                    }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "ExcelExport", "PdfExport", "ColumnChooser", "Print", "Search" }).AllowGrouping().Render()
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="~/Scripts/jquery.jsontotable.min.js"></script>
+<script @resources.JavaScript>
+    $('#btnSearch').click(function() {
+        var regno = "";
+        if ($('#rdobyregno').is(':checked')) {
+            regno = $("#regno").val();
+        }
+        var sectionid = 0;
+        if ($("#Sections").val() != null) {
+            sectionid = $("#Sections").val();
+        }
+        var examsid = 0;
+        if ($("#Exams").val() != null) {
+            examsid = $("#Exams").val();
+        }
+        var rdobyregno = "false";
+        if ($('#rdobyregno').is(':checked')) {
+            rdobyregno = "true";
+        }
+        var rdobyrclass = "false";
+        if ($('#rdobyclass').is(':checked')) {
+            rdobyclass = "true";
+        }
+        var dob = "false";
+        if ($('#dob').is(':checked')) {
+            dob = "true";
+        }
+        var summary = "false";
+        if ($('#summary').is(':checked')) {
+            summary = "true";
+        }
+        var student = $('#student').val();
+        if ($('#student').val() == null) {
+            remarks = "";
+        }
+        var url1 = '@Url.Action("GetResultGazzeteforDatatable")';
+        url1 += '?Classes=' + $("#Classes").val() + '&Sections=' + sectionid + '&campus=' + $('#Campus').val() + '&exams=' + examsid + '&dob=' + dob + '&summary=' + summary + '';
+        var messageTop = 'Result Gazzete ' + '   Campus: ' + $("#Campus :selected").html() + '   Class: ' + $("#Classes :selected").html() + '    Section: ' + $("#Sections :selected").html();
+        $.ajax({
+            url: url1,
+            type: "GET",
+            success: function(data) {
+                if (data) {
+                    var gridObj = document.getElementById("GridList").ej2_instances[0];
+
+                    gridObj.columns.splice(4, gridObj.columns.length);
+                    gridObj.refresh();
+
+                    $(data.subjectNames).each(function(index, subjectName) {
+                        gridObj.columns.push({ field: subjectName, headerText: subjectName, Width: 60 });
+                    });
+                    gridObj.columns.push({ field: "Obtained", headerText: "Obtained", Width: 60 });
+                    gridObj.columns.push({ field: "Total", headerText: "Total", Width: 60 });
+                    gridObj.columns.push({ field: "%age", headerText: "%age", Width: 60 });
+                    gridObj.columns.push({ field: "Sec_Pos", headerText: "Sec.Pos", Width: 60 });
+                    gridObj.columns.push({ field: "C_Pos", headerText: "Cls.Pos", Width: 60 });
+
+                    gridObj.columns.push({ field: "Remarks", headerText: "Remarks" });
+                    gridObj.refreshColumns();
+                    gridObj.dataSource = (data.Items);
+                    gridObj.refresh();
+                }
+            }
+        });
+    });
+
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("GridList").ej2_instances[0];
+        if (args.item.id === 'GridList_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'GridList_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+</script>
+@Html.EJS().ScriptManager()

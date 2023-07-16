@@ -1,0 +1,106 @@
+﻿@using sms.Models
+@using Syncfusion.EJ2.Grids
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "All Employee List";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("EmployeeReports", "Reports")">Employee Report</a>
+        </li>
+        <li class="active">
+            All Employees List
+        </li>
+    </ul>
+</div>
+<section class="content" id="idcard">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "idcard", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = false, ShowCampus = true})
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @Html.EJS().Grid("list_rpt_employee").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Template("#sno").HeaderText("S.No").Width("140").TextAlign(TextAlign.Left).Add();
+           col.Field("EmpCode").HeaderText("ID").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("EmployeeName").Template("#empEdit").HeaderText("Employee Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("FName").HeaderText("Father Name").AutoFit(true).Add();
+           col.Field("JoiningDate").HeaderText("Joing Date").AutoFit(true).TextAlign(TextAlign.Left).Format(new { type = "dateTime", format = "dd/MM/yyyy" }).Add();
+           col.Field("DOB").HeaderText("Date").Width("160").TextAlign(TextAlign.Left).Format(new { type = "dateTime", format = "dd/MM/yyyy" }).Add();
+           col.Field("Designation").HeaderText("Designation").AutoFit(true).Format("C2").TextAlign(TextAlign.Left).Add();
+           col.Field("Qualififcation").HeaderText("Qualification").AutoFit(true).Format("C2").TextAlign(TextAlign.Left).Add();
+           col.Field("MobileNo").HeaderText("Mobile No").AutoFit(true).Add();
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+                    { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>
+            <script type="text/x-jsrender" id="empEdit">
+                <a class="ajax-load" rel="nofollow" href="/Payroll/EditEmployee/${Id}">${EmployeeName}</a>
+            </script>
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    $('#list_rpt_employee').on('click',
+        'a.ajax-load',
+        function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var url = window.$(this).attr('href');
+            Navigate(url);
+            return false;
+        });
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("list_rpt_employee").ej2_instances[0];
+        if (args.item.id === 'list_rpt_employee_pdfexport') {
+            var exportProperties = {
+                filename: "EmployeeList.pdf"
+            }
+            gridObj.pdfExport(exportProperties);
+        } else if (args.item.id === 'list_rpt_employee_excelexport') {
+            var exportProperties = {
+                filename: "EmployeeList.xlsx"
+            }
+            gridObj.excelExport();
+        }
+    }
+
+    $('#btnSearch').on('click',
+        function() {
+            var campus = $('#Campus').val();
+            if (!campus) {
+                sweetalert('Campus', 'Please select a campus to continue.', 'error');
+                return false;
+            }
+            var url1 = '@Url.Action("GetEmployeeInformatoin")';
+            url1 += '?campusId=' + campus;
+            var grid = document.getElementById("list_rpt_employee").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });    
+</script>
+@Html.EJS().ScriptManager()

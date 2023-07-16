@@ -1,0 +1,110 @@
+﻿@using sms.Models
+
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "ID Card";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("StudentReports", "Reports")">Student Report</a>
+        </li>
+        <li class="active">
+            Student ID Card
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="idcard">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2  mt-2 pt-3 form-group has-feedback">
+                            <label> <input type="radio" id="rdobyclass" checked name="radiobtn"/> by Class</label>
+                        </div>
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "idcard", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = true, ShowCampus = true, ShowClasses = true, ShowSections = true})
+
+                        <div class="col-12"></div>
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2   mt-2 pt-3 form-group has-feedback">
+                            <label> <input type="radio" id="rdobyregno" name="radiobtn"/> By Reg No</label>
+                        </div>
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Reg No</label>
+                            <div class="controls">
+                                <div>
+                                    <input type="text" id="regno" class="form-control" value="1-50000" />
+                                </div>
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        @*<div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Validity</label>
+                            <div><input type="number" id="validupto" class="form-control"/></div>
+                            <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                        </div>*@
+
+                        @*<div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group mt-4 has-feedback">
+                        <label><input type="checkbox" id="AllowTransport" name="AllowTransport" /> Allow Transport</label>
+                        </div>*@
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn mt-2" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 pt-2">
+            <div id="divReport">
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    $('#btnSearch').click(function() {
+        var regno = "";
+        var campus = $('#Campus').val();
+        var section = $('#Sections').val();
+        // var validupto = $('#validupto').val();
+        var rdoByClass = "false";
+        var rdoByAdm = "false";
+        var trans = "false";
+        var regno = $('#regno').val();
+        if ($('#rdobyclass').is(':checked')) {
+            rdoByClass = "true";
+        }
+        if ($('#rdobyregno').is(':checked')) {
+            rdoByAdm = "true";
+        }
+        if ($('#AllowTransport').is(':checked')) {
+            trans = "true";
+        };
+        var sectionid = 0;
+        if ($("#Sections").val() != null) {
+            sectionid = $("#Sections").val();
+        }
+        var src = '/Content/Reports/ReportViewer/ReportViewer.aspx?report=idcard&Campus=' + campus + '&Classes=' + $("#Classes").val() + '&Sections=' + sectionid + '&RegNo=' + regno + '&rdoByClass=' + rdoByClass + '&rdoByAdm=' + rdoByAdm + '&trans=' + trans;
+        var iframe = '<iframe id="reportFrame" width="100%" height="800px" style="background-color:#fff;" scrolling="no" frameborder="0" src="' + src + '" allowfullscreen></iframe>';
+        $("#divReport").html(iframe); block('#btnSearch');
+        const handleLoad = function () {
+            $('#divReport').unblock();
+            $('#btnSearch').unblock();
+        }
+        document.getElementById('reportFrame').addEventListener('load', handleLoad, true);
+        block('#divReport');
+    });
+</script>

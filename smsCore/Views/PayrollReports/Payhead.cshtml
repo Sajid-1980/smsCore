@@ -1,0 +1,89 @@
+﻿@using Models
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Payhead Report";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("PayrollReports", "Reports")">Payroll Report</a>
+        </li>
+        <li class="active">
+            Payhead Report
+        </li>
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Designation</label>
+                            <div class="controls"> @Html.DropDownList("payheadId", (SelectList)ViewBag.payheadlist, new { @class = "form-control" })</div>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Type</label>
+                            <select id="type" class="form-control controls">
+                                <option value="All">All</option>
+                                <option value="Adition">Adition</option>
+                                <option value="Deduction">Deduction</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div id="report-printable" class="card">
+                <div class="card-body">
+                    <div id="classwisereport-gridContainer" class="col-12">
+                        <table id="example" class="table table-bordered" style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th>S No</th>
+                                <th>PayHead Name</th>
+                                <th>Type</th>
+
+                            </tr>
+                            </thead>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    $('#btnSearch').on('click',
+        function() {
+            var payheadId = $('#payheadId').val();
+            var url1 = '@Url.Action("GetPayheadDatatable")';
+            url1 += '?payheadId=' + payheadId + '&type=' + $('#type').val();
+
+            var messageTop = 'Payhead Report';
+            var colmodel = [
+                { "data": "SlNo", "orderable": true, "searchable": true },
+                { "data": "payHeadName", "orderable": true, "searchable": true },
+                { "data": "type", "orderable": true, "searchable": true },
+            ];
+            DrawTableLocal('#example', colmodel, url1, messageTop, '');
+        });
+</script>

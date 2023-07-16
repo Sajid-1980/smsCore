@@ -1,0 +1,151 @@
+﻿@using Utilities;
+@using smsCore.Data.Helpers;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}<style>
+    .dtp-time + .ui-datepicker-trigger {
+        position: absolute;
+        right: 21px;
+        bottom: 6px;
+        cursor: pointer;
+    }
+
+    .small.time {
+        max-width: 230px !important;
+    }
+</style>
+@*@using (Ajax.BeginForm("SchoolAttendanceSchedule", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "SchoolAttendanceSchedulemainForm #server-progress", OnBegin = "begin" }, new { id = "SchoolAttendanceSchedulemainFormmainForm" }))
+{*@
+
+
+
+<form asp-action="SchoolAttendanceSchedule" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SchoolAttendanceSchedulemainFormmainForm" data_reset="true" enctype="multipart/form-data">
+      
+    <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <fieldset class="fieldset">
+                <legend>
+                    For Students
+                </legend>
+                <div class="row">
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>School Opening Time</label>
+                        <div class="controls">
+                            <input type="text" name="dtpschoolOtstudent" readonly id="stdSchoolOpeningTime" class="form-control has-feedback-left dtp-time" value="@existings.Where(w => w.PropertyName == "OTstudent").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-clock form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>School Closing Time</label>
+                        <div class="controls">
+                            <input type="text" name="dtpscholCtstudent" readonly id="stdSchoolClosingTime" class="form-control has-feedback-left dtp-time" value="@existings.Where(w => w.PropertyName == "CTstudent").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-clock form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>Attendance Time</label>
+                        <div class="controls">
+                            <input type="text" name="dtpattendancetimestudent" readonly id="stdAttendanceTime" class="form-control has-feedback-left dtp-time" value="@existings.Where(w => w.PropertyName == "ATstudent").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-clock form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-12 col-md-6">
+            <fieldset class="fieldset">
+                <legend>
+                    For Employees
+                </legend>
+                <div class="row">
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>School Opening Time</label>
+                        <div class="controls">
+                            <input type="text" name="dtpschoolOtstaff" id="empSchoolOpeningTime" readonly class="form-control has-feedback-left dtp-time" value="@existings.Where(w => w.PropertyName == "OTetaff").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-clock form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>School Closing Time</label>
+                        <div class="controls">
+                            <input type="text" name="dtpschoolStstaff" id="empSchoolClosingTime" readonly class="form-control has-feedback-left dtp-time" value="@existings.Where(w => w.PropertyName == "CTstafff").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-clock form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>Attendance Time</label>
+                        <div class="controls">
+                            <input type="text" name="dtpattendanceStaff" id="empAttendanceTime" readonly class="form-control has-feedback-left dtp-time" value="@existings.Where(w => w.PropertyName == "ATstaff").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-clock form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-12 mt-2">
+                        <label class="mr-2">
+                            @{
+                                var stfAtt = existings.Where(w => w.PropertyName == "SendStaffAttendance").Select(s => s.PropertyValue).FirstOrDefault();
+                                if (string.IsNullOrEmpty(stfAtt))
+                                {
+                                    stfAtt = "false";
+                                }
+                            }
+                            <input type="checkbox" name="cbxSendStaffAttendance" @(stfAtt.Trim().ToLower() == "true" ? "checked" : "") id="SendEmplyattendance" />Send Employee Attendance To This No
+                        </label>
+                        <div class="controls"><input type="text" name="txtStaffAttendanceMobileNo" id="SendempAttendance" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "StaffAttendanceMobileNo").Select(s => s.PropertyValue).FirstOrDefault()" /></div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-12 col-md-6">
+            <fieldset class="fieldset">
+                <legend>
+                    Class
+                </legend>
+                <div class="row">
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>First Period</label>
+                        <div class="controls">
+                            <input type="text" name="dtpFirstPeriod" id="dtpFirstPeriod" class="form-control has-feedback-left dtp-time" value="@existings.Where(w => w.PropertyName == "FirstPeriod").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-clock form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                   
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 float-right">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+
+    </div>
+</form>
+<script>
+    $('.dtp-time').timepicker({
+        buttonImage: '/assets/images/calendar.png',
+        buttonImageOnly: true,
+        showOn: 'button',
+        showAnim: "clip",
+        controlType: 'select',
+        oneLine: true,
+        timeFormat: "hh:mm TT",
+    });
+</script>

@@ -1,0 +1,126 @@
+﻿@{
+    ViewBag.Title = "CampusEdit";
+}
+
+@using m = Models;
+@model Campus
+
+@{
+    ViewBag.Title = "Campus Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@*
+
+@using (Ajax.BeginForm("CampusEdit", "School", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "editSchoolmainForm #server-progress", OnBegin = "begin"}, new {id = "editSchoolmainForm", enctype = "multipart/form-data"}))
+{
+  *@
+<form asp-action="CampusEdit" asp-controller="School" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editSchoolmainForm" data_reset="true">
+                   
+  
+  
+  <div class="row">
+
+        <div class="col-12 ">
+
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            <div class="row">
+                <div class="col-12">
+                    <div id="message">
+
+                    </div>
+                </div>
+            </div>
+            <div class="Container">
+
+                <div class="row ">
+
+                    <div class="col-12 col-sm-6  has-feedback">
+                        <label>Campus Name</label>
+                        <div class="controls">
+                            @Html.HiddenFor(m => m.ID)
+                            @Html.TextBoxFor(model => model.CampusName, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "30", required = "true" })
+                            <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.CampusName)
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6  has-feedback">
+                        <label>Address</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.address, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "50" })
+                            <span class="fa fa-address-book form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.address)
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6  has-feedback">
+                        <label>Mailing Name</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.mailingName, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "50", required = "true" })
+                            <span class="fa fa-address-book form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.mailingName)
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6  has-feedback">
+                        <label>Phone</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.phone, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "50", required = "true", type = "datetime" })
+                                                <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.phone)
+                                            </div>
+                    </div>
+                    <div class="col-12 col-sm-6  has-feedback">
+                        <label>Mobile</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.mobile, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "50", required = "true", type = "datetime" })
+                            <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.mobile)
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6  has-feedback">
+                        <label>Web</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.web, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "50", required = "true", type = "datetime" })
+                            <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.web)
+                        </div>
+                    </div>
+                </div>
+                @*<div class="row m">
+
+                                    <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                        <label>Email </label>
+                                        <input type="text" name="Email" minlength="7" , maxlength="17" class="form-control has-feedback-left" />
+                                        <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessage("Email")
+                                    </div>
+                                    <div class="col-12 col-md-4 col-sm-6 has-feedback">
+                                        <label>Password </label>
+                                        <input type="password" name="password" minlength="7" , maxlength="17" class="form-control has-feedback-left" />
+                                        <span class="fa fa-key form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessage("Password")
+                                    </div>
+
+                                </div>*@
+
+                <div class="row">
+                    <div class="col-12">
+                        
+                        <button type="reset" name="Reset" id="resetbtn" class="btn btn-danger float-right mt-2"><i class="fa fa-refresh mr-2"></i>Reset</button>
+                        <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>

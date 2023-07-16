@@ -1,0 +1,194 @@
+﻿@inject StaticResources resources
+@model List<Admission>
+
+@{
+    //if (Request.IsAjaxRequest())
+    //{
+        Layout = null;
+   // }
+    ViewBag.Title = "Promote Student to Next Class";
+}
+<style>
+    button[disabled] .fa-spin {
+        display: inline-block;
+    }
+</style>
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Promote Student
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="promote-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="col-lg-12 col-md-12 col-sm-12 col-xs-12 heading text-center">Promote Students To Next Class <a href="https://www.youtube.com/watch?v=qnCNefvfqfg&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=110s" title="Watch our Youtube Video to understand" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+                <div id="message">
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h4>Promote From</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mr-4 ml-4">
+                        <div class="col-md-12   mr-4 ml-4" id="PromoteFrom">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "PromoteFrom", ColCssClass = "col-11", ShowCampus = true, ShowSession = true, ShowClasses = true })
+                        </div>
+                        <div class="col-12 mt-2 mr-4">
+                            <button class="btn float-right  mr-4 btn-primary" id="search" onclick="searchbtn()"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h5>Promote To</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mr-4 ml-4">
+
+                        <div class="col-md-12 PromoteTo mr-4 ml-4" id="PromoteTo">
+                            @*@Html.Partial("_PartialSchoolProperty", new ViewDataDictionary { { "ParentContainerID", "#PromoteTo " }, { "NoSubjects", true }, { "NoSections", true }, { "NoExams", true }, { "NoGroups", true }, { "NoFeeGroup", true }, { "ColCssClass", "col-11" } })*@
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "PromoteTo", ColCssClass = "col-11", ForSearch = false, ShowCampus = true, ShowSession = true, ShowClasses = true })
+
+                        </div>
+                        <div class="col-md-12 mt-2 mr-4 d-none d-md-block d-lg-block">
+                            <button id="SaveAndPromote" class="btn float-right mr-4  btn-primary"><i class="fa fa-save"></i> <i class="fa fa-spinner fa-spin" style="display: none"></i> Save and Promote</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3>Student list</h3>
+                </div>
+                <div class="col-12">
+                   @* @Html.EJS().Grid("list").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+               {
+                   col.Type("checkbox").Width("50").Add();
+                   col.Template("${sno(index)}").HeaderText("S.No").Width("50").TextAlign(TextAlign.Left).Add();
+                   col.Field("registrationNo").HeaderText("Reg. No").Width("60").TextAlign(TextAlign.Left).Add();
+                   col.Field("studentName").HeaderText("Name").Width("120").TextAlign(TextAlign.Left).Add();
+                   col.Field("fName").HeaderText("Father's Name").Width("100").TextAlign(TextAlign.Left).Add();
+               }).PageSettings(page => page.PageSize(15)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()*@
+               
+
+                    @{
+                        var gridModel = new GridModel()
+            {
+                GridId = "list",
+                AllowFiltering= true,
+                AllowGrouping = true,
+                Height="300",
+                Width="auto",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowResizing = true,
+                AddSerialNo =true,
+                Columns = new List<Column>
+                    {
+                    new Column{Type="checkbox",Width="50",TextAlign = TextAlign.Left},
+                    //new Column{Template = "${sno(index)}", HeaderText = "S.No",Width="60" ,  TextAlign = TextAlign.Left  } ,
+                    new Column{FieldName="registrationNo",HeaderText="Reg.No",Width="60",HeaderTextAlign=TextAlign.Left},
+                    new Column{FieldName="studentName",HeaderText="Name",Width="120",HeaderTextAlign=TextAlign.Left},
+                    new Column{FieldName="fName",HeaderText="Father's Name",Width="100",HeaderTextAlign=TextAlign.Left},
+                   
+                    },
+            };
+                    }
+
+                    @await Html.PartialAsync("_grid",gridModel)
+               
+               </div>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+<script @resources.JavaScript>
+    function searchbtn() {
+        var gridObj = document.getElementById("list").ej2_instances[0];
+        gridObj.dataSource = [];
+        var url = 'SearchStudents';
+        url+= '?campus=' + $('#Campus').val() + '&classID=' + $('#Classes').val() + '&session=' + $('#Session').val();
+        gridObj.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    };
+
+    function loader(type) {
+        if (type == 'hide') {
+            $('#promote-container').unblock();
+        }
+        else {
+            block('#promote-container');
+
+        }
+    }
+
+    $('#SaveAndPromote').click(function() {
+       // $(this).attr('disabled', true);
+        //RegistrationNos
+        
+        $('#message').html('');
+        let session = $('#PromoteTo #Session').val();
+        let old_session = $('#PromoteFrom #Session').val();
+        //if (session == old_session) {
+        //    sweetalert("You cannot promote student to same session(year).", "", "error");
+        //    return false;
+        //}
+        var gridObj = document.getElementById("list").ej2_instances[0];
+        var selectedrecords = gridObj.getSelectedRecords();
+        var RegistrationNos = selectedrecords.map(function (c, a, i) { return c.registrationNo });
+        if (RegistrationNos.length==0)
+        {
+            sweetalert("Please select atleast one student to continue.", "", "error");
+            return false;
+        }
+        var postdata = {
+            RegistrationNos, CampusID: $('#PromoteTo #Campus').val(), ClassID: $('#PromoteTo #Classes').val(), Session: session, old_session: old_session
+        }
+        loader('show');
+        $.post('@Url.Action("PromoteStudent", "Students")', postdata, function (data) {
+            if (data.status ) {
+                $('#message').html('<p class="alert alert-info">Selected Students promoted successfully.</p>');
+                searchbtn();
+            } else {
+                $('#message').html('<p class="alert alert-danger">An unknow error occured whil trying to promote the student.</p>');
+            }
+            $(this).removeAttr('disabled');
+            loader('hide');
+        }).error(function () {
+            $('#message').html('<p class="alert alert-danger">' + er.responseText + '</p>');
+            $(this).removeAttr('disabled');
+            loader('hide');
+
+        });
+
+    });
+</script>

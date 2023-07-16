@@ -1,0 +1,47 @@
+﻿@using sms.Models
+@{
+    ViewBag.Title = "No Objection Certificate";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("EmployeeReports", "Reports")">Employee Report</a>
+        </li>
+        <li class="active">
+            No Objection Certificate
+        </li>
+    </ul>
+</div>
+<section class="content" id="idcard">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "idcard", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = true, ShowCampus = true})
+
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 pt-2">
+            <div id="divReport">
+
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,151 @@
+﻿@inject StaticResources resources
+
+@{
+    ViewBag.Title = "RoleList";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Role
+            </li>
+
+        </ul>
+    </div>
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-4 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Add New Role</h3>
+                </div>
+                <div class="card-body">
+
+                    @* @using (Ajax.BeginForm("CreateRole", "Users", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+                    {*@
+                    <form asp-action="CreateRole" asp-controller="Users" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-12 pt-2">
+                                <label class="control-label">Role</label>
+                                <font class="text-danger">*</font>
+                                <div class="controls">
+                                    @Html.TextBox("RoleName", null, new { @class = "form-control ", placeholder = "Enter your Role...", required = "true" })
+                                    <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-12"></div>
+                            <div class="form-group col-12  pb-2 mt-3">
+
+
+                                <button type="submit" value="Create" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Role List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="col-12">
+                      @*  @Html.EJS().Grid("list_role").DataSource(s=> { s.Url("/Users/RolesList"); }).Columns(col =>
+                        {
+                        col.Field("Name").HeaderText("Description").Width("100").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                        col.Template("#action").HeaderText("Action").TextAlign(TextAlign.Center).Width("100").Add();
+                        }).Load("load").Render()*@
+
+                        @{
+                            var gridmodel = new GridModel()
+            {
+                GridId = "list_role",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+
+
+
+                Columns = new List<Column>
+                        {
+                        new Column{FieldName="Name",HeaderText="Description",Width="100",TextAlign=TextAlign.Left},
+                        new Column{FieldName="#action",HeaderText="Action",Width="100",TextAlign=TextAlign.Left},
+     
+                        },
+            };
+                        }
+                        @await Html.PartialAsync("_grid",gridmodel)
+                        <script type="text/x-jsrender" id="action">
+                            ${if(isEditAble)}
+                            <a title="Edit" href="/Users/EditRole?role=${Name}" class="edit ajax ml-1"><i class="fa fa-edit"></i></a>
+                            <a title="Delete" href="/Users/DeleteRole?id=${Id}" class="edit ajax ml-1"><i class="fa fa-trash"></i></a>
+                            <a title="User in Role=>{s.Name}" href="/Users/UsersInRole?role=${Name}" class="edit ajax ml-1"><i class="fa fa-user"></i></a>
+
+                            <a title="Add User In Role=>{s.Name}" href="/Users/AssignRole?role=${Name}" class="edit ajax ml-1"><i class="fa fa-user-plus"></i></a>
+                            ${/if}
+                        </script>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</section>
+<script @resources.JavaScript>
+    function load() { }
+    function reloadGridData() {
+        let grid = document.getElementById('list_role').ej2_instances[0];
+        grid.refresh();
+    }
+    $('#list_role').on('click',
+        'a',
+        function (e) {
+            e.preventDefault();
+            var title = 'Roles';
+            var url = $(this).attr('href');
+
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>
+@Html.EJS().ScriptManager();

@@ -1,0 +1,119 @@
+﻿@model System.Data.DataTable
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "RatingEntry";
+}
+<style>
+    .labelcolor {
+        color: #49f52b;
+        font-size: 20px;
+        font-style: oblique;
+    }
+</style>
+<div class="sico-container">
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="row sico-form-col">
+        <h5 class="col-12 border-bottom"> Rating For</h5>
+
+        @*@foreach (System.Data.DataRow dr in Model.Rows)
+        {
+            foreach (System.Data.DataColumn cols in Model.Columns)
+            {*@
+        @*<td>
+                        @dr[cols.ColumnName].ToString()
+                    </td>*@
+        <div class="row" style="min-width: 100%">
+            <div class="col-md-6">
+                <label class="labelcolor mt-4">Rating For</label>
+                <label>. . . . . . . .</label>
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="labelcolor mt-4">Campus</label>
+                        <label>. . . . . . . .</label><br/>
+                        <label class="labelcolor">Class</label>
+                        <label>. . . . . . . .</label>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="~/Uploads/images/user.png" id="CurrentTeacherPhoto" class="d-block m-auto" style="width: 90px;"/>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="row sico-form-col">
+        <h5 class="col-12 border-bottom"></h5>
+
+        <div class="col-md-12">
+            <label class="mr-4">. . . . . </label>
+            <label class="ml-4">Reg No </label>
+            <input type="text" id="regNo" name="registrationo" style="background-color: #a8cfd3; width: 10%;"/>
+        </div>
+    </div>
+    <div class="row sico-form-col">
+        <h5 class="col-12 border-bottom">Rating By</h5>
+        <div class="row" style="min-width: 100%">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="labelcolor">Reg No</label>
+                        <label id="lblRegNo">. . . . . . . .</label><br/>
+                        <label class="labelcolor">Campus</label>
+                        <label id="lblCampus">. . . . . . . .</label>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="labelcolor">Name</label>
+                        <label id="lblName">. . . . . . . .</label><br/>
+                        <label class="labelcolor">Class</label>
+                        <label id="lblClass">. . . . . . . .</label>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label class="labelcolor mt-4">Section</label>
+                        <label id="lblSection">. . . . . . . .</label><br/>
+                        <label class="labelcolor">Rate</label>
+                        <input type="text" id="lblRate" style="background-color: #a8cfd3; width: 40%;"/>
+                    </div>
+                    <div class="col-md-6">
+                        <img src="~/Uploads/images/user.png" id="CurrentTeacherPhoto" class="d-block m-auto" style="width: 90px;"/>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script @resources.JavaScript>
+    $('#regNo').on('change',
+        function() {
+
+            if ($('#regNo').val() > 5 & $('#regNo').val() > 1) {
+                $('#regNo').focus();
+            }
+            var id = $('#regNo').val();
+            var url = ('@Url.Action("RatingEntryRegNoChange", "Dashboard", new {regno = 0})').replace('0', id);
+            $.get(url,
+                function(data) {
+                    $('#lblRgno').html(data.lblRgno);
+                    $('#lblCampus').html(data.lblCampus);
+                    $('#lblName').html(data.lblName);
+                    $('#lblClass').html(data.lblClass);
+                    $('#lblSection').html(data.lblSection);
+
+                });
+        });
+</script>

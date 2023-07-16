@@ -1,0 +1,207 @@
+﻿ 
+@model IEnumerable<Models.FeeGroup>
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Fee Groups";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Fee Group
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="classfeeindex">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Horizontal Form -->
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Fee Group <a href="https://www.youtube.com/watch?v=-L7sM_ZtyMo&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div><!-- /.box-header -->
+
+               @* @using (Ajax.BeginForm("AddClassFeeGroups", "Fee", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm", data_reset = "true"}))
+                {*@
+                <form asp-action="AddClassFeeGroups" asp-controller="Fee"
+                      data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+                
+
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                            @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "classfeeindex", ColCssClass = "col-12 col-sm-12", ShowCampus = true, CampusFieldName = "CampusID"})
+
+                            <div class="col-12 col-sm-12 mt-2">
+                                <label> Fee Group:</label><font class="text-danger">*</font>
+                                <input type="text" name="feeGroup" id="feeGrp" class="form-control"/>
+                                <span class="fa fa-plus form-control-feedback left" aria-hidden="true"></span>
+                                @*<a class="new float-right" href="@Url.Action("FeeGroupIndex", "Fee")" data-type="fee" title="Add New Fee Group" style="position:inherit!important;"><i class="fa fa-plus"></i> </a>*@
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+
+                    <div class="card-footer mt-2">
+                        <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>
+
+                        <button type="submit" value="Create" class="btn btn-info pull-right">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div><!--/.col (right) -->
+        <!-- left column -->
+        <div class="col-md-8">
+            <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Fee Groups List</h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div id="classfeegroup-gridContainer" class="no-footer">
+                        <table cellpadding="0" cellspacing="0" id="jqgFeeGroup">
+                        </table>
+                        <div class="dataTables_paginate paging_simple_numbers" style="text-align: center;" id="jqgpFeeGroup"></div>
+                    </div><!-- /.table -->
+                </div><!-- /.box-body -->
+            </div>
+        </div><!--/.col (left) -->
+        <!-- right column -->
+    </div>
+</section>
+
+<script @resources.JavaScript>
+
+    function reloadGridData() {
+        $('#jqgFeeGroup').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    $(function() {
+        setTimeout(function() { $('#Campus').trigger('change'); }, 400);
+
+        $('#Campus').on('change',
+            function() {
+                var campusId = $('#Campus').val();
+
+                $.get('/api/fee/feegroups/' + campusId + '?search=False',
+                    function(subject) {
+                        var subjects = JSON.parse(subject);
+
+                        $('#FeeGroupID').html('').select2({
+                            data: subjects,
+                            width: '100%'
+                        });
+                    });
+
+                var url = '@Url.Action("GetFeeGroupListForJq")';
+                url += '?campusId=' + campusId;
+                $('#jqgFeeGroup').jqGrid({
+                    //url from wich data should be requested
+                    url: url,
+                    //type of data
+                    datatype: 'json',
+                    //url access method type
+                    mtype: 'Post',
+                    colModel: [
+                        { label: 'Id', name: 'ID', index: 'ID', align: 'left', width: 50, search: true, stype: 'text', searchoptions: { attr: { title: 'Select Date' } } },
+                        { label: 'Fee Group', name: 'FeeGroupName', index: 'FeeGroupName', align: 'left' },
+                        { label: 'Action', name: 'action', index: 'action', align: 'center', width: 50 }
+                    ],
+                    // caption: 'Class Fee Groups List',
+                    //enable footer
+                    footerrow: false,
+                    userDataOnFooter: false,
+                    //expect object instead of flat array
+                    jsonReader: { repeatitems: false, id: 'sr' },
+                    //pager for grid
+                    pager: $('#jqgpFeeGroup'),
+                    //number of rows per page
+                    rowNum: 10,
+                    //initial sorting column
+                    sortname: 'Id',
+                    //initial sorting direction
+                    sortorder: 'asc',
+                    //we want to display total records count
+                    viewrecords: true,
+                    height: 'auto',
+                    loadComplete: function() {
+                        var table = this;
+                        setTimeout(function() {
+                                updatePagerIcons(table);
+                            },
+                            0);
+                    },
+                    gridComplete: function() {
+                        $('.ajax').on('click',
+                            function(e) {
+                                e.preventDefault();
+                                var title = $(this).attr('title');
+                                var url = $(this).attr('href');
+
+                                BootstrapDialog.show({
+                                    title: title,
+                                    message: $('<div />').load(url),
+                                    onhide: function(dialogRef) {
+
+                                        reloadGridData();
+                                    }
+                                });
+                                return false;
+                            });
+                    }
+                });
+
+                $('#jqgFeeGroup').jqGrid('setGridParam', { url: url });
+                $('#jqgFeeGroup').trigger('reloadGrid', { current: true, fromserver: true });
+
+                function updatePagerIcons(table) {
+                    var replacement =
+                    {
+                        'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+                        'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+                        'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+                        'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+                    };
+                    $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function() {
+                        var icon = $(this);
+                        var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+                        if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+                    });
+                }
+
+                var DataGrid = $('#jqgFeeGroup');
+
+                //sets the grid size initially
+                DataGrid.jqGrid('setGridWidth', parseInt($('#classfeegroup-gridContainer').width()));
+
+                //handles the grid resize on window resize
+                $(window).resize(function() {
+                    DataGrid.jqGrid('setGridWidth', parseInt($('#classfeegroup-gridContainer').width()));
+                });
+            });
+
+    });
+
+
+</script>

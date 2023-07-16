@@ -1,0 +1,193 @@
+﻿@model System.Data.DataTable
+@inject StaticResources resources
+
+@{
+    /**/
+    string title = "Visitor Register";
+    string action = "Index";
+    string createAction = "Create";
+    string listdataAction = "VisitorList";
+    string deleteMasterAction = "DeleteVisitor";
+    string gridId = "Grid";
+    ViewBag.Title = title;
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Admin
+        </li>
+        <li class="active">
+            @title
+        </li>
+    </ul>
+</div>
+@*@using (Html.BeginForm(action, "Visitor", FormMethod.Get, new { enctype = "multipart/form-data", @class = "form-horizontal form-label-left " }))
+{*@
+
+<form asp-action="action" asp-controller="Visitor"  data-ajax="true" data-ajax-method="get" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask"  data_reset="true">
+        
+    <section class="content">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                          {
+                              Label = "From Date",
+                              ParentContainerID = "from-container",
+                              ColCssClass = "col-6 col-sm-6",
+                              ShowAltField = false,
+                              DateFieldId = "fromdate",
+                              DateFieldName = "Fromdate",
+                              KeepDataFieldReadOnly = true
+                          })
+
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                          {
+                              Label = "To Date",
+                              ParentContainerID = "to-cotainer",
+                              ColCssClass = "col-6 col-sm-6",
+                              ShowAltField = false,
+                              DateFieldId = "todate",
+                              DateFieldName = "Todate",
+                              KeepDataFieldReadOnly = true
+                          })
+
+                            <div class="col-6 col-sm-12">
+                                <label>Name</label>
+                                <div class="controls">
+
+                                    <input type="text" name="name" id="name" class="form-control has-feedback-left" />
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("name")
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 mt-2">
+                                <button type="button" id="btnSearch" class="btn btn-primary sico-btn float-right" name="Search"><i class="fa fa-search mr-2"></i> Search</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-header px-2">
+                        <h3>
+                            @title
+                            <a href="@Url.Action(createAction)" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn ajax-load-menu"><i class="fa fa-plus-circle"></i> Add New Record</a>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="row no-gutters sico-form-col mt-1">
+                            <div class="col-12">
+                               @* @Html.EJS().Grid(gridId).AllowGrouping().Height("auto").Width("auto").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                           {
+                               col.Template("#sno").HeaderText("S.No").TextAlign(TextAlign.Left).Width("90").Add();
+                               col.Field("Date").HeaderText("Date").TextAlign(TextAlign.Left).AutoFit(true).Format(new { type = "dateTime", format = "dd/MM/yyyy" }).Add();
+                               col.Field("Name").HeaderText("Name").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("Descrition").HeaderText("Description/Purpose").TextAlign(TextAlign.Left).Add();
+                               col.Field("VistorType").HeaderText("Type").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                               col.Template("#action").HeaderText("Action").Width("100").TextAlign(TextAlign.Left).Add();
+                           }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+                             {  "Print", "ColumnChooser", "Search" }).Render()*@
+
+
+                                @{
+                                    var gridModel = new GridModel()
+                                    {
+                                        GridId = "gridId",
+                                        AddSerialNo = true,
+                                        Height = "auto",
+                                        Width = "auto",
+                                        ShowColumnChooser = true,
+                                        AllowResizing = true,
+                                        
+                                        Columns = new List<Column>
+                                        {
+                                             new Column{FieldName = "date", HeaderText = "Date", TextAlign = TextAlign.Left , AutoFit=true  , DateFormat="dd/MM/yyyy"  } ,
+                                            new Column{FieldName="name",HeaderText="Name",  AutoFit=true ,HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="description",HeaderText="Descrition/Purpose",HeaderTextAlign=TextAlign.Left},
+                                            new Column{FieldName="vistorType",HeaderText="Type",HeaderTextAlign=TextAlign.Left , AutoFit=true},
+                                            new Column{FieldName="action",Template="#action",HeaderText="Action",Width="90",HeaderTextAlign=TextAlign.Left , AutoFit=true},
+                                 
+                                        },
+                                        
+
+                                    };
+
+
+                             }
+
+                                @await Html.PartialAsync("_grid",gridModel)
+                                <script id="sno" type="text/x-jsrender">
+                                    ${sno(index)}
+                                </script>
+                                <script type="text/x-jsrender" id="action">
+                                    <a title="Edit" href="/Visitor/@createAction/${Id}" class="ajax-load-menu ml-1"><i class="fa fa-edit"></i></a>
+                                    <a title="Delete" href="javascrpt:void(0);" onclick="deleteRecord(${Id})" class="ml-1"><i class="fa fa-trash"></i></a>
+                                </script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+@*}*@
+</form>
+
+<script @resources.JavaScript>
+
+    $('#btnSearch').on('click',
+        function() {
+            var fromdate = $('#fromdate').val();
+            var todate = $('#todate').val();
+            var ledger = $('#LedgerId').val();
+            var voucher = $('#VoucherNo').val();
+
+            var url1 = '@Url.Action("VisitorList")';
+            url1 += encodeURI('?fromdate=' + fromdate + '&todate=' + todate + '&LedgerId=' + ledger + '&VoucherNo=' + voucher);
+            
+            var grid = document.getElementById("gridId").ej2_instances[0]
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+    function reloadGridData() {
+        let grid = document.getElementById('@gridId').ej2_instances[0];
+        grid.refresh();
+    }
+
+    function deleteRecord(id) {
+
+        sweetalertWithUrl("Are you sure to delete this record?", `/Visitor/@deleteMasterAction/${id}`, true, reloadGridData)
+
+    }
+
+    $(function () {
+        $('#btnSearch').trigger('click');
+    });
+</script>
+ 

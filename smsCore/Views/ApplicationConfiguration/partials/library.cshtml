@@ -1,0 +1,84 @@
+﻿@using Utilities;
+@using smsCore.Data.Helpers;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+@*@using (Ajax.BeginForm("Library", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "LibrarymainForm #server-progress", OnBegin = "begin" }, new { id = "LibrarymainForm" }))
+{*@
+
+<form asp-action="Library" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="LibrarymainForm" data_reset="true">
+  
+
+
+    <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-12 col-md-6 form-group">
+            <div class="row">
+                <div class="col-12 form-group ">
+                    <label>Staff NOC Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtStaffLibraryNOCtitle" id="StaffNOCTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "StaffLibraryNOCTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group mb-2">
+                    <label>Staff NOC Body</label>
+                    <div class="controls">
+                        <textarea name="txtStaffLibraryNOCBody" id="StaffNOCBody" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "StaffLibraryNOCBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "StaffLibraryNOCBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group ">
+                    <label>Student NOC Title</label>
+                    <div class="controls">
+                        <input type="text" name="txtStudentLibraryNOCTitle" id="StudentNOCTitle" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "StudentLibraryNOCTitle").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-certificate form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group mb-2">
+                    <label>Student NOC Body</label>
+                    <div class="controls">
+                        <textarea name="txtStudentLibraryNOCBody" id="StudentNOCBody" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "StudentLibraryNOCBody").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "StudentLibraryNOCBody").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        <span class="fa fa-sitemap form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <label>Please Save The Information In This Format:</label>
+            <br /><br />
+            <label>{0} For Name</label>
+            <label>{1} For Father Name</label>
+            <label>{2} For Address</label>
+            <label>{3} For Joining Date</label>
+            <label>{4} For DOB</label>
+            <label>{5} For CNIC</label>
+            <br /><hr />
+            <br />
+            <label>{0} For Registration</label>
+            <label>{1} For Name</label>
+            <label>{2} For Father Name</label>
+            <label>{3} For Address</label>
+            <label>{4} For DOB</label>
+
+        </div>
+        <div class="col-12 float-right mt-2">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+    </div>
+</form>

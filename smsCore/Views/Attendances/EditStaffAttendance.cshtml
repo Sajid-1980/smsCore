@@ -1,0 +1,209 @@
+﻿@model List<Models.StudentAttendence>
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Edit Student Attendance";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+
+    Layout = null;
+
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Attendance
+        </li>
+        <li class="active">
+            Edit Staff Attendance
+        </li>
+
+    </ul>
+</div>
+
+
+@*@using (Ajax.BeginForm("EditStudentAttendance", "Message", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "EditStudentAttendancemainForm #server-progress", OnBegin = "begin"}, new {id = "EditStudentAttendancemainForm"}))
+{*@
+
+<form asp-action="EditStudentAttendance" asp-controller="Message" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="EditStudentAttendancemainForm" data_reset="true">
+
+    @Html.AntiForgeryToken()
+
+    <div class="row">
+    </div>
+    <section class="content" id="editstaff-container">
+        <div class="row ">
+            @*<div class="col-12">
+            <div id="newCreateMessage">
+            </div>
+            </div>*@
+            @Html.AntiForgeryToken()
+
+            <div class="col-12 col-md-4">
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels
+                            {
+                            ParentContainerID = "editstaff-container",
+                            ColCssClass = "col-sm-12 col-lg-6",
+                            ShowCampus = true,
+                            })
+
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                            {
+                            Label = "Date",
+                            ParentContainerID = "att-date",
+                            ColCssClass = "col-12 col-lg-6",
+                            ShowAltField = false,
+                            DateFieldId = "Time",
+                            DateFieldName = "Time",
+                            KeepDataFieldReadOnly = true,
+                            PickerType = "time",
+                            DefaultDate = DateTime.Now
+                            })
+
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="col-12 text-right">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right" id="btnSearch" onclick="reloadGridData()"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h3 class="card-title"><i class="fa fa-list mr-2"></i> Staff Attendance list</h3>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="EditStaffAttendance-gridContainer" class="col-12">
+                                @{
+                                    var gridmodel = new GridModel()
+            {
+                GridId = "list_attenance_staff",
+                Columns=new List<Column>
+                {
+                                new Column{Type="checkbox",Width="50"},
+                                new Column{FieldName="employeeCode",HeaderText="Code",TextAlign=TextAlign.Left},
+                                new Column{FieldName="employeeName",HeaderText="Name",TextAlign=TextAlign.Left},
+                                new Column{FieldName="designationName",HeaderText="Designation",TextAlign=TextAlign.Left},
+                                new Column{FieldName="Status",HeaderText="Attendance",TextAlign=TextAlign.Left},
+                },
+                                    };
+                                }
+                                @await Html.PartialAsync("_grid",gridmodel);
+                            </div>
+                           @* <div id="EditStaffAttendance-gridContainer" class="col-12">
+                                @Html.EJS().Grid("list_attenance_staff").SelectionSettings(sel => { sel.CheckboxOnly(true); }).Columns(col =>
+                                {
+                                col.Type("checkbox").Width("50").Add();
+                                //col.Field("RegNo").HeaderText("Reg. No").TextAlign(TextAlign.Left).Add();
+                                col.Field("employeeCode").HeaderText("Code").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                                col.Field("employeeName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                                col.Field("designationName").HeaderText("Designation").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                                col.Field("Status").HeaderText("Attendance").TextAlign(TextAlign.Center).Add();
+                                }).Render()
+                            </div>*@
+                            <div class="col-8 col-sm-6 col-md-4 mt-3">
+                                <label>Attendance</label>
+                                <div class="controls">
+                                    @Html.DropDownList("AttendanceType", (SelectList)ViewBag.AttendanceType, new { @class = "form-control chosen has-feedback-left", id = "attendanceType", placeholder = "enter name here." })
+                                    <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("AttendanceType")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="col-12">
+                            <div id="message">
+                            </div>
+                        </div>
+                        <div class="col-12 text-right">
+                            <button type="button" class="btn float-right btn-primary" id="btnSave"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</form>
+
+@Html.EJS().ScriptManager();
+<script @resources.JavaScript>
+    function reloadGridData() {
+
+        var campus = $('#Campus').val();
+        var selectdate = $('#Time').val();
+        if (selectdate == "") {
+            return $('#selectdate').focus();
+        }
+        var url1 = '/Attendances/StaffAttendanceByDate';
+        url1 += '?campus=' + campus + '&date=' + selectdate;
+
+        var grid = document.getElementById("list_attenance_staff").ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    function Save() {
+
+        let url = `/Attendances/EditStaffAttendanceSave`;
+
+        let grid = document.getElementById('list_attenance_staff').ej2_instances[0];
+        var selected = grid.getSelectedRecords().map(function (v) { return { id: v.id }; });
+        if (selected.length == 0) {
+            sweetalert("Plaese select atleast one employee before continue", '', 'error');
+            return false;
+        }
+        var attendance = $('#attendanceType').val();
+        var selecteddate = $('#Time').val();
+        selected[0].AttendanceType = attendance;
+        selected[0].Date = selecteddate;
+        block('#editstaff-container');
+        $.post(url, { data: selected }, function (response) {
+            if (response.status) {
+                $('#message').html('<span class="float-left alert alert-info w-100">Date Saved successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                reloadGridData();
+            }
+            else {
+                $('#message').html('<span class="float-left alert alert-danger w-100">' + response.message + '.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            $('#editstaff-container').unblock();
+        }).error(function () {
+            $('#message').html('<span class="float-left alert alert-danger w-100">Unknow network error occured.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            $('#editstaff-container').unblock();
+        });
+
+    }
+
+
+    $('#btnSave').on('click',
+        function () {
+            Save();
+        });
+
+
+
+
+</script>

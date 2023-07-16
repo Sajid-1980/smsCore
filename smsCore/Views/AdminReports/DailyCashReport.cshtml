@@ -1,0 +1,73 @@
+﻿@inject StaticResources resources
+
+
+@*@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Setting
+            </li>
+            <li class="active">
+                Application Configuration
+            </li>
+
+        </ul>
+    </div>
+}*@
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Daily Cash Report</h3>
+                </div>
+                <div class="card-body">
+                    <div>
+                        <label>Session Start</label>
+                        <div class="controls">
+                            <input type="date" id="DateChange" class="form-control has-feedback-left" required />
+                            <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div id="DailyCashReport-gridContainer">
+                        @Html.EJS().Grid("list_create").Columns(col =>
+   {
+       col.Template("${sno(index)}").HeaderText("S.No").Width("70").TextAlign(TextAlign.Left).Add();
+       col.Field("Name").HeaderText("Description").TextAlign(TextAlign.Left).Add();
+       col.Template("#ecaction").HeaderText("Action").AutoFit(true).TextAlign(TextAlign.Center).Add();
+   }).AllowPaging().PageSettings(page => page.PageSize(500)).Render()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    $('Document').ready(function () {
+
+        $('#DateChange').datepicker();
+
+    });
+
+    function reloadGridData() {
+
+        var grid = document.getElementById("list_create").ej2_instances[0];
+        grid.dataSource = [];
+        var dt = $('#DateChange').val();
+        var url = '/ClassManagement/DailyCashReportData?dt=' + dt;
+        var campusId = $('#Campus').val();
+        if (campusId)
+            url += '&campusId=' + campusId;
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+</script>

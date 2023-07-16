@@ -1,0 +1,140 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+@{
+    ViewBag.Title = "Present Students Information";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("StudentReports", "Reports")">Student Report</a>
+        </li>
+        <li class="active">
+            Students Information
+        </li>
+    </ul>
+</div>
+s
+<section class="content" id="presentstudent">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2  mt-2 pt-3 form-group has-feedback">
+                            <label> <input type="radio" id="rdobyclass" checked name="radiobtn"/> by Class</label>
+                        </div>
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "presentstudent", ColCssClass = " col-sm-4  form-group has-feedback", ShowCampus = true, ShowClasses = true})
+
+                        <div class="col-12"></div>
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2   mt-2 pt-3 form-group has-feedback">
+                            <label> <input type="radio" id="rdobyregno" name="radiobtn"/> By Reg No</label>
+                        </div>
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Reg No</label>
+                            <div class="controls">
+                                <input type="text" id="regno" class="form-control" value="1-50000"/>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn mt-2" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new  GridModel
+                {
+                    GridId="list_rpt_present",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Present Students",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father's Name", AutoFit=true },
+                        new Column{ FieldName="MotherTongue", HeaderText="Mother Tongue", AutoFit=true },
+
+                        new Column{ FieldName="Gender", HeaderText="Gender", AutoFit=true },
+                        new Column{ FieldName="DOB", HeaderText="DOB", AutoFit=true },
+                        new Column{ FieldName="PresentClass", HeaderText="Present Class", AutoFit=true },
+                        new Column{ FieldName="AdmissionDate", HeaderText="Adm. Date", AutoFit=true },
+                        }
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_present_student_info").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Template("#sno").HeaderText("S.No").Width("60").TextAlign(TextAlign.Left).Add();
+           col.Field("AdmissionID").HeaderText("Admission Id").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("StudentName").HeaderText("Student Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("FName").HeaderText("Father Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("MotherTongue").HeaderText("Mother Tongue").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Gender").HeaderText("Gender").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("DOB").HeaderText("DOB").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("PresentClass").HeaderText("Present Class").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("AdmissionDate").HeaderText("Admission Date").AutoFit(true).TextAlign(TextAlign.Left).Add();
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>
+            <script id="header" type="text/x-jsrender">
+                <h3>${schoolName()}</h3>
+                <h5>${schoolAddress()}</h5>
+            </script>*@
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_present_student_info").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_present_student_info_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_present_student_info_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+    $('#btnSearch').on('click',
+        function() {
+
+            var rdoByClass = "false";
+            var rdoByAdm = "false";
+            var regno = $('#regno').val();
+            if ($('#rdobyclass').is(':checked')) {
+                rdoByClass = "true";
+            }
+
+            if ($('#rdobyregno').is(':checked')) {
+                rdoByAdm = "true";
+            }
+            var classId = $('#Classes').val();
+
+            var url1 = '@Url.Action("GetPresentStudentsInformation")';
+            url1 += '?clasId=' + classId + '&campusId=' + $('#Campus').val() + '&rdoByClass=' + rdoByClass + '&rdoByAdm=' + rdoByAdm + '&regno=' + regno;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+   
+</script>
+@Html.EJS().ScriptManager()

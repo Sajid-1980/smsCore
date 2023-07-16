@@ -1,0 +1,196 @@
+﻿@inject StaticResources resources
+@{
+    ViewBag.Title = "Salary Package Register";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Salary Package Register
+        </li>
+
+    </ul>
+</div>
+<section class="content">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Salary Package Search</h3>
+                </div><!-- /.box-header -->
+                @*@using (Ajax.BeginForm("SalaryPackageRegister", "Payroll", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+                {*@
+                <form asp-action="SalaryPackageRegister" asp-controller="Payroll" data-ajax="true" OnSuccess="reloadGridData" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label>Package Name</label>
+                                <div class="controls">
+                                    <input type="text" name="PackageName" value="@ViewBag.PackageName" id="PackageName" class="form-control has-feedback-left" />
+                                    <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("PackageName")
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label>Active</label>
+                                <div class="controls">
+                                    @Html.DropDownList("Active", new SelectList(new[] { "All", "Yes", "No" }, Model == null ? null : "Active"), new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-check-double form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Active")
+                                </div>
+                            </div>
+
+                            <div class="form-group col-12 pb-2 mt-3">
+                                @*<a href="@Url.Action("Index","Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>*@
+
+                                <button type="button" id="seacrh" onclick="reloadGridData()" class="btn btn-primary float-right mr-2" name="save">
+                                    <i class="fa fa-search mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> search
+                                </button>
+
+                            </div>
+                        </div>
+                    </div>
+                    @*}*@
+                </form>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Salary Package List</h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="row mt-3">
+                        <div id="salarypackageRegistered-gridContainer" class="col-12">
+                            @*  @Html.EJS().Grid("list_package").Columns(col =>
+                            {
+                            col.Field("name").HeaderText("Pacakage").TextAlign(TextAlign.Left).Add();
+                            col.Template("#active").HeaderText("Active").AutoFit(true).TextAlign(TextAlign.Center).Add();
+                            col.Field("Amount").HeaderText("Amount").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                            col.Template("#action").HeaderText("Action").TextAlign(TextAlign.Center).Add();
+                            }).Render()*@
+
+                            @{
+                                var gridModel = new GridModel()
+            {
+                GridId = "list_package",
+
+                Columns = new List<Column>
+                            {
+                            new Column{FieldName="name", HeaderText = "Pacakage", TextAlign = TextAlign.Left    } ,
+                            new Column{Template="#active",HeaderText="Active",AutoFit=true ,TextAlign =TextAlign.Left},
+                            new Column{FieldName="amount",HeaderText="Amount",TextAlign=TextAlign.Left },
+                            new Column{Template="#action",HeaderText="Actions",TextAlign = TextAlign.Left},
+                            },
+
+
+            };
+                            }
+
+                            @await Html.PartialAsync("_grid",gridModel)
+
+
+
+                            <script id="active" type="text/x-jsrender">
+
+                                ${if(isActive)}
+                                <span class="fa fa-check-circle" style="color:green"></span>
+                                ${else}
+                                <span class="fa fa-times-circle" style="color:red"></span>
+                                ${/if}
+                            </script>
+                            <script type="text/x-jsrender" id="action">
+                                <a rel="nofollow" title="Edit" href="/Payroll/SalarypackageEdit/${Id}" class="ml-1"><i class="fa fa-edit"></i></a>
+                                <a rel="nofollow" title="Delete" href="javascrpt:void(0);" onclick="deleteData($,{Id})" class="ml-1"><i class="fa fa-trash"></i></a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    var grid = document.getElementById("list_package").ej2_instances[0];
+    $('#list_package').on('click',
+        'a.ajax-load',
+        function (e) {
+            e.preventDefault();
+            var title = 'Fee System';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+    function reloadGridData() {
+        var url = '/Payroll/SalaryPackageList';
+        var packagename = $('#PackageName').val();
+        if (packagename == null) {
+            packagename = "";
+        }
+        var Active = $('#Active').val();
+        url += '?packagename=' + packagename + '&Active=' + Active;
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    reloadGridData();
+    function deleteData(id) {
+        Confirm("Are your sure to delete the selected record?", true, true, "Confirm Delete", "Cancel", reloadGridData1, null);
+        Swal.fire({
+            title: "Are your sure to delete the selected record?",
+            showCancelButton: true,
+            icon: 'question',
+            confirmButtonText: "Delete Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('/Payroll/SalarypackageDelete/' + id, null, function (response) {
+                    if (response.status) {
+                        sweetalert(response.message, "", "info");
+                        reloadGridData1()
+                    }
+                    else {
+                        sweetalert(response.message, "", "error");
+                    }
+                }).error(function () {
+                    sweetalert("An unknow Network error occured.", "", "error");
+                });
+            }
+        });
+    }
+    function reloadGridData1() {
+        let grid = document.getElementById('list_package').ej2_instances[0];
+        grid.refresh();
+    }
+
+</script>

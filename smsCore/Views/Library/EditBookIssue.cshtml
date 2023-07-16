@@ -1,0 +1,140 @@
+﻿@model Models.LibraryIssuedBook
+@inject StaticResources resourse;
+@{
+    ViewBag.Title = "EditBookIssue";
+}
+@Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="text-primary">Edit Book Record</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+
+                @Html.HiddenFor(model => model.ID)
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Books Issued <font class="text-danger">*</font></label>
+                    <div  class="controls">
+                        @Html.DropDownListFor(model => model.LibraryBookRecordId, (SelectList)ViewBag.LibraryBookRecordId, new { @class = "form-control has-feedback-left" })
+                        <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.LibraryBookRecordId)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Student Name <font class="text-danger">*</font></label>
+                    <div  class="controls">
+                        @Html.DropDownListFor(model => model.StudentID, (SelectList)ViewBag.StudentID, new { @class = "form-control has-feedback-left" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.StudentID)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 has-feedback">
+                    <label>Book Condition <font class="text-danger">*</font></label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.BookCondition, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.BookCondition)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 has-feedback">
+                    <label>Return Date <font class="text-danger">*</font></label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.ReturnDate, new { @class = "date form-control has-feedback-left", required = "true", type = "text", id = "returnsdate" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.ReturnDate)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 has-feedback">
+                    <label>Due Date <font class="text-danger">*</font></label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.DueDate, new { @class = "date form-control has-feedback-left", required = "true", type = "text", id = "dueDat" })
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.DueDate)
+                                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 has-feedback">
+                    <label>Issued Date <font class="text-danger">*</font></label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.IssuedDate, new { @class = "date form-control has-feedback-left", required = "true", type = "text", id = "issuedate" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.IssuedDate)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 has-feedback">
+                    <label>Remarks <font class="text-danger">*</font></label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Remarks)
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-4 mr-2 m-md-2">
+                        <i class="fa fa-save mr-2"></i>
+                        <span>
+                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                        </span> Save
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
+<script @resourse.JavaScript>
+    $(function() {
+        $('.date').val('');
+        $(".date").datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            showAnim: "clip",
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            yearRange: "-50:+0"
+        });
+
+        $(".date").on('change', function() {
+            var val = $(this).val();
+            try {
+                var mo = moment(val, 'YYYY-MM-DD');
+                if (mo._d == 'Invalid Date') {
+                    $(this).closest('div').append('<span class="nosubmit conversion-error text-danger">Please select a valid date</span>');
+                } else {
+                    $(this).closest('div').find('.conversion-error').remove();
+                }
+                //console.log(mo)
+                //alert('converted',mo);
+            } catch{
+                alert('conversion error');
+        };
+    });
+
+    $('.date').inputmask({ mask: '99/99/9999' });
+
+    $('#returnsdate').datepicker('setDate', new Date('@Model.ReturnDate'));
+    $('#dueDat').datepicker('setDate', new Date('@Model.DueDate'));
+    $('#issuedate').datepicker('setDate', new Date('@Model.IssuedDate'));
+    });
+</script>

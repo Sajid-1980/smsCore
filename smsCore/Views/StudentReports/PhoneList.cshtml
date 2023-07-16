@@ -1,0 +1,107 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+@{
+    ViewBag.Title = "Phone list";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("StudentReports", "Reports")">Student Report</a>
+        </li>
+        <li class="active">
+            Phone List
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="phonelist">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "phonelist", ColCssClass = " col-12 col-sm-3  form-group has-feedback", ForSearch = true, ShowCampus = true, ShowClasses = true})
+
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn mt-2" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_phone",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Phone List",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father's Name", AutoFit=true },
+                        new Column{ FieldName="Class", HeaderText="Class", AutoFit=true },
+
+                        new Column{ FieldName="MobileNo", HeaderText="Mobile No.", AutoFit=true },
+                        new Column{ FieldName="TelephoneResidance", HeaderText="Telephone Residance", AutoFit=true }
+                        }
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_phone").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Template("#sno").HeaderText("S.No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("AdmissionID").HeaderText("Admission Id").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("StudentName").HeaderText("Student Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("FName").HeaderText("Father Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("MobileNo").HeaderText("Mobile No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Class").HeaderText("Class").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("TelephoneResidance").HeaderText("Telephone Residance").AutoFit(true).TextAlign(TextAlign.Left).Add();
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_phone").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_phone_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_phone_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+    $('#btnSearch').on('click',
+        function() {
+            var campus = $('#Campus').val();
+            var classId = $('#Classes').val();
+            var url1 = '@Url.Action("GetPhoneList")';
+            url1 += '?clasId=' + classId + '&campus=' + campus;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+</script>
+@Html.EJS().ScriptManager()

@@ -1,0 +1,55 @@
+﻿@{
+    ViewBag.Title = "UsersInRole";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@*<h2>Users In Role @ViewBag.rolename <a style="float:right;" class="btn btn-success" href="@Url.Action("AssignRole", new { role=ViewBag.rolename})">Add User in Role</a></h2>*@
+@*@using (Ajax.BeginForm("RemoveUserFromRole", "Users", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{*@
+
+<form asp-action="RemoveUserFromRole" asp-controller="User" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive table-responsive-data2">
+    <table class="table table-data2">
+        <thead>
+        <tr>
+            <th>S.No</th>
+            <th>User Name</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        @{ var index = 1; }
+        @foreach (var user in (string[]) ViewBag.users)
+        {
+            <tr class="tr-shadow">
+                <td>@index</td>
+                <td>@user</td>
+                <td>
+                    <div class="table-data-feature">
+
+                        <a href="@Url.Action("RemoveUserFromRole", "Users", new {username = user, ViewBag.rolename})" title="User - Remove" class="item">
+                            <i class="fa fa-trash"></i>
+                        </a>
+
+                    </div>
+                </td>
+            </tr>
+            index++;
+        }
+
+        </tbody>
+    </table>
+</div>
+<a href="@Url.Action("RoleList")" class="btn btn-danger">Back to List</a>

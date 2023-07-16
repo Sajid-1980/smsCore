@@ -1,0 +1,332 @@
+﻿@inject StaticResources resources
+
+@{
+    /**/
+
+   
+        Layout = null;
+   
+    //ViewBag.Title = "Add Results";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Result Entry Fixed
+        </li>
+
+    </ul>
+</div>
+
+<style>
+
+    .control-label { padding-top: 10px; }
+</style>
+
+
+<section class="content" id="resultcreate">
+    <div class="row">
+        <div class="col-12">
+          @*  @using (Ajax.BeginForm("Create", "Results", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "resultcreate #server-progress", OnBegin = "begin"}, new {id = "resultcreate"}))
+            {*@
+
+            <form asp-action="Create" asp-controller="Results" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="resultcreate" data_reset="true">
+                   
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Result Entry</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row  my-0">
+                            <div class="col-lg-12">
+                                <div id="message">
+                                </div>
+
+                            </div>
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "resultcreate", ColCssClass = "col-6 col-sm-4 col-md-4", ShowCampus = true, ShowClasses = true, ShowSections = true, ShowExams = true, ShowSession = false, ShowSubjects = true, SubjectsFieldName = "ClassSubjectID"})
+                        </div>
+                        <div class="row">
+                            <div class="col-12 col-sm-6 col-md-4 mt-2">
+                                <div class="row no-gutters">
+                                    <label class="control-label col-md-3 col-sm-4 col-12 pt-1" for="basicinput">Student</label>
+                                    <div class="controls col-md-9 col-sm-8 col-12">
+                                        <input name="Student" id="Student" class=" form-control" data-toggle="popover" data-trigger="focus"
+                                               data-placement="top" data-content="Student Registration ID. It should be exist in the selected school, campus, class, group section"/>
+                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-md-4 mt-2">
+                                <div class="row no-gutters ">
+                                    <label class="control-label col-md-3 col-sm-4 col-12 pt-1" for="basicinput">Marks</label>
+                                    <div class="controls col-md-9 col-sm-8 col-12">
+                                        <input name="Marks" id="Marks" class=" form-control" data-toggle="popover" data-trigger="focus"
+                                               data-placement="top" data-content="Enter a valid value to continue.It should not be less then Zero or greater then Total marks specified in datesheet."/>
+                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row col-12 col-sm-6 col-md-4 mt-2" id="studentDetails">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span class="pull-left control-label pt-1" id="max-marks">No Subject selected</span>
+                        <button type="button" id="btnAdd" class="btn btn-success pull-right"><i class="fa fa-plus-square-o mr-2"></i>Add</button>
+                    </div>
+                </div>
+
+                <div class="card">
+
+                    <div class="card-header">
+                        <h3>Subjects List</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <td class="hidden">ID</td>
+                                <td>Reg ID</td>
+                                <td>Name</td>
+                                <td>Marks</td>
+                                <td>Action</td>
+                            </tr>
+                            </thead>
+                            <tbody id="newResults"></tbody>
+                        </table>
+                    </div>
+
+                    <div class="hidden" id="SubjectDetails">
+                    </div>
+                    <div class="card-footer">
+                        <button type="button" id="btnSave" class="btn btn-primary pull-right"><i class="fa fa-save mr-2"></i>Save</button>
+                    </div>
+                </div>
+           </form>
+        </div>
+    </div>
+</section>
+
+
+<script @resources.JavaScript>
+    //$('.chosen').select2({ width: '95%' });
+    $('[data-toggle="popover"]').popover();
+    //$('[data-toggle="tooltip"]').tooltip();
+    $('[data-toggle="popover"]').on('shown.bs.popover',
+        function() {
+            $('.popover-content').css('color', 'red');
+        });
+
+    function gotoDateSheetCreation() {
+        var url = '@Url.Action("DateSheetEntry", "Exams")';
+        url += '?examId=' + $('#Exams').val() + '&classId=' + $('#Classes').val() + '&sectionId=' + $('#Sections').val() + '&campusId=' + $('#Campus').val();
+        alert(url);
+        var win = window.open(url, '_blank');
+        if (win) {
+            //Browser has allowed it to be opened
+            win.focus();
+        } else {
+            //Browser has blocked it
+            alert('Please allow popups for this website');
+        }
+    }
+
+    $(function() {
+
+
+        $('#Subjects').change(function() {
+
+            var campus = $('#Campus').val();
+            var cls = $('#Classes').val();
+            var exam = $('#Exams').val();
+            var subject = $('#Subjects').val();
+            var sectionId = $('#Sections').val();
+            if (!campus || !cls || !exam || !subject || !sectionId) {
+                return false;
+            }
+
+            $.getJSON('@Url.Action("GetSubjectDetail", "Results", new {area = "Admin"})',
+                { myclass: cls, campus: campus, exam: exam, subject: subject, sectionId: sectionId },
+                function(data) {
+                    if (data.type == "success") {
+                        var html = '';
+                        $.each(data.subject,
+                            function(key, value) {
+                                html += '<input type="hidden" id="' + value.ID + '" value=' + value.TotalMarks + ' />';
+                                html += '<input type="hidden" id="ClassSubjectID" value=' + value.ClassSubjectID + ' />';
+                                $('#max-marks').html('(' + value.TotalMarks + ') Maximum Marks');
+                            });
+                        $('#SubjectDetails').html(html);
+                        $('#Student').attr('disabled', false);
+                        $('#Marks').attr('disabled', false);
+                        $('#btnAdd').attr('disabled', false);
+
+                    } else {
+
+                        $('#Student').attr('disabled', true);
+                        $('#Marks').attr('disabled', true);
+                        $('#btnAdd').attr('disabled', true);
+
+                        $('#max-marks').html('<span class="alert alert-danger">No date sheet (<a href="javascript:void()" onclick="gotoDateSheetCreation();" >click to add</a>) found for the selected subject (' + $('#Subjects  option:selected').html() + ')</span>');
+                    }
+                });
+        });
+        $('#Exams').change(function() { $('#Subjects').trigger('change'); });
+        $('#Campus').change(function() { $('#Subjects').trigger('change'); });
+        $('#Classes').change(function() { $('#Subjects').trigger('change'); });
+        $('#Sections').change(function() { $('#Subjects').trigger('change'); });
+
+        $(btnAdd).click(function() {
+            var message = '';
+            let fields;
+            let subject = $('#Subjects').val();
+            let clsSubjectId = $('#ClassSubjectID').val();
+
+            if (!clsSubjectId) {
+                message = 'Select a subject to continue';
+                fields = 'Subjects';
+            } else if ($(Student).val() == '') {
+                message = 'Student Registration ID. It should be exist in the selected school, campus, class, group section';
+                fields = 'Student';
+            } else if ($(Marks).val() == '') {
+                message = 'Enter Marks to continue';
+                fields = 'Marks';
+            } else if (parseInt($('#' + subject + '').val() < 1)) {
+                message = 'Subject Not Selected';
+                fields = 'Subjects';
+            } else if (parseInt($(Marks).val()) < 0 || parseInt($(Marks).val()) > parseInt($('#' + subject + '').val())) {
+                alert($('#' + subject + '').val());
+                message = 'Enter a valid value to continue.It should not be less then Zero or greater then ' + $('#' + subject + '').val() + ' specified in datesheet.';
+                fields = 'Marks';
+            }
+
+            var reg = $('#regID').html();
+            $(newResults).find('tr').each(function() {
+                if ($(this).find('.ID').html() == reg) {
+                    message = 'Student result already added for selected subject.';
+                    fields = 'Student';
+                    return;
+                }
+            });
+
+            if (fields) {
+                var f = $('#' + fields + '');
+                f.attr('data-content', message);
+                f.focus();
+                return false;
+            }
+            $(newResults).append('<tr><td style="display:none;"><span class="ID">' + $('#regID').html() + '</span><span class="ClassSubjectID">' + $('#ClassSubjectID').val() + '</span><span class="ExamHeldID">' + $('#Exams').val() + '</span></td><td><span class="student">' + $('#regID').html() + '</spane></td><td><span class="student">' + $('#regNo').html() + '</spane></td><td>' + $('#studentName').html() + '</td><td><a class="marks" href="#" id="' + $(Student).val() + '" data-type="number" data-pk="1" data-placement="top" data-placeholder="Required" data-totalMarks="' + $('#' + subject + '').val() + '" data-subjectid="' + subject + '" data-title="Edit marks for ' + $('#studentName').html() + '">' + $(Marks).val() + '</a> </td><td><i class="fa fa-times" onclick="Remove(this);"></td></tr>');
+            $(Student).focus();
+            $(Student).val('');
+            $(Marks).val('');
+        });
+
+        $(Marks).keyup(function(e) {
+            if (e.which == 13) {
+                $(btnAdd).trigger('click');
+            }
+        });
+        $(Student).keyup(function(e) {
+            if (e.which == 13) {
+                $(Marks).focus();
+            }
+        });
+        $(btnSave).click(function() {
+            var results = Array();
+            var index = 0;
+            $(newResults).find('tr').each(function() {
+                var tr = $(this);
+                var result = {};
+
+                result.ID = 0;
+                result.AdmissionID = tr.find('.ID').html();
+                result.ClassSubjectID = tr.find('.ClassSubjectID').html();
+                result.CheckedBy = "me";
+                result.ExamHeldID = tr.find('.ExamHeldID').html(); //ExamHeldID
+                result.ObtainedMarks = tr.find('.marks').html().toLowerCase() == 'a' ? 2000 : tr.find('.marks').html();
+
+                results[index] = result;
+                index++;
+            });
+            console.log(results);
+            $.ajax({
+                url: '@Url.Action("Create", new {area = "Admin"})',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: '{results:' + JSON.stringify(results) + '}',
+                success: function(data) {
+                    //CreateSuccess(data);
+                    if (data.type == "success") {
+                        $('#message').html('<span class="float-left alert alert-info w-100">Information added to database successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                        $(newResults).find('tr').each(function() { $(this).remove(); });
+                    } else {
+                        $('#message').html('<span class="float-left alert alert-danger w-100">Something went wrong while trying to store data. <a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+
+                    }
+                },
+                error: function() {
+                    var data = {};
+                    data.message = "Unable to store the selected configuration values.";
+                    data.type = "error";
+                    $('#message').html('<span class="float-left alert alert-danger w-100">Something went wrong while trying to store data. <a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                }
+            });
+        });
+        $(Student).focusout(function() {
+            var reg = $(this).val();
+            if (reg.length == 0)
+                return false;
+            $('#studentDetails').html($('#cameraLoader').html());
+            var url = '@Url.Action("SearchStudent", "Students", new {area = "Admin"})';
+            var campus = $('#Campus').val();
+            var cls = $('#Classes').val();
+            var exam = $('#Exams').val();
+            var group = $('#Groups').val();
+            var section = $('#Sections').val();
+            var subject = $('#Subjects').val();
+            $.ajax({
+                url: url,
+                contentType: 'application/json; charset=utf-8',
+                data: { campus: campus, classid: cls, group: group, section: section, forResult: true, examid: exam, registration: reg, subject: subject },
+                success: function(data) {
+                    console.log(data);
+                    var html = '';
+                    if (data.type == 'success') {
+                        $(Marks).prop('disabled', false);
+                        $.each(data.Student,
+                            function(key, value) {
+                                html += '<span class="col-1 d-none" >ID: <label id="regID">' + value.ID + '</label></span><span class="col-12 col-md-4">Registraion: <label id="regNo">' + value.RegistrationNo + ' </span><span class="col-12 col-md-8">Student Name: <label id="studentName">' + value.StudentName + '</label></span>';
+                            });
+                        $(Marks).focus();
+
+                    } else {
+                        $(Marks).prop('disabled', true);
+                        html = data.message;
+                        $(Student).val('');
+                        $(Student).focus();
+                    }
+                    $('#studentDetails').html(html);
+                },
+                error: function() {
+                    $('#studentDetails').html('An error occured while verifying data. please try again later or contact the admin.');
+                }
+            });
+
+
+        });
+
+        $('#Subjects').trigger('change');
+
+    });
+
+
+    function Remove(element) { $(element).closest('tr').remove(); }
+</script>

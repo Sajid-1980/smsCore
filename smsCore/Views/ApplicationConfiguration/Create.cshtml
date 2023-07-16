@@ -1,0 +1,113 @@
+﻿@using Utilities; 
+@using smsCore.Data.Helpers;
+@inject StaticResources rec;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Admin
+        </li>
+        <li class="active">
+            Application Configuration
+        </li>
+
+    </ul>
+</div>
+
+<style>
+    .fieldset {
+        border: groove;
+        border-color: #f7f1f1;
+        margin: 0;
+        min-width: 0;
+        padding: 10px;
+    }
+
+    legend {
+        display: block;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    hr { margin-top: 0px; }
+</style>
+
+<section class="content" id="appconfig-container">
+
+<div class="row">
+<div class="col-12 col-md-3">
+    <div class="card">
+        <div class="card-header"><a href="https://www.youtube.com/watch?v=LcG_cpH1AkU#t=194s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></div>
+        <div class="card-body">
+            <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <div class="partial-container">
+                    @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "appconfig-container", ColCssClass = "col-12 mb-2", ShowCampus = true})
+                   
+                </div>
+                <a class="nav-link active" id="pagecontent-tab" data-action="FeeAndTerrifSetup" data-toggle="tab" href="#FeeAndTerrifSetup" role="tab" aria-controls="FeeAndTerrif" aria-selected="true">Fee & Terrif Setup</a>
+                <a class="nav-link" id="pagecontent-tab" data-action="MessagingEmailSetup" data-toggle="tab" href="#MessagingEmailSetup" role="tab" aria-controls="MessagingEmail" aria-selected="false">Messaging Email Setup</a>
+                <a class="nav-link" id="pagecontent-tab" data-action="ViewExamSetup" data-toggle="tab" href="#ViewExamSetup" role="tab" aria-controls="ViewExam" aria-selected="false">View Exam Setup</a>
+                <a class="nav-link" id="pagecontent-tab" data-action="SchoolLogoSignature" data-toggle="tab" href="#SchoolLogoSignature" role="tab" aria-controls="SchoolLogoSignature" aria-selected="false">School Logo /Signature</a>
+                <a class="nav-link" id="pagecontent-tab" data-action="SchoolInfo" data-toggle="tab" href="#SchoolInfo" role="tab" aria-controls="SchoolInfo" aria-selected="true">School Information</a>
+                <a class="nav-link" id="pagecontent-tab" data-action="FounderInfo" data-toggle="tab" href="#FounderInfo" role="tab" aria-controls="FounderInfo" aria-selected="false">Founder Information</a>
+                <a class="nav-link" id="pagecontent-tab" data-action="Certificates"  data-toggle="tab" href="#Certificates" role="tab" aria-controls="Certificates" aria-selected="false">Certificates</a>
+                <a class="nav-link" id="pagecontent-tab" data-action="SchoolAttendanceSchedule" data-toggle="tab" href="#SchoolAttendanceSchedule" role="tab" aria-controls="SchoolAttendanceSchedule" aria-selected="false">School And Attendance Schedule</a>
+                <a class="nav-link" id="pagecontent-tab" data-action="Library" data-toggle="tab" href="#Library" role="tab" aria-controls="Library" aria-selected="true">Library</a>
+                <a class="nav-link" id="pagecontent-tab" data-action="MessageTemplate" data-toggle="tab" href="#MessageTemplate" role="tab" aria-controls="MessageTemplate" aria-selected="false">Message Template</a>
+                @*<a class="nav-link" id="UserRoleSetting-tab" data-toggle="tab" href="#UserRoleSetting" role="tab" aria-controls="UserRoleSetting" aria-selected="false">User Roles</a>*@
+               @* <a class="nav-link" id="pagecontent-tab" data-action="AccountSetting" data-toggle="tab" href="#AccountSetting" role="tab" aria-controls="AccountSetting" aria-selected="false">Account Setting</a>*@
+            </div>
+        </div>
+    </div>
+</div>
+@* Side Menu End *@
+@* Body Content Start *@
+
+<div class="col-12 col-md-9">
+<div class="card">
+<div class="card-body">
+
+<div class="tab-content" id="v-pills-tabContent">
+
+@* Fee And Terrif Setup Start *@
+
+<div class="tab-pane fade show active" id="pagecontent" role="tabpanel" aria-labelledby="pagecontent-tab">
+
+</div>
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<script @rec.JavaScript>
+    function reload() { }
+    $('#v-pills-tab a.nav-link').on('click', function () {
+        $('a.nav-link').removeClass('active');
+        $(this).addClass('active');
+        let action = $(this).attr('data-action');
+        var url = `/ApplicationConfiguration/${action}` + '?CampusId=' + $('#Campus').val();
+        $('#pagecontent').html('<div style="margin: auto;display: block;" class="spinner-grow" role="status"><span class="sr-only">Loading...</span></div>').load(url);
+    });
+    $('#Campus').on('change', function () {
+        $('a.nav-link.active').trigger('click');
+    })
+</script>

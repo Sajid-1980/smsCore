@@ -1,0 +1,308 @@
+﻿@{
+    ViewBag.Title = "searchbycontact";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li>
+            <i class="fa fa-user">
+
+            </i>
+            <a href="@Url.Action("Index")">Students</a>
+        </li>
+        <li class="active">
+            Search By Contact Numbers
+        </li>
+
+    </ul>
+</div>
+
+<style>
+    #_fieldset {
+        border: groove;
+        border-color: #f7f1f1;
+        margin: 0;
+        min-width: 0;
+        padding: 10px;
+    }
+
+    legend {
+        display: block;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    input[type="radio"] {
+        height: 20px;
+        width: 20px;
+    }
+
+    #searchcontact span {
+        color: green;
+    }
+</style>
+@*@using (Ajax.BeginForm("searchbycontact", "Students", new AjaxOptions { HttpMethod = "GET", OnComplete = "completed", LoadingElementId = "SendMessagebyStudentNamemainForm #server-progress", OnBegin = "begin" }, new { id = "SendMessagebyStudentNamemainForm" }))
+{*@
+<form asp-action="searchbycontact" asp-controller="Students" data-ajax="true" data-ajax-method="get" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SendMessagebyStudentNamemainForm" data_reset="true">
+
+    <section class="content" id="searchcontact">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h3 class="card-title titlefix pt-2">
+                            <i class="fa fa-search"></i> Select Criteria <a href="https://www.youtube.com/watch?v=qnCNefvfqfg&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=160s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a>
+
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ColCssClass = "col-12 col-sm-6", ParentContainerID = "searchcontact", ShowCampus = true, ForSearch = true})
+
+                            <div class="col-12 col-sm-6">
+                                <label>Enter Contact</label><font class="text-danger">*</font>
+                                <div class="controls">
+                                    <input type="text" name="mobileNo" id="mobile" class="form-control has-feedback-left " required />
+                                    <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <button type="button" id="add" name="view" class="btn btn-primary float-right " onclick="search()"><i class="fa fa-search pr-2"></i> Search</button>
+                            </div>
+                        </div>
+                        @*<label><input type="checkbox" name="skipdelete" id="checkdelete" checked class="" />Skip Delete</label>*@
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <img class="img-fluid rounded mx-auto d-block mb-2" src="/Uploads/images/user.png" alt="User Avatar" style="max-width: 150px">
+
+                                <ul class="list-group list-group-unbordered">
+                                    <li class="list-group-item listnoback">
+                                        <span>Reg Number</span>
+                                        <a class="float-right text-aqua">
+                                            <span id="regno">.........</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Name</span>
+                                        <a class="float-right text-aqua">
+                                            <span id="name">.........</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Father Name</span>
+                                        <a class="float-right text-aqua">
+                                            <span id="fname">.........</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <ul class="list-group list-group-unbordered">
+                                    <li class="list-group-item listnoback">
+                                        <h4 class="text-center" style="color: green" id="tablefound">.......</h4>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Campus</span>
+                                        <a class="float-right text-aqua">
+                                            <span id="campus">.........</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Class</span>
+                                        <a class="float-right text-aqua">
+                                            <span id="class">.........</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Sections</span>
+                                        <a class="flaot-right text-aqua">
+                                            <span id="section">.........</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Address</span>
+                                        <a class="float-right text-aqua">
+                                            <span id="address">.........</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Home telephone</span>
+                                        <a class="float-right text-aqua">
+                                            <span id="hometel">.........</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Office telephone </span>
+                                        <a class="flaot-right text-aqua">
+                                            <span id="offictel">.........</span>
+                                        </a>
+                                    </li>
+
+
+                                    @*<li class="list-group-item listnoback">
+                                    <b>Group</b> <a class="pull-right text-aqua">  <span id="group">.........</span></a>
+                                    </li>*@
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div id="advancepayment-gridContainer" class="col-12">
+                                <table id="jqgadvancepayment" cellpadding="0" cellspacing="0"></table>
+                                <div id="jqgpadvancepayment" style="text-align: center;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+<script>
+    function search() {
+        if ($('#mobile').val() == "") {
+            return $('#mobile').focus();
+        }
+        // regno = lblRegNo,address = lbladdress,campus = lblcamp, classes = lblclas,fname = lblFname,group = lblgrp,hometel = lblHometel,name = lblName,officetel = lblofficetel, sections = lblsec
+        var url1 = '@Url.Action("searchcontact", "Students")';
+        var mobile = $('#mobile').val();
+        var checkdelete = "true";
+        url1 += '?mobile=' + mobile + '&campusId=' + $('#Campus').val() + '&checkdelete=' + checkdelete;
+        var table = "....";
+        $.get(url1,
+            function (data) {
+
+                $('#regno').html(data.regno);
+                $('#address').html(data.address);
+                $('#campus').html(data.campus);
+                $('#class').html(data.classes);
+                $('#fname').html(data.fname);
+                $('#group').html(data.group);
+                $('#hometel').html(data.hometel);
+                $('#name').html(data.name);
+                $('#offictel').html(data.officetel);
+                $('#section').html(data.sections);
+                $('#tablefound').html(data.foundtable);
+                table = data.foundtable;
+                $('#hh').hide();
+
+                searches(table, data.id);
+            });
+    }
+
+    function reloadGridData() {
+        $('#jqgadvancepayment').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    function searches(table, id) {
+        $('#advancepayment-gridContainer').show();
+        var tablefount = table;
+        if (tablefount == "Students" || tablefount == "Staff") {
+            var url1 = '@Url.Action("Getstudentorstaff")';
+            url1 += '?tablefound=' + tablefount + '&id=' + id;
+            $('#jqgadvancepayment').jqGrid('clearGridData');
+            $('#jqgadvancepayment').jqGrid({
+                //url from wich data should be requested
+                url: url1,
+                //type of data s.MobileNo, s.IsDefault,s.MobileHolder
+                datatype: 'json',
+                //url access method type
+                mtype: 'Post',
+                colModel: [
+                    { label: 'Mobile No', name: 'MobileNo', index: 'MobileNo', align: 'left' },
+                    { label: 'Is Default', name: 'IsDefault', index: 'IsDefault', align: 'left' },
+                    { label: 'Mobile Holder', name: 'MobileHolder', index: 'MobileHolder', align: 'left' }
+                ],
+                //caption: ' ',
+                //enable footer
+                footerrow: false,
+                userDataOnFooter: false,
+                //expect object instead of flat array
+                jsonReader: { repeatitems: false, id: 'MobileNo' },
+                //pager for grid
+                //pager: $('#jqgpadvancepayment'),
+                //number of rows per page
+                rowNum: 10,
+                //initial sorting column
+                sortname: 'MobileNo',
+                //initial sorting direction
+                sortorder: 'asc',
+                //we want to display total records count
+                viewrecords: true,
+                height: 'auto',
+
+                loadComplete: function () {
+                    var table = this;
+                    setTimeout(function () {
+                        updatePagerIcons(table);
+                    },
+                        0);
+                },
+                gridComplete: function () {
+                    $('.ajax').on('click',
+                        function (e) {
+                            e.preventDefault();
+                            var title = $(this).attr('title');
+                            var url = $(this).attr('href');
+
+                            BootstrapDialog.show({
+                                title: title,
+                                message: $('<div />').load(url),
+                                onhide: function (dialogRef) {
+
+                                    reloadGridData();
+                                }
+                            });
+                            return false;
+                        });
+                }
+            });
+
+            $('#jqgadvancepayment').jqGrid('setGridParam', { url: url1 });
+            var DataGrid = $('#jqgadvancepayment');
+
+            //sets the grid size initially
+            DataGrid.jqGrid('setGridWidth', parseInt($('#advancepayment-gridContainer').width()));
+
+            //handles the grid resize on window resize
+            $(window).resize(function () {
+                DataGrid.jqGrid('setGridWidth', parseInt($('#advancepayment-gridContainer').width()));
+            });
+            $('#jqgadvancepayment').trigger('reloadGrid', { current: true, fromserver: true });
+        } else {
+            $('#advancepayment-gridContainer').hide();
+
+
+        }
+    }
+
+    function updatePagerIcons(table) {
+        var replacement =
+        {
+            'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+            'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+            'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+            'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+        };
+        $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function () {
+            var icon = $(this);
+            var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+            if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+        });
+    }
+
+</script>

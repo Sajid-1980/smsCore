@@ -1,0 +1,89 @@
+﻿@using Utilities;
+@using smsCore.Data.Helpers;
+@inject StaticResources Rec;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+
+<section class="content" id="examlis">
+   @* @using (Ajax.BeginForm("ViewExamSetup", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "ViewExamSetupmainForm #server-progress", OnBegin = "begin" }, new { id = "ViewExamSetupmainForm" }))
+    {*@
+
+
+    <form asp-action="ViewExamSetup" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FounderInfomainForm" data_reset="true" enctype="multipart/form-data">
+      
+
+        <div class="row">
+            <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+            <div class="col-12 ">
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h3 class="card-title"><i class="fa fa-list"></i> Exams List</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-12">
+                            @Html.EJS().Grid("list").Columns(col =>
+                       {
+                           col.Field("ID").HeaderText("ID").Width("80").TextAlign(TextAlign.Left).Add();
+                           col.Field("ExamName").HeaderText("Exam Name").Width("80").TextAlign(TextAlign.Left).Add();
+                           col.Field("View").Template("#View").HeaderText("View").Width("80").TextAlign(TextAlign.Left).Add();
+                       }).PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { }).Render()
+
+                        </div>
+                        <script type="text/x-jsrender" id="View">
+                            ${if(VeiwAble)}
+                            <input type="checkbox" id="ViewId" class="ViewClass" checked onclick="CheckValue(this)" />
+                            <input type="hidden" id="selectId" name="select" value="1" />
+                            ${else}
+                            <input type="checkbox" id="ViewId" class="ViewClass" onclick="CheckValue(this)" />
+                            <input type="hidden" id="selectId" name="select" value="0" />
+                            ${/if}
+                            <input type="hidden" id="regnoId" name="regno" value="${ID}" />
+                        </script>
+
+                        <div class="float-right col-12">
+                            <button type="submit" class="float-right btn btn-primary mt-3"><i class="fa fa-save"></i> Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+@Html.EJS().ScriptManager()
+
+<script @Rec.JavaScript>
+
+        function CheckValue(me) {
+            if ($(me).is(':checked')) {
+                $(me).parent().find('#selectId').val('1');
+            }
+            else {
+                $(me).parent().find('#selectId').val('0');
+            }
+        }
+
+        function reloadGridData() {
+            var url = '/ApplicationConfiguration/GetViewExamList';
+            url += '?campusId=' + @ViewBag.CampusId;
+            var grid = document.getElementById("list").ej2_instances[0];
+            grid.dataSource = new ej.data.DataManager({
+                url: url,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+    }
+    reloadGridData();
+    $('#Campus').on('change', function () { reloadGridData(); });
+</script>

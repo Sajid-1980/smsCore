@@ -1,0 +1,200 @@
+﻿@model LoginViewModel
+@{
+    ViewBag.Title = "Log in";
+    Layout = "~/Views/Shared/_LayoutBlank.cshtml";
+}
+<style>
+
+    .field {
+        position: relative
+    }
+
+        .field input {
+            background: #fff;
+            height: 45px;
+            outline: none;
+            padding-left: 32px !important;
+            border: 1px solid;
+        }
+
+    .form-control-feedback {
+        font-size: 27px;
+        left: 6px;
+        position: absolute;
+        top: 7px;
+        height: 24px;
+        width: 21px;
+    }
+
+
+    a:hover {
+        color: #000;
+    }
+
+    .btn {
+        background-color: crimson;
+        border: none;
+        border-radius: 15px;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 34px;
+        margin-bottom: 20px;
+        margin-top: 30px;
+        max-width: 100%;
+        padding: 0 15px !important;
+        width: auto;
+        width: 150px;
+    }
+
+        .btn.social {
+            border-radius: 2px;
+            border-radius: 5px;
+            font-size: 12px;
+            font-weight: 200;
+            line-height: initial;
+            max-width: 76px;
+            padding: 5px 0px !important;
+        }
+
+        .btn:hover {
+            background-color: #57D7AA;
+            color: #808080;
+        }
+
+    a.forgot {
+        font-size: 13px;
+        line-height: 45px;
+        text-decoration: underline;
+    }
+
+    .lock {
+        background-image: url(/assets/images/pwd.png);
+        background-repeat: no-repeat;
+        background-position: 1px 6px;
+    }
+
+    .user {
+        background-image: url(/assets/images/user.png);
+        background-repeat: no-repeat;
+        background-position: 1px 6px;
+    }
+
+    .sign-in {
+        background-image: url(/assets/images/login-white.png);
+        background-repeat: no-repeat;
+        background-position: 4px 5px;
+        background-position-x: 4px;
+        background-position-y: 5px;
+        width: 30px;
+        float: right;
+        height: 30px;
+        background-size: 26px 25px;
+    }
+</style>
+<section class="inner_banner">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="full">
+                    <h3>Login</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="section padding_bottom-0">
+    <div class="row align-items-center full-height no-gutters">
+        <div class="col">
+
+
+            <div class="row no-gutters full-height align-items-center">
+                <div class="col-12 col-sm-5  col-md-7">
+                    <img src="/Uploads/images/site/login-bg.jpeg" class="img-fluid" />
+                </div>
+                @*<div id="corner" data-corner="right 450px" class="col-md-6 full-height d-none d-md-flex" style="background-image: url(../../Uploads/images/site/login-bg.jpeg); background-size: cover; overflow: hidden;">
+                        <div class="position-absolute w-100 h-100" style="background-color: rgba(0, 0, 0, .5);">
+
+                        </div>
+                    </div>*@
+                <div class="col-12 col-sm-7 col-md-5">
+
+
+                    <section id="loginForm" class="row" style="margin: auto; max-width: 320px;">
+                        <h4 class="col-12 text-center">Login</h4>
+                        <p class="col-12 text-center">Enter your user name and password.</p>
+                       @* @using (Ajax.BeginForm("Login", "Account", new { ViewBag.ReturnUrl }, new AjaxOptions { HttpMethod = "POST", OnComplete = "loggedIn", OnBegin = "begin" }, new { @class = "form-horizontal col-12", role = "form" }))
+                        {*@
+                        <form asp-action="Login" asp-controller="Account"
+                          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class = "form-horizontal form-label-left input_mask"   role = "form">
+         
+
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="row">
+                                <div id="message" class="col-12">
+
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                @Html.LabelFor(m => m.Email, new { @class = "col-12 control-label font-weight-light text-left" })
+                                <div class="col-12 field">
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                                    <span class="user form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger", placeHolder = "Email" })
+                            </div>
+                            <div class="form-group row no-gutters">
+                                @Html.LabelFor(m => m.Password, new { @class = "col-12 control-label font-weight-light text-left" })
+                                <div class="col-12 field">
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                                    <span class="lock form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger", placeHolder = "Password" })
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <div class="col-offset-2 col-10 pt-2">
+                                    <div class="checkbox">
+                                        @Html.CheckBoxFor(m => m.RememberMe)
+                                        @Html.LabelFor(m => m.RememberMe)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row no-gutters">
+                                <div class="col-7 pt-4">
+                                    @Html.ActionLink("Forgot your password?", "ForgotPassword", null, new { @class = "float-left mt-2 forgot" })
+                                </div>
+                                <div class="col-5">
+                                    <button type="submit" value="Log in" class="btn btn-default float-right">
+                                        Login <i class="sign-in ml-1"></i>
+                                    </button>
+                                </div>
+
+                                <hr class="col-12 hr-rule float-left w-100" />
+
+                            </div>
+                        </form>
+                    </section>
+                    <div class="row ">
+
+                        <div class="col-12 text-center">
+                            <a href="https://www.facebook.com/SoftifyTechPk" class="btn btn-default social" style="background-color: #3b5998;"><i class="fa fa-facebook-square"></i> Facebook</a>
+                            <a href="submit" class="btn btn-default social" style="background-color: #f2003c;"><i class="fa fa-instagram"></i> Instagram</a>
+                            <a href="https://www.linkedin.com/company/softify-pk/" class="btn btn-default social" style="background-color: #0e76a8;"><i class="fa fa-linkedin-square"></i> LinkedIn</a>
+                            <a href="https://www.youtube.com/channel/UCQFf95Tyl3o9y-DE0vvlTQg" class="btn btn-default social" style="background-color: #c4302b;"><i class="fa fa-youtube-square"></i> Youtube</a>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+    @section Scripts{
+        <script defer src="~/assets/unobtrusive-ajax/jquery.unobtrusive-ajax.min.js"></script>
+        <script defer src="~/Scripts/blockui.min.js"></script>
+        <script defer src="~/assets/theme/login.js">
+           
+        </script>
+    }

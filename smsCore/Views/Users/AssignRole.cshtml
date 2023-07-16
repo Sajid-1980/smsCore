@@ -1,0 +1,53 @@
+﻿@model Microsoft.AspNetCore.Identity.EntityFrameworkCore.UserStore
+@{
+    /**/
+
+    ViewBag.Title = "AssignRole";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+@{
+    /**/
+
+    //var roles = (SelectList)ViewBag.roles;
+    var users = (SelectList) ViewBag.users;
+}
+
+@*@using (Ajax.BeginForm("AssignRole", "Users", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{*@
+    
+<form asp-action="AssignRole" asp-controller="Users" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-12">
+            @Html.AntiForgeryToken()
+
+            @Html.HiddenFor(m => m.Users)
+            <label>Select User</label>
+            <div>
+                @Html.DropDownList("userId", users)
+            </div>
+        </div>
+        <div class="form-group col-12 col-md-8  pb-2 mt-3">
+            <a href="@Url.Action("RoleList", "Users")" aria-label="Back to Dashboard" class="btn btn-danger float-right ml-1"> <i class="fa fa-chevron-circle-left mr-2"></i> Back </a>
+
+            <button type="submit" value="Create" class="btn btn-primary float-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Save
+            </button>
+        </div>
+    </div>
+</form>

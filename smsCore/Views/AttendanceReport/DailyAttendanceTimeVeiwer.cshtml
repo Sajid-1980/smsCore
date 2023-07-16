@@ -1,0 +1,239 @@
+﻿@using Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                <a href="@Url.Action("AttendanceReports", "Reports")">Student Report</a>
+            </li>
+            <li class="active">
+                Staff Daily Attendance Time Veiwer
+            </li>
+        </ul>
+    </div>
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        <div class="col-12 col-sm-4 col-md-3 form-group has-feedback">
+                            <label>Staff</label>
+                            <div class="controls">
+                                <div>
+                                    @Html.DropDownList("staffId", (SelectList)ViewBag.stafflist, new { @class = "form-control " })
+                                </div>
+                                <span class="fa fa-address-card form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-4 col-md-2 form-group has-feedback mt-4">
+                            <label><input type="checkbox" id="checktime" /> Check Time</label>
+                        </div>
+                        <div class="col-12 col-sm-3 col-md-2 form-group has-feedback ">
+                            <label> Time From</label>
+                            <div class="controls">
+                                <div>
+                                    <input type="time" id="timefrom" class="form-control" readonly />
+                                </div>
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-3 col-md-2  form-group has-feedback">
+                            <label> Time To</label>
+                            <div class="controls">
+                                <div>
+                                    <input type="time" id="timeto" class="form-control" readonly />
+                                </div>
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4 col-md-3"></div>
+
+                        <div class="col-12 col-sm-3 col-md-2 form-group has-feedback mt-4">
+                            <label><input type="checkbox" id="checkdate" /> Check Date</label>
+                        </div>
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+                             {
+                                 Label = "Date From",
+                                 ParentContainerID = "adm-date1",
+                                 ColCssClass = "col-12 col-sm-3",
+                                 ShowAltField = false,
+                                 DateFieldId = "datefrom",
+                                 DateFieldName = "datefrom",
+                                 KeepDataFieldReadOnly = true,
+                                 DefaultDate = DateTime.Now,
+
+                             })
+
+                        @Html.Partial("_PartialDate", new PartialDateViewModels
+                             {
+                                 Label = "Date To",
+                                 ParentContainerID = "adm-date2",
+                                 ColCssClass = "col-12 col-sm-3",
+                                 ShowAltField = false,
+                                 DateFieldId = "dateto",
+                                 DateFieldName = "dateto",
+                                 KeepDataFieldReadOnly = true,
+                                 DefaultDate = DateTime.Now,
+
+                             })
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_attendance_daily_view",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Daily Attendance Time",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father Name", AutoFit=true },
+                        new Column{ FieldName="PickTime", HeaderText="Time", AutoFit=true },
+                        new Column{ FieldName="EntryDat", HeaderText="Date", AutoFit=true },
+                        new Column{ FieldName="Misc", HeaderText="Misc", AutoFit=true },
+                        new Column{ FieldName="Remarks", HeaderText="Remarks", AutoFit=true },
+                        }
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("GridS").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnChooser().AllowResizing().Columns(col =>
+            {
+//col.Field("SNo").HeaderText("S.No").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                col.Field("AdmissionID").HeaderText("ID").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("StudentName").HeaderText("Name").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("FName").HeaderText("Father Name").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("EntryDat").HeaderText("Date").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("PickTime").HeaderText("Time").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Misc").HeaderText("Misc").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Remarks").HeaderText("Remarks").Width("80").TextAlign(TextAlign.Left).Add();
+            }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "Search", "ColumnChooser" }).Render()*@
+      
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    $(function() {
+        $('.date').inputmask({ mask: '99/99/9999' });
+        $(".date").datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            showAnim: "clip",
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            yearRange: "-50:+0"
+        });
+
+        $(".date").on('change', function() {
+            var val = $(this).val();
+            try {
+                var mo = moment(val, 'YYYY-MM-DD');
+                if (mo._d == 'Invalid Date') {
+                    $(this).closest('div').append('<span class="nosubmit conversion-error text-danger">Please select a valid date</span>');
+                } else {
+                    $(this).closest('div').find('.conversion-error').remove();
+                }
+                //console.log(mo)
+                //alert('converted',mo);
+            } catch{
+                alert('conversion error');
+        };
+    }); });
+
+  
+
+    $('#checktime').on('change',
+        function() {
+            if ($(this).is(':checked')) {
+                $('#timefrom').attr('readonly', false);
+                $('#timeto').attr('readonly', false);
+            } else {
+                $('#timefrom').attr('readonly', true);
+                $('#timeto').attr('readonly', true);
+            }
+        });
+    $('#checkdate').on('change',
+        function() {
+            if ($(this).is(':checked')) {
+                $('#datefrom').attr('readonly', false);
+                $('#dateto').attr('readonly', false);
+            } else {
+                $('#datefrom').attr('readonly', true);
+                $('#dateto').attr('readonly', true);
+            }
+        });
+    $('#btnSearch').on('click',
+        function() {
+            var staffID = $('#staffId').val();
+
+            var checktime = "false";
+            if ($('#checktime').is(':checked')) {
+                checktime = "true";
+                if ($('#timefrom').val() == "") {
+                    return $('#timefrom').focus();
+                }
+                if ($('#timeto').val() == "") {
+                    return $('#timeto').focus();
+                }
+            }
+            var checkdate = "false";
+            if ($('#checkdate').is(':checked')) {
+                checkdate = "true";
+                if ($('#datefrom').val() == "") {
+                    return $('#datefrom').focus();
+                }
+                if ($('#dateto').val() == "") {
+                    return $('#dateto').focus();
+                }
+            }
+            var url1 = '@Url.Action("GetDailyAttendanceTimeVeiwerDatatable")';
+            url1 += '?staffId=' + staffID + '&checktime=' + checktime + '&timefrom=' + $('#timefrom').val() + '&timeto=' + $('#timeto').val() + '&checkdate=' + checkdate + '&datefrom=' + $('#datefrom').val() + '&dateto=' + $('#dateto').val();
+            var messageTop = 'Staff Daily Attendance ';
+            $.get(url1,
+                null,
+                function(data) {
+                    console.log(data);
+                    var gridObj = document.getElementById("@grid.GridId").ej2_instances[0];
+                    // Refreshes the grid data source
+                    gridObj.dataSource = (data);
+                });
+        });
+
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("GridS").ej2_instances[0];
+    //    if (args.item.id === 'GridS_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'GridS_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+</script>
+@Html.EJS().ScriptManager()

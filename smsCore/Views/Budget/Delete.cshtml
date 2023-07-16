@@ -1,0 +1,103 @@
+﻿@using System.Data
+@{
+    ViewBag.Title = "Delete";
+    
+    
+        Layout = null;
+    
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Budget Edit
+            </li>
+
+        </ul>
+    </div>
+}
+
+@*@using (Ajax.BeginForm("Delete", "Budget", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{*@
+
+<form asp-action="Delete" asp-controller="Budget" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+                   
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="row no-gutters ">
+        <div class="col-12">
+            <h5>Are you Sure You Want to Delete This !!!</h5><hr/>
+
+            <div class="row">
+
+                @{ var j = 1; }
+                @foreach (DataRow item in Model.Rows)
+                {
+                    if (j == 1)
+                    {
+                        <div class="col-12">
+                            <label>Budget Name</label><br/>
+                            <label>
+                                <b>@item["BudgetName"]</b>
+                            </label>
+                            <input type="hidden" name="budgetmasterId" value="@item["masterId"]"/>
+                        </div>
+
+                        <div class="col-12 ">
+                            <label>From Date</label><br/>
+                            <label>
+                                <b>@item["fromDate"]</b>
+                            </label>
+
+                        </div>
+                        <div class="col-12">
+                            <label>To Date</label><br/>
+                            <label>
+                                <b>@item["ToDate"]</b>
+                            </label>
+
+                        </div>
+                        <div class="col-12">
+                            <label>Type</label><br/>
+                            <label>
+                                <b>@item["Type"]</b>
+                            </label>
+
+                        </div>
+                        <div class="col-12">
+                            <label>Narration</label><br/>
+                            <label>
+                                <b>@item["Narration"]</b>
+                            </label>
+
+                        </div>
+                    }
+                    j++;
+                }
+            </div>
+        </div>
+    </div>
+    <div class="form-group col-12 pb-2 mt-3">
+        <a href="@Url.Action("Index", "Budget")" aria-label="Back to List" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to List</a>
+        <button type="submit" value="Create" class="btn btn-danger pull-right">
+            <i class="fa fa-trash mr-2"></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+            </span> Delete
+        </button>
+    </div>
+</form>

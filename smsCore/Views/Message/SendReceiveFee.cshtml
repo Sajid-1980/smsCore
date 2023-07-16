@@ -1,0 +1,201 @@
+﻿@inject StaticResources resourse;
+@using sms.Models;
+@{
+    ViewBag.Title = "Send ReceiveFee";
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Receive Fee Message
+            </li>
+
+        </ul>
+    </div>
+}
+
+@*@using (Ajax.BeginForm("SendReceiveFee", "Message", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "SendReceiveFeemainForm #server-progress", OnBegin = "begin" }, new { id = "SendReceiveFeemainForm" }))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.ValidationSummary(true)*@
+<form asp-action="SendReceiveFee" asp-controller="Message" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SendReceiveFeemainForm" data_reset="true">
+
+    <section class="content" id="receiveFee-container">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+
+                            @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "receiveFee-container", ColCssClass = "col-12 col-sm-8", ShowCampus = true })
+
+                            @Html.Partial("_PartialDate", new PartialDateViewModels
+                       {
+                           ColCssClass = "col-12 col-sm-8",
+                           Label = "Month",
+                           IsRequired = true,
+                           KeepDataFieldReadOnly = true,
+                           AltFieldFormat = "dd/mm/yy",
+                           AltFieldId = "mydate",
+                           AltFieldName = "mydate",
+                           DateFieldId = "date-picker",
+                           DateFieldName = "datepicker",
+                           Format = "MM yy",
+                           ParentContainerID = "date-filter-fee-smss",
+                           PickerType = "month",
+                           ShowAltField = true,
+                           DefaultDate=DateTime.Now
+                       })
+                           
+
+
+                            <div class="col-12 text-right">
+                                <button type="button" class="btn btn-primary mt-2" id="search"><i class="fa fa-search"></i>View</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Received Fee List</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="SendReceiveFee-gridContainer" class="col-12">
+ @*                               @Html.EJS().Grid("list_fee_message").SelectionSettings(sel => { sel.CheckboxOnly(true); }).Columns(col =>
+                           {
+                               col.Type("checkbox").Width("50").Add();
+                               col.Field("RegistrationNo").HeaderText("Reg. No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                               col.Field("StudentName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                               col.Field("ClassName").HeaderText("Class").TextAlign(TextAlign.Left).Add();
+                               col.Field("MobileNo").HeaderText("Mobile").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                               col.Field("ForMonth").HeaderText("Month").AutoFit(true).Format("MMM, yyyy").TextAlign(TextAlign.Left).Add();
+                               col.Field("Received").HeaderText("Amount").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                               col.Field("EntryDate").HeaderText("Date").AutoFit(true).Format("dd/MM/yyyy").TextAlign(TextAlign.Left).Add();
+                               col.Field("EntryDate").HeaderText("Time").AutoFit(true).Format("hh:mm aa").TextAlign(TextAlign.Left).Add();
+                           }).AllowResizing(true).Height("50vh").Render()*@
+
+
+                                @{
+                                    var modelgrid = new GridModel()
+            {
+                GridId = "list_fee_messag",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                                {
+                                new Column{Type="checkbox",Width="50"},
+                                new Column{FieldName="RegistrationNo",HeaderText="Reg. No",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="StudentName",HeaderText="Name",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="ClassName",HeaderText="Class",HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="MobileNo",HeaderText="Mobile",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="ForMonth",HeaderText="Month",DateFormat="MMM, yyyy",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="Received",HeaderText="Amount",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                                new Column{FieldName="EntryDate",HeaderText="Date",AutoFit=true,DateFormat="dd/MM/yyyy",HeaderTextAlign=TextAlign.Center},
+                                new Column{FieldName="EntryDate",HeaderText="Time",AutoFit=true,DateFormat="hh:mm aa",HeaderTextAlign=TextAlign.Center},
+      
+                                },
+                AllowFiltering = true,
+            };
+                                }
+                                @await Html.PartialAsync("_grid",modelgrid)
+                            </div>
+                            <div class="col-12 text-right mt-3">
+                                <button type="button" onclick="Save();" class="btn btn-primary mr-2" name="save"><i class="fa fa-send mr-2"></i>Sent Message</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+@*}*@
+</form>
+<script @resourse.JavaScript>
+    function loaded() {
+        let grid = document.getElementById("list_fee_message").ej2_instances[0];
+        grid.dataSource = [];
+    }
+</script>
+@Html.EJS().ScriptManager()
+<script @resourse.JavaScript>
+    function reloadGridData() {
+        if ($("#mydate").val() == "") {
+            return $("#date-picker").focus();
+        }
+        var campus = $('#Campus').val();
+        if (!campus) {
+            return false;
+        }
+        var Date = $('#date-picker').val();
+        var url1 = '@Url.Action("ReceivedFeeList")';
+        url1 += '?date=' + Date + '&campusId=' + campus;
+        var grid = document.getElementById("list_fee_message").ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+  
+        $('#search').on("click",
+            function() {
+                reloadGridData();
+            });
+
+    function Save() {
+
+        var campus = $('#Campus').val();
+        var Month = $('#date-picker').val();
+        if (!campus || !Month) {
+            sweetalert("Plaese select month and campus before continue", '', 'error');
+            return false;
+        }
+        let url = `/Message/SendReceiveFee?campusId=${campus}&month=${Month}`;
+
+        let grid = document.getElementById('list_fee_message').ej2_instances[0];
+        var selected = grid.getSelectedRecords();
+        if (selected.length==0) {
+            sweetalert("Plaese select atleast one student to continue.", '', 'error');
+            return false;
+        }
+
+        let regnos = selected.map(function (v, i, a) { return { RegistrationNo: v.RegistrationNo } });
+
+        block('#receiveFee-container');
+        $.post(url, { data: regnos }, function (response) {
+            if (response.status) {
+                $('#message').html('<span class="float-left alert alert-info w-100">Messages sent successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            else {
+                $('#message').html('<span class="float-left alert alert-danger w-100">' + response.message + '.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            $('#receiveFee-container').unblock();
+        }).error(function () {
+            $('#message').html('<span class="float-left alert alert-danger w-100">Unknow network error occured..<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            $('#receiveFee-container').unblock();
+        });
+
+    }
+</script>

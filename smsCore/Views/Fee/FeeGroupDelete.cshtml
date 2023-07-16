@@ -1,0 +1,37 @@
+﻿@model  FeeGroup
+@{
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width"/>
+    <title>FeeGroupDelete</title>
+</head>
+<body>
+<div>
+    <h5>Are You Sure You Want to Delete This!!.</h5>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FeeGroupName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FeeGroupName)
+        </dd>
+    </dl>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+
+        <input type="submit" value="Delete" class="btn btn-danger"/>
+    }
+</div>
+</body>
+</html>

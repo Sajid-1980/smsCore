@@ -1,0 +1,166 @@
+﻿ 
+@model List<Models.Admission>
+@inject StaticResources resources
+
+@{
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+    ViewBag.Title = "Sections in Classes";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Change Class Sections
+        </li>
+
+    </ul>
+</div>
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="col-lg-12 col-md-12 col-sm-12 col-xs-12 heading text-center card-title">Change Class Section Of Admission <a href="https://www.youtube.com/watch?v=oEQiT2G9uPQ&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=265s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+
+
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Student's Current Class Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mr-4 ml-4">
+                        <div class="col-md-12  PromoteFrom mr-4 ml-4" id="PromoteTo">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "PromoteTo", ColCssClass = "col-11", ShowCampus = true, ShowClasses = true, ShowSections = true})
+                        </div>
+                        <div class="col-12 mt-2 mr-4">
+                            <button class="btn float-right  mr-4 btn-primary" id="search"><i class="fa fa-search"></i> Search</button>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-12 col-sm-12 col-md-6">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Student's New Class Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mr-4 ml-4">
+
+                        <div class="col-md-12 PromoteTo mr-4 ml-4" id="PromoteTo">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "PromoteTo", ColCssClass = "col-10 col-md-8 col-lg-10", ShowCampus = true, ShowSections = true, ShowClasses = true})
+                                                     
+                        </div>
+                        <div class="col-md-11 mt-2 mr-4 d-none d-md-block d-lg-block">
+                            <button id="SaveAndPromote" class="btn pull-right mr-4  btn-primary"><i class="fa fa-save"></i> Save and Promote</button>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Student list</h3>
+                </div>
+
+                <div class="card-body">
+                    @*<div class="col-md-12" style="max-height:400px; height:400px; overflow-y:scroll;">*@
+                    <div class="row">
+                        <div class="table-responsive col-12 table-hover".>
+                            <label id="SelectAllLabel"><input type="checkbox" id="selectAll" class="mr-2 mb-2"/>Select All</label>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>S.No</th>
+                                    <th>Reg. No.</th>
+                                    <th>Name</th>
+                                    <th>Father's Name</th>
+                                </tr>
+                                </thead>
+                                <tbody id="currentBody"></tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-12 mt-2 mr-4 d-md-none d-lg-none d-xl-none d-sm-block d-block">
+                            <button id="SaveAndPromote" class="btn pull-right mr-4  btn-primary"><i class="fa fa-save"></i> Save and Promote</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    $('#selectAll').on('change',
+        function() {
+            $('#currentBody').find('.select').each(function() {
+                $(this).prop('checked', $('#selectAll').is(':checked'));
+            });
+        });
+    $('#search').on('click', function() { SearchFrom(); });
+
+    function SearchFrom() {
+        var link = '@Url.Action("SearchStudents", "ClassManagement")';
+        $.ajax({
+            url: link,
+            data: { 'campus': '' + $('.PromoteFrom #Campus').val() + '', 'classID': '' + $('.PromoteFrom #Classes').val() + '', 'Sections': '' + $('.PromoteFrom #Sections').val() + '' },
+            success: function(data) {
+                var html = '';
+                var sno = 1;
+                $.each(data,
+                    function(key, value) {
+                        html += '<tr><td><input type="checkbox" class="select" /><input type="hidden" name="ID" id="admissionId" value="' + value.id + '" /></td><td>' + sno + '</td><td id="regno">' + value.registrationNo + '</td><td>' + value.studentName + '</td><td>' + value.fName + '</td></tr>';
+                        sno += 1;
+                    });
+                $('#currentBody').html(html);
+            },
+            error: function() {}
+        });
+    }
+
+
+    $('#SaveAndPromote').click(function() {
+        var toPromote = [];
+        var i = 0;
+        $('#currentBody').find('tr').each(function() {
+            if ($(this).find('.select:first').is(':checked')) {
+                toPromote[i] = parseInt($(this).find('#admissionId').val());
+                i++;
+            }
+        });
+        //RegistrationNos
+        $.ajax({
+            url: '@Url.Action("StudentSectionChange", "ClassManagement")',
+            type: 'POST',
+            contentType: 'application/json; charset=utf-8',
+            data: '{RegistrationNos:' + JSON.stringify(toPromote) + ',CampusID: ' + $('.PromoteTo #Campus').val() + ',ClassID:' + $('.PromoteTo #Classes').val() + ' ,Sections:' + $('.PromoteTo #Sections').val() + ' }',
+            success: function() {
+                location.reload();
+            },
+            error: function() {}
+        });
+
+    });
+
+</script>

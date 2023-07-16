@@ -1,0 +1,175 @@
+﻿@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Monthly Salary Register";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Monthly Salary Register
+            </li>
+        </ul>
+    </div>
+}
+
+<section class="content" id="monthlysalaryregister">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    Monthly Salary Register
+                </div>
+                <div class="card-body">
+                    @*@using (Ajax.BeginForm("MonthlySalaryRegister", "Payroll", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+            {*@
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "monthlysalaryregister", ColCssClass = "col-6 col-md-6 has-feedback", CampusFieldName = "CampusID", ShowCampus = true })
+
+                        @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                     {
+                         Label = "Month:",
+                         PickerType = "month",
+                         Format = "MM yy",
+                         ParentContainerID = "mont-date",
+                         ColCssClass = "col-12 col-sm-4 col-md-3",
+                         ShowAltField = true,
+                         AltFieldId = "month",
+                         AltFieldName = "Month",
+                         AltFieldFormat = "dd/mm/yy",
+                         DateFieldId = "monthpick",
+                         DateFieldName = "monthpick",
+                         KeepDataFieldReadOnly = true,
+                         DefaultDate = DateTime.Now
+                     })
+                    </div>
+                    @*}*@
+
+                </div>
+
+                <div class="card-footer text-right">
+                    @*<a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>*@
+
+                    <button type="button" onclick="reloadGridData()" class="btn btn-primary">
+                        <i class="fa fa-search mr-2"></i>
+                        <span>
+                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                        </span> Search
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    Monthly Salary Register
+                </div>
+                <div class="card-body">
+                    <div id="salaryvoucherregistered-gridContainer" class="">
+                       @* @Html.EJS().Grid("list_monthlysalary").Columns(col =>
+                   {
+                       col.Template("${sno(index)}").HeaderText("S.No").AutoFit(true).Add();
+                       col.Field("employeeCode").HeaderText("Code").TextAlign(TextAlign.Left).Add();
+                       col.Field("employeeName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                       col.Field("salaryPackageName").HeaderText("Salary Package").TextAlign(TextAlign.Left).Add();
+                       col.Field("Amount").HeaderText("Amount").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                       col.Template("#active").HeaderText("Paid").AutoFit(true).TextAlign(TextAlign.Center).Add();
+                       col.Template("#action").HeaderText("Action").AutoFit(true).TextAlign(TextAlign.Center).Add();
+                   }).Render()*@
+
+
+
+                        @{
+                            var gridModel = new GridModel()
+            {
+                GridId = "list_monthlysalary",
+                AddSerialNo=true,
+                Columns = new List<Column>
+                        {
+                      //  new Column{Template="${sno(index)}",HeaderText="S.No",AutoFit=true},
+                        new Column{FieldName="employeeCode", HeaderText = "Code", TextAlign = TextAlign.Left    } ,
+                        new Column{FieldName="employeeName" ,HeaderText="Name" ,TextAlign=TextAlign.Left},
+                        new Column{FieldName="salaryPackageName",HeaderText="Father's Name",TextAlign=TextAlign.Left},
+                        new Column{FieldName="amount",HeaderText="Amount",TextAlign=TextAlign.Left },
+                        new Column{Template="#active",HeaderText="Paid",TextAlign = TextAlign.Center},
+                        new Column{Template="#action",HeaderText="Actions",TextAlign = TextAlign.Center},
+                        },};
+
+                        }
+                        @await Html.PartialAsync("_grid",gridModel)
+                    </div>
+
+
+                    <script type="text/x-jsrender" id="active">
+
+                        ${if(IsPayed)}
+                        <span class="fa fa-check-circle" style="color:green"></span>
+                        ${else}
+                        <span class="fa fa-times-circle" style="color:red"></span>
+                        ${/if}
+                    </script>
+                    <script type="text/x-jsrender" id="action">
+                        <a rel="nofollow" title="Edit" href="/Payroll/MonthlySalaryRegisterEdit/${Id}" class="ml-1"><i class="fa fa-edit"></i></a>
+                        <a rel="nofollow" title="Delete" href="/Payroll/SalarypackageDelete/${Id}" class="ajax-load ml-1"><i class="fa fa-trash"></i></a>
+                    </script>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+
+ <script @resources.JavaScript>
+    var grid = document.getElementById("list_monthlysalary").ej2_instances[0];
+    $('#list_package').on('click',
+        'a.ajax-load',
+        function (e) {
+            e.preventDefault();
+            var title = 'Fee System';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+    function reloadGridData() {
+        var campusId = $('#Campus').val();
+        var url = '/Payroll/MonthlySalaryRegisterList';
+        var month = $('#month').val();
+
+        url += '?month=' + month + '&campusId=' + campusId;
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    reloadGridData();
+
+</script>

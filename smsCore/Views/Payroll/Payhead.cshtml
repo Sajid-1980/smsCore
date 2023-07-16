@@ -1,0 +1,173 @@
+﻿@model  tbl_PayHead
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Payhead";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Pay Head
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Pay head creation</h3>
+                </div><!-- /.box-header -->
+               @* @using (Ajax.BeginForm("Payhead", "Payroll", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm",data_reset="true"}))
+                {*@
+                <form asp-action="Payhead" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row no-gutters ">
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col-6">
+                                        
+                                            <label>Name</label>
+
+                                            <div class="controls">
+                                                @Html.TextBoxFor(m => m.payHeadName, new { @class = "form-control has-feedback-left", required = "true" })
+                                                <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessage("payHeadName")
+                                            </div>
+                                       </div>
+                                    <div class="col-6">
+                                        <label>Type</label>
+                                        <div class="controls">
+                                            <select name="type" class="form-control">
+                                                <option value="1">Addition</option>
+                                                <option value="-1">Deduction</option>
+                                            </select>
+                                            <span class="fa fa-sort form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("type")
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <label>Narration</label>
+                                        <div class="controls">
+                                            @Html.TextBoxFor(m => m.narration, new { @class = "form-control has-feedback-left" })
+                                            <span class="fa fa-sticky-note form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("narration")
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-12 pb-2 mt-3">
+                                      @*  <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>*@
+
+                                        <button type="submit" value="Create" class="btn btn-primary float-right">
+                                            <i class="fa fa-save mr-2"></i>
+                                            <span>
+                                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                            </span> Save
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+           </form>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Pay head List</h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="row">
+                        <div id="payhead-gridContainer" class="col-12">
+            @*                @Html.EJS().Grid("list_payhead").DataSource(dataManger =>
+                  {
+                      dataManger.Url("/Payroll/PayHeadList").Adaptor("UrlAdaptor");
+                  }).Columns(col =>
+                  {
+                      col.Template("${sno(index)}").HeaderText("S.No").Width("50").TextAlign(TextAlign.Left).Add();
+                      col.Field("Name").HeaderText("Description").Width("60").TextAlign(TextAlign.Left).Add();
+                      col.Field("Narration").HeaderText("Notes").Width("120").TextAlign(TextAlign.Left).Add();
+                      col.Field("Type").HeaderText("Type").Width("100").TextAlign(TextAlign.Left).Add();
+                     col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(TextAlign.Left).Add();
+                  }).Render()*@
+
+
+                            @{
+                                var gridmodel = new GridModel()
+            {
+                GridId = "list_payhead",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                DataUrl = "/Payroll/PayHeadList",
+                AddSerialNo=true,
+
+
+                Columns = new List<Column>
+                            {
+                             new Column{FieldName="name",HeaderText="Description",Width="60",TextAlign=TextAlign.Left},
+                            new Column{FieldName="narration",Template="Notes",Width="120",HeaderText="Allow",TextAlign=TextAlign.Left},
+                            new Column{FieldName="type",Width="50",HeaderText="Type",TextAlign=TextAlign.Left},
+                            new Column{FieldName="action",Template="#action",Width="70",TextAlign=TextAlign.Left},
+
+                            },
+            };
+                            }
+                            @await Html.PartialAsync("_grid",gridmodel)
+                            <script type="text/x-jsrender" id="action">
+                                <a title="Edit" href="/Payroll/PayheadEdit/${payHeadId}" class="edit ml-1"><i class="fa fa-edit"></i></a>
+                                <a title="Delete" href="/Payroll/PayheadDelete/${payHeadId}" class="edit ml-1"><i class="fa fa-trash"></i></a>
+                                
+                                </script>
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script @resources.JavaScript>
+    function reloadGridData() {
+        document.getElementById('list_payhead').ej2_instances[0].refresh();
+    }
+    $('#list_payhead').on('click',
+        'a',
+        function (e) {
+            e.preventDefault();
+            var title = 'Pay Head';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>

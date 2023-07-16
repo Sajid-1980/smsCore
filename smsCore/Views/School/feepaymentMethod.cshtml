@@ -1,0 +1,161 @@
+﻿@using m = Models;
+@using Models
+@inject StaticResources resources
+
+@model FeeSlipPaymentMethod
+
+@{
+    ViewBag.Title = "Fee payment Method";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+
+
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Fee Payment Method
+
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="feepayments">
+    @*@using (Ajax.BeginForm("feepaymentMethod", "School", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "editSchoolmainForm #server-progress", OnBegin = "begin"}, new {id = "editSchoolmainForm", enctype = "multipart/form-data"}))
+    {*@
+
+    <form asp-action="feepaymentMethod" asp-controller="School" data-ajax="true" OnSuccess="reloadGridData" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editSchoolmainForm" data_reset="true">
+
+        <div class="row">
+
+            <div class="col-5 col-sm-5 col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix"> Payment Method <a href="https://www.youtube.com/watch?v=LcG_cpH1AkU#t=194s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                    </div>
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="Container">
+
+                            <div class="row ">
+
+                                <div class="col-12 has-feedback">
+                                    <label>Payment Method Name</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.PaymentMethodName, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "30", required = "true" })
+                                        <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.PaymentMethodName)
+                                    </div>
+
+                                </div>
+                                @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "feepayments", ColCssClass = "col-12", ShowCampus = true})
+
+                                <div class="col-12 mt-4">
+                                    <label>@Html.EditorFor(m => m.AllowPartialPayment) Allow Partial Payment</label>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="reset" name="Reset" id="resetbtn" class="btn btn-danger float-right mt-2"><i class="fa fa-refresh mr-2"></i>Reset</button>
+                                    <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                                        <i class="fa fa-save mr-2"></i>
+                                        <span>
+                                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                        </span> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-7 col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">Fee Payment Method List</h3>
+                    </div>
+                    <div class="card-body">
+                        @*         @Html.EJS().Grid("list_method").DataSource(s => { s.Url("/School/PaymentMethodList").Adaptor("UrlAdaptor"); }).Columns(col =>
+                        {
+                        col.Field("PaymentMethodName").HeaderText("Description").Format("MMM, yyyy").TextAlign(TextAlign.Left).Add();
+                        col.Template("#partial").HeaderText("Allow Partial Payment").TextAlign(TextAlign.Center).Add();
+                        col.Template("#action").HeaderText("Action").TextAlign(TextAlign.Center).Add();
+                        }).Height("auto").Width("auto").Render()*@
+                        @{
+                            var gridmodel = new GridModel()
+            {
+                GridId = "list_method",
+                DataUrl = "/School/PaymentMethodList",
+                Columns = new List<Column>
+                        {
+                        new Column{FieldName="paymentMethodName",HeaderText="Description",TextAlign=TextAlign.Left},
+                        new Column{Template="#partial",HeaderText="Allow Partial Payment",TextAlign=TextAlign.Center},
+                        new Column{Template="#action",HeaderText="Action",TextAlign=TextAlign.Center},
+                        },
+            };
+                        }
+                        @await Html.PartialAsync("_grid",gridmodel)
+
+                    </div>
+                    <script id="partial" type="text/x-jsrender">
+                        ${if(AllowPartialPayment)}
+                        <i class="fa fa-check-circle" style="color:green"></i>
+                        ${else}
+                        <i class="fa fa-times-circle" style="color:red"></i>
+                        ${/if}
+                    </script>
+                    <script id="action" type="text/x-jsrender">
+                        <a title="Edit" href="/School/FeepaymentmethodEdit/${getid(Id)}" class="edit ajax ml-1"><i class="fa fa-edit"></i></a>
+                        <a title="Delete" href="/School/Deletepaymentmethod/${getid(Id)}" class="edit ajax ml-1"><i class="fa fa-trash"></i></a>
+
+                    </script>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</section>
+<script @resources.JavaScript>
+    function getid(id) {
+        return id.toString() + '    ';
+    }
+    function reloadGridData() {
+        document.getElementById('list_method').ej2_instances[0].refresh();
+    }
+    $('#list_method').on('click',
+        'a',
+        function (e) {
+            e.preventDefault();
+            var title = 'Payment Method';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>

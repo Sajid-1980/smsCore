@@ -1,0 +1,138 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Remarks Entry Sheet";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("ExamReports", "Reports")">Exam Report</a>
+        </li>
+        <li class="active">
+            Remarks Entry Sheet
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="remarksentrysheet">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "remarksentrysheet", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ShowExams = true, ShowCampus = true, ShowClasses = true, ShowSections = true})
+
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-12">
+            @{
+
+                var grid = new GridModel()
+                {
+                    GridId="list_remarks_entry_sheet",
+                    AllowPrint=true,
+                    AllowPdfExport=true,
+                    AllowExcelExport=true,
+                    ReportTitle="Remarks Entry Sheet",
+                    Columns=new List<Column>() {
+                    new Column{ FieldName="RegistrationNo",HeaderText="Reg.No", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="StudentName",HeaderText="Name", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="FName",HeaderText="Father Name", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="SocialBhv",HeaderText="Social Behavior", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="Discpline",HeaderText="Decipline", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="Manners",HeaderText="Manners", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="OralExp",HeaderText="Oral Exp", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="Confid",HeaderText="Confidence", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="Punctuality",HeaderText="Punctuality", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="Attendance",HeaderText="Attendance", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="PhyFit",HeaderText="Physical Fitness", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="Neatness",HeaderText="Neatness", Width="", TextAlign= TextAlign.Left },
+
+                    }
+
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_exam-remarks-entrysheet").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           //col.Template("#sno").HeaderText("S.No").Width("140").TextAlign(TextAlign.Left).Add();
+           col.Field("RegistrationNo").HeaderText("Reg No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("StudentName").HeaderText("Student Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("FName").HeaderText("Father Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("SocialBhv").HeaderText("Social Behavior").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Discpline").HeaderText("Decipline").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Manners").HeaderText("Manners").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("OralExp").HeaderText("Oral Exp").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Confid").HeaderText("Confidence").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Punctuality").HeaderText("Punctuality").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Attendance").HeaderText("Attendance").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("PhyFit").HeaderText("Physical Fitness").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Neatness").HeaderText("Neatness").AutoFit(true).TextAlign(TextAlign.Left).Add();
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+                { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_exam-remarks-entrysheet").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_exam-remarks-entrysheet_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_exam-remarks-entrysheet_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+    $('#btnSearch').click(function() {
+        $('#example tbody').html('');
+
+        var sectionid = $("#Sections").val();
+        if ($("#Sections").val() == null) {
+            return $("#Sections").focus();
+        }
+
+        var examsid = 0;
+        if ($("#Exams").val() != null) {
+            examsid = $("#Exams").val();
+        }
+
+        var url1 = '@Url.Action("GetRemarksSheet")';
+        url1 += '?Classes=' + $("#Classes").val() + '&Sections=' + sectionid + '&campus=' + $('#Campus').val() + '&exams=' + examsid + '&group=' + "";
+       var messageTop = 'Remarks Entry Sheet ' + 'Campus:' + $("#Campus :selected").html() + 'Class:' + $("#Classes :selected").html() + 'Section:' + $("#Sections :selected").html();
+        var messageTop = 'Award List blank ' + 'Campus:' + $("#Campus :selected").html() + 'Class:' + $("#Classes :selected").html() + 'Section:' + $("#Sections :selected").html() + 'Subject:' + $("#Subject :selected").html();
+        var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    });
+
+   
+</script>
+@Html.EJS().ScriptManager()

@@ -1,0 +1,95 @@
+﻿@using sms.Models
+@using Syncfusion.EJ2.Grids
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "StaffStatement";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("EmployeeReports", "Reports")">Employee Report</a>
+        </li>
+        <li class="active">
+            Staff Statemnets
+        </li>
+    </ul>
+</div>
+<section class="content" id="idcard">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "idcard", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = false, ShowCampus = true})
+
+                        <div class="col-12 col-md-2 col-sm-6 col-lg-2 form-group has-feedback">
+                            <label>Emp Code</label>
+                            <div class="controls">
+                                <div>
+                                    <input type="text" id="empcode" class="form-control" />
+                                </div>
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @Html.EJS().Grid("employeeStaffstatement").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Field("StaffID").HeaderText("Staff ID").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Name").HeaderText("Staff Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("FName").HeaderText("Father Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("CNIC").HeaderText("CNIC").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("PAddress").HeaderText("P.Address").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("CNo").HeaderText("Mobile No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Designation").HeaderText("Designation").AutoFit(true).TextAlign(TextAlign.Left).Add();
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+         { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render();            
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("employeeStaffstatement").ej2_instances[0];
+        if (args.item.id === 'employeeStaffstatement_pdfexport') {
+            gridObj.pdfExport();
+        } else if (args.item.id === 'employeeStaffstatement_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+      $('#btnSearch').on('click',
+          function () {
+            var empcode = $('#empcode').val();
+            var campus = $('#Campus').val();
+            if (!campus) {
+                sweetalert('Campus', 'Please select a campus to continue.', 'error');
+                return false;
+            }
+              var url1 = '@Url.Action("GetStaffStaments")';
+              url1 += '?campusId=' + campus + '&empcode=' + empcode;
+              $.get(url1,
+                  null,
+                  function (list) {
+                      var gridObj = document.getElementById("employeeStaffstatement").ej2_instances[0];
+                      gridObj.dataSource = (list);
+                  });
+        });
+</script>
+@Html.EJS().ScriptManager()

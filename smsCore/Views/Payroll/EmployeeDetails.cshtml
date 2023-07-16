@@ -1,0 +1,442 @@
+﻿@using Models
+@model  tbl_Employee
+@inject SchoolEntities db
+
+@{
+    ViewBag.Title = "Employee Details";
+    var Qualifications = db.Qualifications.Where(w => w.StaffID == Model.Id).ToList();
+    var Experience = db.EmployeeExpriences.Where(w => w.StfID == Model.Id).ToList();
+    var subjectExperience = db.EmployeeExperinceSubjects.Where(w => w.EmployeeId == Model.Id).ToList();
+
+    var left = Model.LeavedStaffs.FirstOrDefault();
+    var infocls = left == null ? "bg-success text-light" : "bg-danger text-light";
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Employee Details
+            </li>
+
+        </ul>
+    </div>
+}
+
+
+@*@{
+    string studentPath = "/Content/Photos/Students/" + Model.RegistrationNo + ".jpg";
+    if (!System.IO.File.Exists(Server.MapPath(studentPath)))
+    {
+        studentPath = "/Uploads/images/user.png";
+    }
+
+    string fatherPath = "/Content/Photos/Students/" + Model.RegistrationNo + "_Father.jpg";
+    if (!System.IO.File.Exists(Server.MapPath(fatherPath)))
+    {
+        fatherPath = "/Uploads/images/user.png";
+    }
+
+
+    string GuardianSignPath = "/Content/Photos/Students/" + Model.RegistrationNo + "_GaurdianSign.jpg";
+    if (!System.IO.File.Exists(Server.MapPath(GuardianSignPath)))
+    {
+        GuardianSignPath = "/Uploads/images/site/signature.png";
+    }
+    string FatherSignPath = "/Content/Photos/Students/" + Model.RegistrationNo + "_FatherSign.jpg";
+    if (!System.IO.File.Exists(Server.MapPath(FatherSignPath)))
+    {
+        FatherSignPath = "/Uploads/images/site/signature.png";
+    }
+
+}*@
+<section class="content">
+<div class="row">
+<div class="col-md-3">
+    <div class="card">
+        <div class="card-body box-profile">
+            @{
+                if (Model.Photo != null)
+                {
+                    <img src="data:image/*;base64,@(Model.Photo != null ? Convert.ToBase64String(Model.Photo) : "")" id="profile-user-img" alt="User profile picture" class="profile-user-img img-responsive img-circle" style="width: 150px;"/>
+                }
+                else
+                {
+                    <img src="~/Uploads/images/user.png" id="profile-user-img" class="profile-user-img img-responsive img-circle" style="width: 150px;"/>
+                }
+            }
+            <h3 class="profile-username text-center">@Model.employeeName</h3>
+            <ul class="list-group list-group-unbordered @infocls">
+                <li class="list-group-item listnoback @infocls">
+                    <b>Campus</b> <a class="pull-right text-aqua">@Model.Campus.CampusName</a>
+                </li>
+                <li class="list-group-item listnoback">
+                    <b>Employee Code</b> <a class="pull-right text-aqua">@Model.employeeCode</a>
+                </li>
+                <li class="list-group-item listnoback">
+                    <b>Title</b> <a class="pull-right text-aqua">@Model.Title</a>
+                </li>
+                <li class="list-group-item listnoback">
+                    <b>Designation</b> <a class="pull-right text-aqua">@Model.tbl_Designation.designationName</a>
+                </li>
+                <li class="list-group-item listnoback">
+                    <b>Qualification</b> <a class="pull-right text-aqua">@Model.qualification</a>
+                </li>
+                <li class="list-group-item listnoback">
+                    <b>Blood Group</b> <a class="pull-right text-aqua">@Model.bloodGroup</a>
+                </li>
+
+                <li class="list-group-item listnoback">
+                    <b>Gender</b> <a class="pull-right text-aqua">@Model.gender</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    @*@if (sibling != null)
+            {
+                foreach (var itm in sibling)
+                {
+                    <div class=" card mt-4">
+                        <div class="card-header with-border">
+                            <h3 class="box-title">Sibling</h3>
+                        </div>
+                        <!-- /.box-header -->
+
+                        <div class="card-body">
+                            <div class="box box-widget widget-user-2">
+                                <!-- Add the bg color to the header using any of the bg-* classes -->
+                                <div class="siblingview">
+                                    @{
+                                        string siblingPath = "/Content/Photos/Students/" + itm.RegistrationNo + ".jpg";
+                                        if (!System.IO.File.Exists(Server.MapPath(siblingPath)))
+                                        {
+                                            siblingPath = "/Uploads/images/user.png";
+                                        } }
+                                    <img class="img-circle " src="@siblingPath" alt="User Avatar" style="max-width:110px">
+                                    <h4><a href="@Url.Action("Studentview","Students",new {id=itm.ID})">@itm.StudentName</a></h4>
+                                </div>
+                                <div class="box-footer no-padding">
+                                    <ul class="list-group list-group-unbordered">
+                                        <li class="list-group-item">
+
+
+                                            <b>Reg Number</b> <a class="pull-right text-aqua">@itm.RegistrationNo</a>
+                                        </li>
+
+                                        <li class="list-group-item">
+                                            <b>Class</b> <a class="pull-right text-aqua">@db.Admissions.Where(w => w.Student.ID == itm.ID).Select(s => s.ClassSection.Class.ClassName).FirstOrDefault()</a>
+                                        </li>
+                                        <li class="list-group-item">
+                                            <b>Section</b> <a class="pull-right text-aqua">@db.Admissions.Where(w => w.Student.ID == itm.ID).Select(s => s.ClassSection.Section.SectionName).FirstOrDefault()</a>
+
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <!-- /.box-body -->
+
+                    </div>
+
+                }
+
+            }*@
+
+
+</div>
+<div class="col-md-9">
+
+<div class="nav-tabs-custom">
+<ul class="nav nav-tabs">
+    <li class="active">
+        <a href="#activity" data-toggle="tab" aria-expanded="true">Profile</a>
+    </li>
+    <li class="">
+        <a href="#other" data-toggle="tab" aria-expanded="false">Other Information</a>
+    </li>
+
+
+    @*<li class="pull-right">
+            <a href="#" class="schedule_modal text-green" data-toggle="tooltip" title="" data-original-title="Login Details">
+                <i class="fa fa-key"></i>
+            </a>
+        </li>*@
+    @if (left==null)
+    {<li class="pull-right">
+        <a href="@Url.Action("EmployeeCreation", "Payroll")" class="text-red" data-toggle="tooltip" title="Add New Employee" data-original-title="Disable">
+            <i class="fa fa-plus"></i>
+        </a>
+    </li>
+
+    <li class="pull-right">
+        <a href="@Url.Action("EditEmployee", "Payroll", new { id = Model.Id })" class="" data-toggle="tooltip" title="Edit" data-original-title="Edit">
+            <i class="fa fa-edit"></i>
+        </a>
+    </li>
+    }
+
+</ul>
+<div class="tab-content">
+<div class="tab-pane active" id="activity">
+    <div class="tshadow mb25 bozero">
+        <div class="table-responsive around10 pt0">
+            <table class="table  tmb0 ">
+                <tbody>
+                    <tr>
+                        <td class="">Joining Date</td>
+                        <td class="">
+                            @Model.joiningDate.Value.ToString("dd MMM yyyy")
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="">Termination Date</td>
+                        <td class="">
+                            @Model.terminationDate
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Date Of Birth</td>
+                        <td>@Model.dob.Value.ToString("dd MMM yyyy")</td>
+                    </tr>
+                    <tr>
+                        <td>Salary Type</td>
+                        <td>
+                            @Model.salaryType
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Salary Package</td>
+                        <td>@Model.designationId</td>
+                    </tr>
+
+                    <tr>
+                        <td>Narration</td>
+                        <td>@Model.narration</td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>@Model.email</td>
+                    </tr>
+                    @if (left!=null)
+                    {
+                        <tr>
+                            <td>Termination Date</td>
+                            <td>@left.LeavingDate.ToString("dd, MMM yyyy")</td>
+                        </tr>
+                        <tr>
+                            <td>Reason</td>
+                            <td>@left.Reason</td>
+                        </tr>
+                        <tr>
+                            <td>Remarks</td>
+                            <td>@left.Remarks</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tshadow mb25 bozero">
+        <h3 class="pagetitleh2">Contact Details </h3>
+        <div class="table-responsive around10 pt0">
+            <table class="table  tmb0">
+                <tbody>
+                <tr>
+                    <td>Mobile Number</td>
+                    <td>@Model.mobileNumber</td>
+                </tr>
+                <tr>
+                    <td>Phone Number</td>
+                    <td>@Model.phoneNumber</td>
+                </tr>
+                <tr>
+                    <td>Current Address</td>
+                    <td>@Model.address</td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tshadow mb25  bozero">
+        <h3 class="pagetitleh2">Qualification</h3>
+
+        <div class="table-responsive around10 pt0">
+            <table class="table  tmb0">
+                <thead>
+                <tr>
+                    <td>University</td>
+                    <td>Qualification</td>
+                    <td>Year</td>
+                    <td>Grade</td>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var itm in Qualifications)
+                {
+                    <tr>
+                        <td>@itm.University</td>
+                        <td>@itm.QualificationType</td>
+                        <td>@itm.Year</td>
+                        <td>@itm.Grade</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tshadow mb25  bozero">
+        <h3 class="pagetitleh2">Professional Experiences</h3>
+
+        <div class="table-responsive around10 pt0">
+            <table class="table  tmb0">
+                <thead>
+                <tr>
+                    <td>Institution</td>
+                    <td>Designation</td>
+                    <td>From[Year]</td>
+                    <td>To[Year]</td>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var itm in Experience)
+                {
+                    <tr>
+                        <td>@itm.Institution</td>
+                        <td>@itm.Desgnition</td>
+                        <td>@itm.From</td>
+                        <td>@itm.To</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tshadow mb25  bozero">
+        <h3 class="pagetitleh2">Subject Experties</h3>
+        <div class="table-responsive around10 pt0">
+            <table class="table  tmb0">
+                <thead>
+                <tr>
+                    <td>S.No</td>
+                    <td>Subject</td>
+                </tr>
+                </thead>
+                <tbody>
+                @{ var i = 0; }
+                @foreach (var itm in subjectExperience)
+                {
+                    i++;
+                    <tr>
+                        <td>@i</td>
+                        <td>@itm.Subject.SubjectName</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="tab-pane" id="other">
+    <div class="timeline-header no-border">
+
+    </div>
+    <div class="table-responsive around10 pt0">
+        <table class="table  tmb0 ">
+            <tbody>
+            <tr>
+                <td class="">Pan Number</td>
+                <td class="">
+                    @Model.panNumber
+                </td>
+            </tr>
+            <tr>
+                <td class="">Pf Number</td>
+                <td class="">
+                    @Model.pfNumber
+                </td>
+            </tr>
+            <tr>
+                <td>Esi Number</td>
+                <td>@Model.esiNumber</td>
+            </tr>
+            <tr>
+                <td>Bank Name</td>
+                <td>
+                    @Model.bankName
+                </td>
+            </tr>
+            <tr>
+                <td>A/c No</td>
+                <td>@Model.bankAccountNumber</td>
+            </tr>
+
+            <tr>
+                <td>Branch Name</td>
+                <td>@Model.branchName</td>
+            </tr>
+            <tr>
+                <td>Branch Code</td>
+                <td>@Model.branchCode</td>
+            </tr>
+            <tr>
+                <td>Passport Number</td>
+                <td>@Model.passportNo</td>
+            </tr>
+            <tr>
+                <td>Passpoet Expiry Date</td>
+                <td>@Model.passportExpiryDate</td>
+            </tr>
+            <tr>
+                <td>Visa Nimber </td>
+                <td>@Model.visaNumber</td>
+            </tr>
+            <tr>
+                <td>Visa Expiry Date</td>
+                <td>@Model.visaExpiryDate</td>
+            </tr>
+            <tr>
+                <td>Labour Card Number</td>
+                <td>@Model.labourCardNumber</td>
+            </tr>
+            <tr>
+                <td>Labour Card Expiry Date</td>
+                <td>@Model.labourCardExpiryDate</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="tab-pane" id="timelineh">
+    <div>
+        <input type="button" id="myTimelineButton" class="btn btn-sm btn-primary float-right " value="Add">
+
+
+    </div>
+
+</div>
+
+<div class="tab-pane" id="exam">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+ 

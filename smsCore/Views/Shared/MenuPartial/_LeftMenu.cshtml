@@ -1,0 +1,31 @@
+﻿@model List<MenuItemViewModel>
+@{
+    bool isDev = Model.Select(s => s.IsDev).FirstOrDefault();
+}
+
+@if (isDev)
+{
+    <ol class="dd-list">
+        @foreach (var item in Model)
+        {
+            await Html.RenderPartialAsync("~/Views/Shared/MenuPartial/_LeftMenuItem.cshtml", item);
+        }
+    </ol>
+}
+else
+{
+
+    @*<div class="sidebar" id="sidebar">
+        <div class="sidebar-inner slimscroll">
+            <div id="sidebar-menu" class="sidebar-menu">
+                <ul>*@
+                    foreach (var item in Model)
+                    {
+                       await Html.RenderPartialAsync("~/Views/Shared/MenuPartial/_LeftMenuItem.cshtml", item);
+                    }
+                @*</ul>
+            </div>
+        </div>
+    </div>*@
+
+}

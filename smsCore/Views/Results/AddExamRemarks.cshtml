@@ -1,0 +1,214 @@
+﻿@inject StaticResources resources
+@using System.Text.Json
+@{
+
+    Layout = null;
+
+    //ViewBag.Title = "Add Results";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            New Exam Remarks
+        </li>
+
+    </ul>
+</div>
+<section class="content" id="addexamremark">
+    <div class="row">
+        <div class="col-12 col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">
+                        Student Remarks <a href="https://www.youtube.com/watch?v=vTMiWr-yHTM#t=232s" title="Watch our Youtube Video to understand" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row ">
+                        <div class="col-lg-12">
+                            <div id="message">
+                            </div>
+
+                        </div>
+                        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "addexamremark", ColCssClass = "col-12 col-md-4", ShowCampus = true, ShowClasses = true, ShowSections = true, ShowExams = true })
+
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="col-12 text-right">
+                        <button type="button" class="btn btn-primary" onclick="reloadGridData()">Search</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Student Remarks List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            @{
+                                var gridmodel = new GridModel()
+            {
+                GridId = "list",
+                Columns = new List<Column>
+                            {
+                            new Column{FieldName="registrationNo",HeaderText="Reg. No",TextAlign=TextAlign.Left,Width="80",AllowEditing=false},
+                            new Column{FieldName="studentName",HeaderText="Name",Width="100",TextAlign=TextAlign.Left,AllowEditing=false},
+                            new Column{FieldName="attendance",HeaderText="Attendance",Width="100",TextAlign=TextAlign.Left,AllowEditing=false},
+                            new Column{FieldName="confid",HeaderText="Confidance",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                            new Column{FieldName="coTeamWork",HeaderText="Co. Teamwork",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                            new Column{FieldName="discpline",HeaderText="Discpline",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                            new Column{FieldName="manners",HeaderText="Manners",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                            new Column{FieldName="neatness",HeaderText="Neatness",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                            new Column{FieldName="oralExp",HeaderText="Oral Expression",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                            new Column{FieldName="phyFit",HeaderText="Physical Fitness",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                            new Column{FieldName="punctuality",HeaderText="Punctuality",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                            new Column{FieldName="socBeh",HeaderText="Social Behaviour",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                            new Column{FieldName="remarks",HeaderText="Remarks",TextAlign=TextAlign.Left,Width="350",AllowEditing=true},
+                            },
+            };
+                            }
+                            @await Html.PartialAsync("_grid",gridmodel)
+                        </div>
+                        @*                        <div class="col-12">
+                        @Html.EJS().Grid("list").AllowSelection().Columns(col =>
+                        {
+                        col.Field("RegistrationNo").IsFrozen(true).HeaderText("Reg. No").Width("100").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                        col.Field("StudentName").HeaderText("Name").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                        col.Field("Attendance").HeaderText("Attendance").TextAlign(TextAlign.Left).AllowEditing(true).Add();
+                        col.Field("Confid").HeaderText("Confidance").AllowEditing(true).EditType("dropdownedit").Edit(new { create = "countryCreate", read = "countryRead", destroy = "countryDestroy", write = "countryWrite" }).TextAlign(TextAlign.Left).Add();
+                        col.Field("CoTeamWork").HeaderText("Co. Teamwork").EditType("dropdownedit").Edit(new { create = "countryCreate", read = "countryRead", destroy = "countryDestroy", write = "countryWrite" }).AllowEditing(true).Add();
+                        col.Field("Discpline").HeaderText("Discipline").EditType("dropdownedit").Edit(new { create = "countryCreate", read = "countryRead", destroy = "countryDestroy", write = "countryWrite" }).TextAlign(TextAlign.Left).AllowEditing(true).Add();
+                        col.Field("Manners").HeaderText("Manners").EditType("dropdownedit").Edit(new { create = "countryCreate", read = "countryRead", destroy = "countryDestroy", write = "countryWrite" }).TextAlign(TextAlign.Left).AllowEditing(true).Add();
+                        col.Field("Neatness").HeaderText("Neatness").EditType("dropdownedit").Edit(new { create = "countryCreate", read = "countryRead", destroy = "countryDestroy", write = "countryWrite" }).TextAlign(TextAlign.Left).AllowEditing(true).Add();
+                        col.Field("OralExp").HeaderText("Oral Expression").EditType("dropdownedit").Edit(new { create = "countryCreate", read = "countryRead", destroy = "countryDestroy", write = "countryWrite" }).AllowEditing(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("PhyFit").HeaderText("Physical Fitness").EditType("dropdownedit").Edit(new { create = "countryCreate", read = "countryRead", destroy = "countryDestroy", write = "countryWrite" }).AllowEditing(true).Add();
+                        col.Field("Punctuality").HeaderText("Punctuality").EditType("dropdownedit").Edit(new { create = "countryCreate", read = "countryRead", destroy = "countryDestroy", write = "countryWrite" }).TextAlign(TextAlign.Left).AllowEditing(true).Add();
+                        col.Field("SocBeh").HeaderText("Social Behaviour").EditType("dropdownedit").Edit(new { create = "countryCreate", read = "countryRead", destroy = "countryDestroy", write = "countryWrite" }).TextAlign(TextAlign.Left).AllowEditing(true).Add();
+                        col.Field("Remarks").HeaderText("Remarks").TextAlign(TextAlign.Left).Width(350).AllowEditing(true).Add();
+                        }).Load("load").AllowFiltering().AllowPaging().EditSettings(edit => { edit.AllowEditing(true).Mode(Syncfusion.EJ2.Grids.EditMode.Batch).AllowNextRowEdit(true);  }).SelectionSettings(select => select.CheckboxOnly(true).CheckboxMode(Syncfusion.EJ2.Grids.CheckboxSelectionType.Default).Type(Syncfusion.EJ2.Grids.SelectionType.Multiple)).FilterSettings(filter => filter.Type(FilterType.Menu)).Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().PageSettings(page => page.PageSize(15)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+                        </div>
+                        *@
+                    </div>
+                    <div class="row">
+                        <div class="col-12 text-right pt-3">
+                            <button type="button" id="btnSave" class="btn btn-primary"><i class="mr-2 fa fa-save"></i>Save</button>
+                        </div>
+                    </div>
+                    <div class="hidden" id="SubjectDetails">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+
+    function load(args) {
+        var instance = document.getElementById('list').ej2_instances[0];
+        instance.element.addEventListener('mousedown', function (e) {
+            if (e.target.classList.contains("e-rowcell")) {
+                var index = parseInt(e.target.getAttribute("Index"));
+                var colindex = parseInt(e.target.getAttribute("aria-colindex"));
+                var field = instance.getColumns()[colindex].field;
+                instance.editModule.editCell(index, field);
+            };
+        });
+    }
+    function reloadGridData() {
+
+        var classid = $('#Classes').val();
+        var campusid = $('#Campus').val();
+        var sectionid = $('#Sections').val();
+        var exam = $('#Exams').val();
+
+        var grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = [];
+        var url = '@Url.Action("StudentListForRemarks")';
+        url += '?campusId=' + campusid + '&classid=' + classid + '&sectionId=' + sectionid + '&examid=' + exam;
+
+        grid.dataSource = new ej.data.DataManager({
+            batchUrl: '/Results/AddExamRemarks',
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+
+    $(function () {
+
+
+        $(btnSave).click(function () {
+            let grid = document.getElementById('list').ej2_instances[0];
+            var changes = grid.getBatchChanges();
+            if (changes.changedRecords.length > 0) { grid.endEdit(); }
+
+            //console.log(results);
+    @*$.ajax({
+                url: '@Url.Action("AddExamRemarks", "Results", new {area = "Admin"})',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: '{remarks:' + JSON.stringify(remarks) + '}',
+                success: function(data) {
+                $('#message').html('<span class="float-left alert alert-info w-100">Information added to database successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+
+                $(newResults).find('tr').each(function() { $(this).remove(); });
+                },
+                error: function() {
+                var data = {};
+                data.message = "Unable to store the selected configuration values.";
+                data.type = "error";
+                CreateSuccess(data);
+                }
+                });*@
+            });
+
+
+    });
+    var countryElem;
+    var countryObj;
+
+
+
+    @{
+        var country = JsonSerializer.Serialize(ViewBag.RemarksDetail);
+    }
+
+
+        function countryCreate() {
+            countryElem = document.createElement('input');
+            return countryElem;
+        }
+    function countryRead() {
+        if (countryObj.text)
+            return countryObj.text;
+    }
+    function countryDestroy() {
+        countryObj.destroy();
+    }
+    function countryWrite() {
+        countryObj = new ej.dropdowns.DropDownList({
+            dataSource: country,
+            fields: { value: 'ID', text: 'Remarks' },
+            placeholder: 'Select Remark',
+            floatLabelType: 'Never'
+        });
+        countryObj.appendTo(countryElem);
+    }
+
+
+
+</script>
+@Html.EJS().ScriptManager()

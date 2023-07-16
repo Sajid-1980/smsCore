@@ -1,0 +1,212 @@
+﻿@model HostelAttendance
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Index";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Hostel Attendance Records
+        </li>
+
+    </ul>
+</div>
+<section class="content">
+    @*@using (Ajax.BeginForm("HostelAttendanceCreate", "Hostel", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "editHostelAttendancemainForm #server-progress", OnBegin = "begin" }, new { id = "editHostelAttendancemainForm", enctype = "multipart/form-data" }))
+    {*@
+    <form asp-action="HostelAttendanceCreate" asp-controller="Hostel" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editHostelAttendancemainForm" data_reset="true">
+
+        <div class="row">
+            <div class="col-12 ">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">Create Hostel Attendance <a href="https://www.youtube.com/watch?v=yqoeHNNcBCw&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=135s" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                    </div>
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="Container">
+
+                            <div class="row ">
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Hostel</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.DropDownListFor(model => model.HostelId, (SelectList)ViewBag.hstlename, new { @class = " form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-building small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.HostelId)
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Student RegNo</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        <input type="text" name="regNo" class="form-control " required />
+                                        <span class="fa fa-user  form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.HostleAdmId)
+                                    </div>
+                                </div>
+
+                                @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                                {
+                                Label = "Date",
+                                ParentContainerID = "adm-date",
+                                ColCssClass = "col-12 col-sm-4",
+                                ShowAltField = false,
+                                DateFieldId = "Date",
+                                DateFieldName = "Date",
+                                KeepDataFieldReadOnly = true,
+                                DefaultDate = DateTime.Now,
+
+                                })
+
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Type</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.DropDownListFor(model => model.AttendanceTypeId, (SelectList)ViewBag.AttendanceType, new { @class = " form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-list small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.AttendanceTypeId)
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <button type="reset" name="Reset" id="resetbtn" class="btn btn-primary float-right  mt-2"><i class="fa fa-refresh mr-2"></i>Reset</button>
+                                    <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                                        <i class="fa fa-save mr-2"></i>
+                                        <span>
+                                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                        </span> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">Attendance List</h3>
+                    </div>
+                    <div class="card-body">
+                        @*
+                        @Html.EJS().Grid("attendance").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                        {
+                        col.Field("Hostel").HeaderText("Hostel Name").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                        col.Field("RegNo").HeaderText("Reg No").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                        col.Field("StudentName").HeaderText("Students").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                        col.Field("AttendanceName").HeaderText("Attendance Type").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                        col.Field("Date").HeaderText("Admission Date").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                        col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(TextAlign.Center).Add();
+
+                        }).FilterSettings(filter => { filter.Type(Syncfusion.EJ2.Grids.FilterType.CheckBox); }).AllowSorting(true).PageSettings(page => page.PageSize(5)).Toolbar(new List<string>()
+                        { "PdfExport", "Print", "ExcelExport", "Search" ,"ColumnChooser" }).Render()*@
+                        @{
+                            var modelgrid = new GridModel()
+            {
+                GridId = "attendance",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                ShowHeader = false,
+                Columns = new List<Column>
+                        {
+                        new Column{FieldName="hostel",HeaderText="Hostel Name",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="regNo",HeaderText="Reg No",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="attendanceName",HeaderText="Attendance Type",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="date",HeaderText="Admission Date",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                        new Column{FieldName="action",HeaderText="Action",Template="#action",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+
+                        },
+                AllowFiltering = true,
+            };
+                        }
+                        @await Html.PartialAsync("_grid",modelgrid)
+                        <script type="text/x-jsrender" id="action">
+                            <a title="Edit" class="editL" id="${Id}" href="/Hostel/HostelAttendanceEdit/${Id}"><i class="fa fa-edit"></i></a>
+                            <a title="Delete" class="delete" id="${Id}" href="/Hostel/HostelAttendanceDelete/${Id}"><i class="fa fa-trash ml-2"></i></a>
+                        </script>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+</section>
+
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+    $(document).ready(function () {
+        var url2 = '@Url.Action("GetAttendanceList")';
+        var grid = document.getElementById("attendance").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url2,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    });
+
+    function reloadGridData() {
+        var gird = document.getElementById('attendance').ej2_instances[0];
+        gird.refresh();
+    }
+    // Modal For Delete Hostel Attendance //
+    $('#attendance').on('click',
+        'a.delete',
+        function (e) {
+            e.preventDefault();
+            var title = "Delete Attendances"
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+
+    $('#attendance').on('click',
+        'a.editL',
+        function (e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            var title = "Edit Hostel Attendances"
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>

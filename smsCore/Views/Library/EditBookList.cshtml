@@ -1,0 +1,254 @@
+﻿@model Models.LibraryBookList
+@inject StaticResources resourse;
+@{
+    ViewBag.Title = "EditBookList";
+}
+
+@*@using (Ajax.BeginForm("EditBookList", "Library", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "EditLibraryForm #server-progress", OnBegin = "begin"}, new {id = "EditLibraryForm", enctype = "multipart/form-data"}))
+{*@
+<form asp-action="EditBookList" asp-controller="Library" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="EditLibraryForm" data_reset="true">
+     
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="text-primary">Edit Book List</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+
+
+                @Html.HiddenFor(model => model.ID)
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Accession No </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.AccessionNo, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                                        <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.AccessionNo)
+                                    </div>
+                </div>
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Classfication No </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.ClassficationNo, new { @class = "form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.ClassficationNo)
+                                    </div>
+                </div>
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Title </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Title, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Title)
+                                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 has-feedback">
+                    <label>Author </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Author, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Author)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Publisher </label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.Publisher, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Publisher)
+                    </div>
+                </div>
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Edition </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Edition, new { @class = "form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Edition)
+                                    </div>
+                </div>
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Subject </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Subject, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Subject)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Year Of Publishing</label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.YearOfPublishing, new { @class = "form-control has-feedback-left" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.YearOfPublishing)
+                    </div>
+                </div>
+
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Volume No </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.VolumeNo, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.VolumeNo)
+                                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Language </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Language, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                                        <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Language)
+                                    </div>
+                </div>
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Pages </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Pages, new { @class = "form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Pages)
+                                    </div>
+                </div>
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Price </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Price, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Price)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Sources </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Source, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Source)
+                                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Present Position </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.PresentPosition, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.PresentPosition)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 has-feedback">
+                    <label>Remarks </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Remarks)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Translator </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Translator, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Translator)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Entry Date </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.EntryDate, new { @class = "date form-control has-feedback-left", required = "true", id = "EntryDatess" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.EntryDate)
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4  has-feedback">
+                    <label>Cornor </label>
+                    <div  class="controls">
+                        @Html.TextBoxFor(model => model.Cornor, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Cornor)
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-4 mr-2 m-md-2">
+                        <i class="fa fa-save mr-2"></i>
+                        <span>
+                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                        </span> Save
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="card">
+        <div class="card-header">
+            <h3 class="text-primary">Library List</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div id="searchhome-gridContainer" class="col-12">
+                    <table class="table-responsive table-condensed" id="jqgsearchhome" cellpadding="0" cellspacing="0"></table>
+                    <div id="jqgpsearchhome" style="text-align: center;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script @resourse.JavaScript>
+    $(function() {
+        $('.date').val('');
+        $(".date").datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            showAnim: "clip",
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            yearRange: "-50:+0"
+        });
+
+        $(".date").on('change', function() {
+            var val = $(this).val();
+            try {
+                var mo = moment(val, 'YYYY-MM-DD');
+                if (mo._d == 'Invalid Date') {
+                    $(this).closest('div').append('<span class="nosubmit conversion-error text-danger">Please select a valid date</span>');
+                } else {
+                    $(this).closest('div').find('.conversion-error').remove();
+                }
+                //console.log(mo)
+                //alert('converted',mo);
+            } catch{
+                alert('conversion error');
+        };
+    });
+
+    $('.date').inputmask({ mask: '99/99/9999' });
+
+    $('#EntryDatess').datepicker('setDate', new Date('@Model.EntryDate'));
+    });
+</script>

@@ -1,0 +1,129 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Subject list with no result";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("ExamReports", "Reports")">Exam Report</a>
+        </li>
+        <li class="active">
+            Subject List with No Result
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="subjectnoresult">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "subjectnoresult", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = true, ShowCampus = true, ShowExams = true})
+                        <div class="col-sm-12 col-md-6 col-lg-4 col-sm-6 mt-4">
+                            <label><input type="checkbox" id="cbxgreater" class="mr-2"/>View Only Positive Data</label>
+                            <label><input type="checkbox" id="cbxSection" class="mr-2"/>omit Section</label>
+                        </div>
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+
+            @{
+                var grid = new GridModel()
+
+                {
+                    GridId="list_result_summary",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Result Summary",
+                    Columns=new List<Column> {
+            new Column{ FieldName="Campus Name", HeaderText="Campus", Width="80" },
+            new Column{ FieldName="Class Name", HeaderText="Class", Width="70" },
+            new Column{ FieldName="Subject Name", HeaderText="Subject", Width="60" },
+            new Column{ FieldName="Teaher Name", HeaderText="Teacher", Width="70" },
+            new Column{ FieldName="Delay", HeaderText="Dely", Width="70" }
+            }
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_exam-remarks-sheet").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+           {
+                col.Template("#sno").HeaderText("S.No").Width("140").TextAlign(TextAlign.Left).Add();
+                col.Field("Campus Name").HeaderText("Campus").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                col.Field("Class Name").HeaderText("Class").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                col.Field("Subject Name").HeaderText("Subject").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                col.Field("Teacher Name").HeaderText("Teacher").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                col.Field("Delay").HeaderText("Delay").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+                { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_exam-remarks-sheet").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_exam-remarks-sheet_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_exam-remarks-sheet_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+    $('#btnSearch').click(function() {
+        $('#example tbody').html('');
+        var examsid = 0;
+        if ($("#Exams").val() != null) {
+            examsid = $("#Exams").val();
+        }
+        var cbxSection = "false";
+        if ($('#cbxSection').is(':checked')) {
+            cbxSection = "true";
+        }
+        var cbxgreater = "false";
+        if ($('#cbxgreater').is(':checked')) {
+            cbxgreater = "true";
+        }
+        var url1 = '@Url.Action("Getsubjectlistwithnoresultblank")';
+        url1 += '?campusid=' + $('#Campus').val() + '&exams=' + examsid + '&cbxSection=' + cbxSection + '&cbxgreater=' + cbxgreater;
+        var messageTop = 'Subject list with no result ';
+        var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    });
+
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list").ej2_instances[0];
+    //    if (args.item.id === 'list_pdfexport') {
+    //        gridObj.pdfExport();
+    //    } else if (args.item.id === 'list_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+</script>
+@Html.EJS().ScriptManager()

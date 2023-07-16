@@ -1,0 +1,157 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Fee Received Statement By Class";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Fee Reports</a>
+        </li>
+        <li class="active">
+            Fee Received Statement By Class
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="resultsubjectsummary">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "resultsubjectsummary", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ShowCampus = true, ShowClasses = true})
+
+                        <div class="col-12 col-md-2 has-feedback">
+                            <label>Month</label>
+                            @{
+                                var month = new List<object>
+                                {
+                                    new {id = 1, name = "January"},
+                                    new {id = 2, name = "February"},
+                                    new {id = 3, name = "March"},
+                                    new {id = 4, name = "April"},
+                                    new {id = 5, name = "May"},
+                                    new {id = 6, name = "June"},
+                                    new {id = 7, name = "July"},
+                                    new {id = 8, name = "August"},
+                                    new {id = 9, name = "September"},
+                                    new {id = 10, name = "October"},
+                                    new {id = 11, name = "November"},
+                                    new {id = 12, name = "December"}
+                                };
+
+                            }
+                        <div class="controls">
+                            @Html.DropDownList("month", new SelectList(month, "id", "name"), new { @class = "form-control small has-feedback-left", minlength = "3", maxlength = "10", placeholder = "Sex" })
+                            <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                        </div>
+
+                        <div class="col-12 col-md-2 has-feedback">
+                            <label>Year</label>
+                            @{
+                                var year = new List<object>();
+                                for (int i= DateTime.Now.Year+1; i>2011; i--)
+                                {
+                                    year.Add(new { id = i, name = i });
+                                }
+                            }
+                        <div class="controls">
+                            @Html.DropDownList("year", new SelectList(year, "id", "name"), new { @class = "form-control small has-feedback-left", placeholder = "Year" })
+                            <span class="fa fa-calculator form-control-feedback left" aria-hidden="true"></span>
+                        </div>                        </div>
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent  btn-primary pull-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            @{
+                var grid = new  GridModel
+                {
+                    GridId="list_rpt_classwise_fsbc",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Fee Statement by Class",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father Name", AutoFit=true },
+                        new Column{ FieldName="Mobile", HeaderText="Mobile", AutoFit=true },
+                        new Column{ FieldName="Total", HeaderText="Month", AutoFit=true },
+                        new Column{ FieldName="Received", HeaderText="Received", AutoFit=true }
+},
+                    GridAggregateColumns=new List<GridAggregateColumn> {
+
+                    new GridAggregateColumn() { Field="Mobile", Type="none", GroupFooterTemplate= "Total",FooterTemplate="Total"},
+                        new GridAggregateColumn() { Field="Total", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}" },
+                        new GridAggregateColumn() { Field="Received", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}"}
+                    },
+
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_fee-stetement-byclass").AllowGrouping().Height("auto").Width("auto").ToolbarClick("toolbarClick").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+        {
+           col.Template("#sno").HeaderText("S.No").Width("80").TextAlign(TextAlign.Left).Add();
+           col.Field("AdmissionID").HeaderText("Reg No").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("StudentName").HeaderText("Student Name").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("FName").HeaderText("Father Name").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("Mobile").HeaderText("Mobile").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("Total").HeaderText("Total").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("Received").HeaderText("Received").Width("150").TextAlign(TextAlign.Left).Add();
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+         { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render();
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_fee-stetement-byclass").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_fee-stetement-byclass_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_fee-stetement-byclass_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+    $('#btnSearch').click(function() {
+
+        let campid = examsid = $("#Campus").val();
+        let clsid = $('#Classes').val();
+        let month = $('#month').val();
+        let year = $('#year option:selected').text();
+        var url1 = '@Url.Action("FeeStatementByClassData")';
+        url1 += '?campusId=' + campid + '&classId=' + clsid + '&month=' + month + '&year=' + year;
+        var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    });
+</script>
+@Html.EJS().ScriptManager()
+

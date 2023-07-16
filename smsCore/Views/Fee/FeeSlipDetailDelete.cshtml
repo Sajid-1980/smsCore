@@ -1,0 +1,80 @@
+﻿@model Models.FeeSlipDetail
+@{
+    ViewBag.Title = "Fee Slip Detail Delete";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@*@using (Ajax.BeginForm("FeeSlipDetailDelete", "Fee", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "FeeSlipDetailDeletemainForm #server-progress", OnBegin = "begin" }, new { id = "FeeSlipDetailDeletemainForm", enctype = "multipart/form-data" }))
+{*@
+
+<form asp-action="FeeSlipDetailDelete" asp-controller="Fee"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeSlipDetailDeletemainForm" data_reset="true">
+                   
+
+
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+
+
+    <h5>Are You Sure You Want to delte it.</h5>
+    @Html.HiddenFor(model => model.Id)
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FeeSlip.Admission.Student.RegistrationNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FeeSlip.Admission.Student.RegistrationNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FeeSlip.Admission.Student.StudentName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FeeSlip.Admission.Student.StudentName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FeeSlip.ForMonth)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FeeSlip.ForMonth)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Amount)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Amount)
+        </dd>
+
+    </dl>
+</div>
+
+        <div class="form-group col-12 mt-2 pb-2">
+            <button asp="Index" data-dismiss="modal" aria-label="Close" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i>Close</button>
+            <button type="submit" value="Create" id="submitbuttom" class="btn btn-primary pull-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+
+                </span> Delete
+            </button>
+        </div>
+        </form>
+    

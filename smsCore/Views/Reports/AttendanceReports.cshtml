@@ -1,0 +1,115 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Attendance Reports";
+}
+
+<section id="ReportSection" class="content">
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>Student Attendance Reports</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a href="@Url.Action("MonthlyAttendance", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/student/monthly attendance.png" alt="" />
+                                <label>Monthly Attendance</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("AttendanceSheetByClass", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/student/attendance sheet by class.png" alt="" />
+                                <label>Attendance Sheet By Class</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("AttendancesOnLeave", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/student/student on leave.png" alt="" />
+                                <label> Attendances On Leave</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("DailyAttendanceTime", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/student/daily attendance time.png" alt="" />
+                                <label>Daily Attendance Time</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("AttendanceRecord", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/student/attendance record.png" alt="" />
+                                <label> Attendance Record</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ConsecutiveAttendance", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/student/consective attendance.png" alt="" />
+                                <label>Consecutive Attendance</label>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    <h4>Staff Attendance Reports</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a href="@Url.Action("MonthlyAttendanceRegister", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/Staff/monthly attendence report.png" alt="" />
+                                <label>Monthly Attendance Register</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("MonthlyAttendanceRegister", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/Staff/staff monthly attendance .png" alt="" />
+                                <label>Monthly Attendance Report</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ShortLeave", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/Staff/short leave.png" alt="" />
+                                <label>Short Leave</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("StaffAttendanceRecord", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/Staff/attendance record.png" alt="" />
+                                <label>Attendance Record</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("DailyAttendanceTimeVeiwer", "AttendanceReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/Staff/daily attendance time viewer.png" alt="" />
+                                <label>Daily Attendance Time Veiwer</label>
+                            </a>
+                        </li>
+                        @*<li>
+                                <a href="@Url.Action("AttendanceAnalysis", "AttendanceReport")">
+                                    <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Attendence/Staff/attendance analysis.png" alt="" />
+                                    <label> Attendance Analysis</label>
+                                </a>
+                            </li>*@
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+
+    $('#ReportSection a').on('click', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+
+    });
+
+</script>

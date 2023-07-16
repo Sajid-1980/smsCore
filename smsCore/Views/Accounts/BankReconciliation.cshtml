@@ -1,0 +1,272 @@
+﻿
+@{
+    ViewBag.Title = "BankReconciliation";
+}
+<style>
+    #_fieldset {
+        min-width: 0;
+        padding: 10px;
+        margin: 0;
+        border-color: #f7f1f1;
+        border: groove;
+    }
+
+    legend {
+        display: block;
+        padding-left: 2px;
+        padding-right: 2px;
+    }
+
+    input[type="radio"] {
+        width: 20px;
+        height: 20px;
+    }
+</style>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Bank Reconciliation</h3>
+                </div><!-- /.box-header -->
+                
+              @*  @using (Ajax.BeginForm("BankReconciliation", "Accounts", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "bankReconciliationForm #server-progress", OnBegin = "begin" }, new { id = "bankReconciliationForm" }))
+                {*@
+                <form asp-action="BankReconciliation" asp-controller="Accounts"
+                          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class = "form-horizontal form-label-left input_mask" id = "bankReconciliationForm" data_reset = "true">
+                   
+
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-6 col-md-3">
+                                <label>Bank Account</label>
+                                <div class="controls">
+                                    @Html.DropDownList("BankAccount", (SelectList)ViewBag.bank, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("BankAccount")
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-2">
+                                <label>Status</label>
+                                <div class="controls">
+                                    @Html.DropDownList("Status", new SelectList(new string[] { "Reconciled", "Unreconciled" }), new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Status")
+                                </div>
+                            </div>
+                            @Html.Partial("_PartialDate", new PartialDateViewModels
+                         {
+                             Label = "Date From",
+                             ParentContainerID = "date",
+                             ColCssClass = "col-6 col-md-2",
+                             ShowAltField = false,
+                             DateFieldId = "StatementdateFrom",
+                             DateFieldName = "StatementdateFrom",
+                             KeepDataFieldReadOnly = true,
+                             DefaultDate = DateTime.Today.AddDays(-30)
+                         })
+                            @Html.Partial("_PartialDate", new PartialDateViewModels
+                            {
+                                Label = "Date To",
+                                ParentContainerID = "date",
+                                ColCssClass = "col-6 col-md-2",
+                                ShowAltField = false,
+                                DateFieldId = "StatementdateTo",
+                                DateFieldName = "StatementdateTo",
+                                KeepDataFieldReadOnly = true,
+                                DefaultDate = DateTime.Today
+                            })   
+
+                            <div class="col-12 col-md-12">
+                                <button type="button" class=" sico-btn float-right mr-2 btn btn-info" id="search" name="search"><i class="fa fa-search mr-2"></i> Search</button>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover table-sm" border="1">
+
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    S. No
+                                                </th>
+                                                <th>
+                                                    Date
+                                                </th>
+                                                <th>
+                                                    Particular
+                                                </th>
+                                                <th>
+                                                    VoucherType
+                                                </th>
+                                                <th>
+                                                    voucherNo
+                                                </th>
+                                                <th>
+                                                    Cheque No
+                                                </th>
+                                                <th>
+                                                    Cheque Date
+                                                </th>
+                                                <th>
+                                                    Deposit
+                                                </th>
+                                                <th>
+                                                    WithDraw
+                                                </th>
+                                                <th>
+                                                    Statement Date
+                                                </th>
+                                                <th>
+                                                    <button type="button" class="float-right" id="add" style="border:none; background-color:transparent;"> <i class="fa fa-plus-circle"></i> </button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablebody"></tbody>
+                                    </table>
+                                    <div class="col-7">
+                                        <fieldset id="_fieldset">
+                                            <legend>
+                                                <span>Debit Credit</span>
+                                            </legend>
+
+                                            <table>
+                                                <thead>
+                                                    <tr>
+                                                        <th></th>
+                                                        <th>Debit</th>
+                                                        <th>Credit</th>
+                                                    </tr>
+
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Balance As per Company Book</td>
+                                                        <td>
+                                                            <input type="text" id="BalanceCompnyDr" value="0" name="BalanceCompnyDr" class=" form-control" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="BalanceCompnyCr" value="0" name="BalanceCompnyCr" class=" form-control" readonly />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Balance As per Bank</td>
+                                                        <td>
+                                                            <input type="text" id="BalanceBankDr" value="0" name="BalanceBankDr" class=" form-control" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="BalanceBankCr" value="0" name="BalanceBankCr" class=" form-control" readonly />
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Difference</td>
+                                                        <td>
+                                                            <input type="text" id="DifferenceDr" value="0" name="DifferenceDr" class=" form-control" readonly />
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" id="DifferenceCr" value="0" name="DifferenceCr" class=" form-control" readonly />
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </fieldset>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+
+                    </div>
+                    <div class="card-footer">
+                        <div class="row">
+                            <div class="form-group col-12 pb-2 mt-3">
+                                <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>
+                                <button type="submit" value="Create" class="btn btn-info pull-right">
+                                    <i class="fa fa-save mr-2"></i> <span>
+                                        <i id="server-progress" style="display:none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<script>
+
+    $(document).ready(function () {
+
+
+        ////
+        $('#search').on('click', function () {
+
+            $('#tablebody').html('');
+            var url = '@Url.Action("bankreconciliationGet", "Accounts")';
+            var BankAccount = $('#BankAccount').val();
+            var Status = $('#Status').val();
+            var StatementdateFrom = $('#StatementdateFrom').val();
+            var StatementdateTo = $('#StatementdateTo').val();
+            //url = url.replace('0', BankAccount);
+            //url = url.replace('___', Status);
+            //url = url.replace('&amp;', '&');
+            //url = url.replace('___', StatementdateFrom);
+            //url = url.replace('&amp;', '&');
+            //url = url.replace('___', StatementdateTo);
+            //url = url.replace('&amp;', '&');
+            url += '?BankAccount=' + BankAccount + '&Status=' + Status + '&StatementDateFrom=' + StatementdateFrom + '&StatementdateTo=' + StatementdateTo;
+            $.get(url, function (data) {
+                var html = '';
+                $.each(data, function (key, value) {
+                    html += '<tr><td>' + value.SlNo + '</td><td><input type="hidden" name="date">' + value.date + '</td><td><input type="hidden" name="ledgerName">' + value.ledgerName + '</td><td><input type="hidden" name="voucherTypeNameo">' + value.voucherTypeNameo + '</td><td><input type="hidden" name="voucherNo">' + value.voucherNo + '</td><td><input type="hidden" name="chequeNo">' + value.chequeNo + '</td><td><input type="hidden" name="chequeDate">' + value.chequeDate + '</td><td><input type="hidden" name="debit">' + value.debit + '</td><td><input type="hidden" name="credit">' + value.credit + '</td><td><input type="hidden" name="statementDate">' + value.statementDate + '</td><td><input type="hidden" name="ledgerPostingId">' + value.ledgerPostingId + '</td></tr>';
+                });
+
+                $('#tablebody').html(html);
+            });
+            var DrCompany = 0;
+            var CrCompany = 0;
+            var DrDifference = 0;
+            var DrBank = 0;
+            var CrBank = 0;
+            var CrDifference = 0;
+            var length = $('#tablebody tr ').length;
+            if (length > 0) {
+                $('#tablebody tr ').each(function () {
+                    DrCompany += Convert.ToDecimal($('#deposit').val().ToString());
+                    CrCompany += Convert.ToDecimal($('#Withdraw').val().ToString());
+                    if ($('#StatementDate').val() != null && $('#StatementDate').val().ToString() != string.Empty) {
+                        DrBank += Convert.ToDecimal($('#deposit').val().Value.ToString());
+                        CrBank += Convert.ToDecimal($('#Withdraw').val().Value.ToString());
+                    }
+                });
+            }
+            DrDifference = DrCompany - DrBank;
+            CrDifference = CrCompany - CrBank;
+            $('#BalanceCompnyDr').html(DrCompany);
+            $('#BalanceCompnyCr').html(DrCompany);
+            $('#BalanceBankDr').html(DrCompany);
+            $('#BalanceBankCr').html(DrCompany);
+            $('#DifferenceDr').html(DrCompany);
+            $('#DifferenceCr').html(DrCompany);
+
+        });
+    });
+</script>

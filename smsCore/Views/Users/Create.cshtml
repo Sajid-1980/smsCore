@@ -1,0 +1,102 @@
+﻿@model  RegisterViewModel
+@inject StaticResources resources
+@{
+     
+    ViewBag.Title = "";
+    string role = ViewBag.role;
+    string fk = ViewBag.fk;
+}
+
+
+<section class="content">
+    <div class="row">
+        <div class="col-md col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Users <a href="https://www.youtube.com/watch?v=LcG_cpH1AkU#t=400s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+                <div class="card-body">
+                  @*  @using (Ajax.BeginForm("Create", "Users", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "classFeeIndexmainForm" }))
+                    {*@
+
+                    <form asp-action="Create" asp-controller="Users"
+                          data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+                        <div class="row">
+                            <div class="col-12 ">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="userIndex-container">
+
+                            <input type="hidden" name="Roles" value="@role" />
+                            <input type="hidden" name="Parents" value="@fk" />
+                            <input type="hidden" name="Students" value="@fk" />
+                            <input type="hidden" name="Employees" value="@fk" />
+
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "userIndex-container", ColCssClass = "col-12 pt-2 has-feedback", ForSearch = true, ShowCampus = true })
+
+
+                            <div class="col-12 has-feedback">
+                                <label>Email</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control has-feedback-left-cls" })
+                                    <span class="fa fa-envelope form-control-feedback left-cls" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.Email)
+                                </div>
+                            </div>
+                            <div class="col-12 has-feedback">
+                                <label>Username</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.UserName, new { @class = "form-control has-feedback-left-cls" })
+                                    <span class="fa fa-user-secret form-control-feedback left-cls" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.UserName)
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6 has-feedback">
+                                <label>Password</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Password, new { @class = "form-control has-feedback-left-cls", type = "password" })
+                                    <span class="fa fa-lock form-control-feedback left-cls" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.Password)
+                                </div>
+                            </div>
+
+
+                            <div class="col-12 col-md-6 has-feedback">
+                                <label>Confirm Password</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.ConfirmPassword, new { @class = "form-control has-feedback-left-cls", type = "password" })
+                                    <span class="fa fa-lock form-control-feedback left-cls" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.ConfirmPassword)
+                                </div>
+                            </div>
+
+
+                            <div class="form-group col-12 pb-2 mt-3">
+
+
+                                <button type="submit" value="Create" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+      function reloadGridData() {
+        
+    }
+
+    </script>

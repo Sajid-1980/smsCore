@@ -1,0 +1,146 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Dues Statement Amount";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Fee Report</a>
+        </li>
+        <li class="active">
+            Dues Statement Amount
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="dueStatementAmount-container">
+    <div class="row">
+        <div class="col-12 col-md-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "dueStatementAmount-container", ColCssClass = "col-12 col-sm-3 col-md-2  form-group has-feedback", ShowCampus = true, ShowClasses = true, ShowSections = true, ForSearch = true})
+                        @*<div class="col-12 col-sm-3  col-md-2 form-group has-feedback mt-4">
+                            <label><input type="checkbox" id="range" /> Category</label>
+                        </div>*@
+                        <div class="col-12 col-sm-3 col-md-2 form-group has-feedback">
+                            <label>Category</label>
+                            <select id="category" class="form-control has-feedback">
+                                <option value="AllStudents">All Students</option>
+                                <option value="PresentStudents">Present Students</option>
+                                <option value="ExStudents">Ex Students</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-4 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-12">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_classwise_feegroup",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Due Statement Amount",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+                        new Column{ FieldName="mobileno", HeaderText="Mobile", AutoFit=true },
+                        new Column{ FieldName="Amount", HeaderText="Month", AutoFit=true },
+                        new Column{ FieldName="Received", HeaderText="Received", AutoFit=true },
+                        new Column{ FieldName="Balance", HeaderText="Balance", AutoFit=true },
+},
+                    GridAggregateColumns=new List<GridAggregateColumn> {
+
+                    new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "ClassName", Type = "Custom", FooterTemplate = "Total" },
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "mobileno", Type = "Count", FooterTemplate = "${Count} Students" },
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Amount", Type = "Sum", FooterTemplate = "${Sum}" },
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Received", Type = "Sum", FooterTemplate = "${Sum}" },
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Balance", Type = "Sum", FooterTemplate = "${Sum}" }
+                    }
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+
+            @*@Html.EJS().Grid("list_rpt_fee-dues-statement-amount").AllowGrouping().Height("auto").Width("auto").ToolbarClick("toolbarClick").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Template("#sno").HeaderText("S.No").Width("100").TextAlign(TextAlign.Left).Add();
+           col.Field("AdmissionID").HeaderText("Reg No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("StudentName").HeaderText("Student Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("FName").HeaderText("FName").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("ClassName").HeaderText("Class Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("mobileno").HeaderText("Mobile No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Amount").HeaderText("Amount").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Received").HeaderText("Received").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("Balance").HeaderText("Balance").AutoFit(true).TextAlign(TextAlign.Left).Add();
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+         { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Aggregates(agg =>
+         {
+             agg.Columns(
+                 new List<Syncfusion.EJ2.Grids.GridAggregateColumn>() {
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "ClassName", Type = "Custom", FooterTemplate = "Total" },
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "mobileno", Type = "Count", FooterTemplate = "${Count} Students" },
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Amount", Type = "Sum", FooterTemplate = "${Sum}" },
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Received", Type = "Sum", FooterTemplate = "${Sum}" },
+             new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Balance", Type = "Sum", FooterTemplate = "${Sum}" }
+             }).Add();
+         }).Render();
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    $('#btnSearch').on('click',
+        function() {
+            var campusID = $('#Campus').val();
+            var classId = $('#Classes').val();
+            var sectionId = $('#Sections').val();
+            var category = $('#category').val();
+            //var range = "false";
+            //if ($('#range').is(':checked')) {
+            //    range = "true";
+            //}
+            var url1 = '@Url.Action("GetDuesStatementAmountdata")';
+            url1 += '?clasId=' + classId + '&campusID=' + campusID + '&sectionID=' + sectionId + '&category=' + category;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_fee-dues-statement-amount").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_fee-dues-statement-amount_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_fee-dues-statement-amount_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+   
+</script>
+@Html.EJS().ScriptManager()

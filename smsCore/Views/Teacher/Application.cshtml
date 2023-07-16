@@ -1,0 +1,248 @@
+﻿
+@model Models.ApplicationLeave
+@inject StaticResources resources;
+@{
+    ViewBag.Title = "Application";
+
+    Layout = null;
+}
+
+<head>
+    <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
+</head>
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Leave Application
+        </li>
+
+    </ul>
+</div>
+
+
+<section class="content">
+    @*@using (Ajax.BeginForm("Application", "Teacher", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "ApplicationForm #server-progress", OnBegin = "begin"}, new {id = "ApplicationForm", enctype = "multipart/form-data"}))
+    {*@
+    <form asp-action="Application" asp-controller="Teacher" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="ApplicationForm" data_reset="true">
+                   
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Leave Application</h2>
+            </div>
+
+            <div class="card-body">
+                <div class="row">
+
+                    <div class="col-12 col-md-6 has-feedback">
+                        <label>Date From <font class="text-danger">*</font></label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.DateFrom, new { @class = "form-control has-feedback-left ", required = "true", id = "datepicker" })
+                                                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 has-feedback">
+                        <label>Date To <font class="text-danger">*</font></label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.DateTo, new { @class = "form-control has-feedback-left ", required = "true", id = "datepickers" })
+                                                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                    </div>
+
+                    <div class="col-12 col-md-12 has-feedback">
+                        <label>Description <font class="text-danger">*</font></label>
+                        <div class="controls">
+                            @Html.TextAreaFor(model => model.Description, new { @class = "form-control has-feedback-left ", required = "true", type = "text", style = "height:150px" })
+                            <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary pull-right mb-2 mt-1">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Application List</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="searchhome-gridContainer" class="col-12">
+                                <table class="table-responsive table-condensed" id="jqgsearchhome" cellpadding="0" cellspacing="0"></table>
+                                <div id="jqgpsearchhome" style="text-align: center;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</section>
+<script @resources.JavaScript>
+    $(function() {
+        $("#datepicker").datepicker();
+    });
+
+    $(function() {
+        $("#datepickers").datepicker();
+    });
+
+    //CKEDITOR.replace('Particular');
+
+    $('#regNoid').on('change',
+        function() {
+
+            if ($(this).hasClass('is-invalid')) {
+                return false;
+            }
+            var regNoid = $('#regNoid').val();
+            url += '?regno=' + regNoid;
+
+        });
+
+
+</script>
+<script @resources.JavaScript>
+    function reloadGridData() {
+        $('#jqgsearchhome').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+
+    var url1 = '@Url.Action("GetApplication")';
+
+    $('#jqgsearchhome').jqGrid('clearGridData');
+
+    $('#jqgsearchhome').jqGrid({
+        //url from wich data should be requested
+        url: url1,
+        //type of data
+        datatype: 'json',
+        //url access method type
+        mtype: 'Post',
+
+        //columns model
+        colModel: [
+            { label: 'ID', name: 'Id', index: 'Id', align: 'left', width: 20 },
+            { label: 'Name', name: 'employeeName', index: 'employeeName', align: 'left', width: 50 },
+            { label: 'Date From', name: 'DateFrom', index: 'DateFrom', align: 'left', width: 50 },
+            { label: 'Date To', name: 'DateTo', index: 'DateTo', align: 'left', width: 50 },
+            { label: 'Application', name: 'Description', index: 'Description', align: 'left', width: 50 },
+            { label: 'Status', name: 'Status', index: 'Status', align: 'left', width: 20 },
+            { label: 'Comments', name: 'Comments', index: 'Comments', align: 'left', width: 50 },
+        ],
+        //caption: 'Students List',
+        //enable footer
+        footerrow: false,
+        userDataOnFooter: false,
+        //expect object instead of flat array
+        jsonReader: { repeatitems: false, id: 'Id' },
+        //pager for grid
+        pager: $('#jqgpsearchhome'),
+        //number of rows per page
+        rowNum: 10,
+        rowList: [5, 10, 20, "10000:All"],
+        //initial sorting column
+        sortname: 'Id',
+        //initial sorting direction
+        sortorder: 'asc',
+        //we want to display total records count
+        viewrecords: true,
+        height: 'auto',
+
+
+        loadComplete: function() {
+            var table = this;
+            setTimeout(function() {
+                    updatePagerIcons(table);
+                },
+                0);
+        },
+        gridComplete: function() {
+            $('.ajax').on('click',
+                function(e) {
+                    e.preventDefault();
+                    var title = $(this).attr('title');
+                    var url = $(this).attr('href');
+
+                    BootstrapDialog.show({
+                        title: title,
+                        message: $('<div />').load(url),
+                        onhide: function(dialogRef) {
+
+                            reloadGridData();
+                        }
+                    });
+                    return false;
+                });
+        }
+    });
+
+    $('#jqgsearchhome').jqGrid('setGridParam', { url: url1 });
+
+    var DataGrid = $('#jqgsearchhome');
+
+    //sets the grid size initially
+    DataGrid.jqGrid('setGridWidth', parseInt($('#searchhome-gridContainer').width()));
+
+    //handles the grid resize on window resize
+    $(window).resize(function() {
+        DataGrid.jqGrid('setGridWidth', parseInt($('#searchhome-gridContainer').width()));
+    });
+    $('#jqgsearchhome').trigger('reloadGrid', { current: true, fromserver: true });
+
+
+    function updatePagerIcons(table) {
+        var replacement =
+        {
+            'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+            'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+            'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+            'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+        };
+        $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function() {
+            var icon = $(this);
+            var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+            if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+        });
+    }
+
+    function Add() {
+        var title = "Add Homework";
+        var url = '@Url.Action("Application", "Teacher")';
+        BootstrapDialog.show({
+            title: title,
+            message: $('<div />').load(url),
+            onhide: function(dialogRef) {
+
+                reloadGridData();
+            }
+        });
+    }
+</script>

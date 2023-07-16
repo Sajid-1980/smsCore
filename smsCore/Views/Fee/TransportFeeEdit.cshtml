@@ -1,0 +1,76 @@
+﻿ 
+@model  StudentsTransport
+@{
+    ViewBag.Title = "TransportFeeEdit";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Edit Transport Fee
+        </li>
+
+    </ul>
+</div>
+<div class="container" id="editTransport">
+   @* @using (Ajax.BeginForm("TransportFeeEdit", "Fee", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "editTransport #server-progress", OnBegin = "begin" }, new { id = "editTransport", enctype = "multipart/form-data", data_reset = "true" }))
+    {*@
+    <form asp-action="TransportFeeEdit" asp-controller="Fee" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editTransport" enctype="multipart/form-data" data_reset="true">
+       
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        <div class="row">
+
+            <div class="col-12 ">
+                <div class="row">
+                    <div class="col-12">
+                        <div id="message">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row ">
+
+                    @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { CampusFieldName="CampusId", ParentContainerID = "editTransport", ColCssClass = "col-12 col-sm-4 col-md-4", ShowCampus=true })
+
+                    <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                        <label>Stops</label>
+                        <div class="controls">
+                            @Html.DropDownListFor(model => model.PickPoint, (SelectList)ViewBag.stop, new { @class = " form-control has-feedback-left", required = "true" })
+                            <span class="fa fa-bus small form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.PickPoint)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                        <label>Fare</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.Fare, new { @class = " form-control has-feedback-left", required = "true" })
+                            <span class="fa fa-stop small form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.Fare)
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-left mt-3 mb-5">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

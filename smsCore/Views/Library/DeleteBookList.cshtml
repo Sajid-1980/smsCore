@@ -1,0 +1,182 @@
+﻿@model Models.LibraryBookList
+@{
+    ViewBag.Title = "DeleteBookList";
+}
+
+@*@using (Ajax.BeginForm("DeleteBookList", "Library", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "deleteLibraryBooklistForm #server-progress", OnBegin = "begin"}, new {id = "deleteLibraryBooklistForm", enctype = "multipart/form-data"}))
+{*@
+<form asp-action="DeleteBookList" asp-controller="Library" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="deleteLibraryBooklistForm" data_reset="true">
+  
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+            <div class="row">
+
+                @Html.HiddenFor(model => model.ID)
+
+                <div>
+                    <h5>Are You Sure You Want to Delete This!!.</h5>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.AccessionNo)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.AccessionNo)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.ClassficationNo)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.ClassficationNo)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Title)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Title)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Author)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Author)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Publisher)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Publisher)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Edition)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Edition)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Subject)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Subject)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.YearOfPublishing)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.YearOfPublishing)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.VolumeNo)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.VolumeNo)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Language)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Language)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Pages)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Pages)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Price)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Price)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Source)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Source)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.PresentPosition)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.PresentPosition)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Remarks)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Remarks)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Translator)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Translator)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.EntryDate)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.EntryDate)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Cornor)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Cornor)
+                        </dd>
+
+                    </dl>
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <input type="submit" value="Delete" class="btn btn-danger"/>
+                    }
+                </div>
+
+            </div>
+        
+</form>

@@ -1,0 +1,134 @@
+﻿@using Utilities;
+@using smsCore.Data.Helpers;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+@*@using (Ajax.BeginForm("MessageTemplate", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "MessageTemplatemainForm #server-progress", OnBegin = "begin" }, new { id = "MessageTemplatemainForm" }))
+{
+   *@ 
+   
+   
+<form asp-action="MessageTemplate" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="MessageTemplatemainForm" data_reset="true"  >
+  
+  
+   
+   
+   <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <fieldset class="fieldset">
+                <legend>
+                    Attendance Message Template
+                </legend>
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-2">
+                        <label>Present Message</label>
+                        <textarea name="txtPresentMessage" id="PresentMessage" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "PresentMessage").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "PresentMessage").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                    </div>
+                    <div class="col-12 col-md-6 mb-2">
+                        <label>Absent Message</label>
+                        <div class="controls">
+                            <textarea name="txtAbsentMessage" id="AbsentMessage" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "AbsentMessage").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "AbsentMessage").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        </div>      </div>
+                    <div class="col-12 col-md-6 mb-2">
+                        <label>Leave Message</label>
+                        <div class="controls">
+                            <textarea name="txtLeaveMessage" id="LeaveMessage" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "LeaveMessage").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "LeaveMessage").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        </div>   </div>
+                    <div class="col-12 col-md-6">
+                        <label>Available Variables:</label>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label>{0} For Registration</label>
+                                <label>{1} For Name</label>
+                                <label>{2} For Father Name</label>
+                                <label>{3} For Attendance Time</label>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label>{4} For Attendance Date</label>
+                                <label>{5} For Attendance Type</label>
+                                <label>{6} For Class</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-12">
+            <fieldset id="fee_fieldset">
+                <legend>
+                    Fee Message Template
+                </legend>
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <label>Fee Slip Issued Message</label>
+                        <div class="controls">
+                            <textarea name="txtSentIssuedFeeTemplate" id="FeeSlipIssuedMessage" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "SentIssuedFeeTemplate").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "SentIssuedFeeTemplate").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        </div>     </div>
+                    <div class="col-12 col-md-6">
+                        <label>Fee Received Message</label>
+                        <div class="controls">
+                            <textarea name="txtFeeReceivedMessageTemplate" id="FeeReceivedMessage" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "FeeReceivedMessageTemplate").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "FeeReceivedMessageTemplate").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        </div>           </div>
+                    <div class="col-12 col-md-6">
+                        <label>Available Variables:</label>
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label>{0} For Registration</label>
+                                <label>{1} For Name</label>
+                                <label>{2} For Fee Month</label>
+                                <label>{3} For Billed Amount</label>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label>{4} For Due Date</label>
+                                <label>{5} For Remarks(type in The below Field)</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label>Available Variable:</label>
+
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <label>{0} For Registration</label>
+                                <label>{1} For Name</label>
+                                <label>{2} For Received Amount</label>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label>{3} Received Date</label>
+                                <label>{4} Received Time</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label>Fee Slip Issued Message Remarks(No Variables Allowed)</label>
+                        <div class="controls">
+                            <textarea name="txtFeeIssuedMessageRemarks" id="FeeSlipIssuedMessageRemarks" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "FeeIssuedMessageRemarks").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "FeeIssuedMessageRemarks").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                        </div>      </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 float-right">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+
+    </div>
+</form>

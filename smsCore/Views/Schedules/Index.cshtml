@@ -1,0 +1,303 @@
+﻿ @model IEnumerable<Models.SchoolLeaveSchedule>
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Index";
+}
+<style>
+    th .fc-scrollgrid-sync-inner {
+        outline: 1px solid #b0b0b0;
+        padding: 11px 8px;
+    }
+    .fc-day {
+        outline: 1px solid #b0b0b0;
+    }
+</style>
+<div class="sico-container" id="scheduleindex">
+    <div class="sico-form-col row">
+
+        <h4 class="col-12 mb-1 text-center">
+            School Calender
+            <a href="@Url.Action("Holyday", "Schedules")" title="Configurations" class="ajaxs float-right btn btn-primary"> <i class="fa fa-connectdevelop"></i> Configurations</a>
+            <a href="https://www.youtube.com/watch?v=TbLi501I5gI&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" title="Watch our Youtube video to understand" class="ajaxs float-right btn btn-primary mr-5"><i class="fa fa-question-circle"></i> Help </a>
+        </h4>
+        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "scheduleindex", ColCssClass = "col-12 col-sm-6 col-md-4 form-group mb-2", ShowCampus = true, CampusLoadCallBack = "loadEvents()" })
+        <hr class="col-12" />
+
+        @*<h2 class="col-lg-6 col-md-6 col-xs-6 col-sm-6">School Calender</h2>*@
+        <div class="col-md-12 col-sm-12 col-xs-12">
+
+            <div id="calendar">
+
+            </div>
+        </div>
+        <!-- calendar modal -->
+        <div id="CalenderModalNew" class="modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+
+                        <h5 class="modal-title" id="myModalLabel">New Calendar Entry <strong id="selectedDate" data-id="0"></strong></h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-hidden="true">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="testmodal" style="padding: 5px 20px;">
+                            <form id="antoform" class="form-horizontal calender" role="form">
+                                <div class="message message-error" id="message"></div>
+
+                                <div id="modelid">
+                                    @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "modelid", ColCssClass = " col-sm-6 col-md-6 mb-2 ", ShowCampus = true })
+                                </div>
+                                <div class="row">
+                                    @await Html.PartialAsync("_PartialDate", new PartialDateViewModels { Label = "From Date", ParentContainerID = "antoform-1", ColCssClass = "col-6 col-md-6", ShowAltField = false, DateFieldId = "StartDate", DateFieldName = "StartDate", KeepDataFieldReadOnly = true })
+                                    @await Html.PartialAsync("_PartialDate", new PartialDateViewModels { Label = "To Date", ParentContainerID = "antoform-2", ColCssClass = "col-6 col-md-6", ShowAltField = false, DateFieldId = "EndDate", DateFieldName = "EndDate", KeepDataFieldReadOnly = true })
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Holiday Description</label><font class="text-danger">*</font>
+                                    <div class="">
+                                        <textarea class="form-control" minlength="3" maxlength="50" style="height: 55px;" id="descr" name="descr" required></textarea>
+
+
+                                    </div>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="isHolidaycbx">Is Holiday
+                                    <label class="form-check-label" for="flexCheckDefault"></label>
+                                </div>
+                                <br />
+                              
+                                <label for="favcolor">Select Color:</label>
+                                <input type="color" id="holidayColor" name="favcolor" value="#0056b3">
+
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" id="btnDeset" style="display: none;" class="btn btn-danger pull-left antosubmit" onclick="DeSetEvents();">Remove Event</button>
+                        <button type="button" class="btn btn-default antoclose" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary antosubmit" onclick="SetEvents();">Save Event</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js"></script>*@
+<script @resources.JavaScript src="https://cdn.jsdelivr.net/npm/fullcalendar@6.0.0/index.global.min.js"></script>
+<script @resources.JavaScript src="/Content/vendors/fullcalendar/lib/moment.min.js"></script>
+
+<!-- FullCalendar -->
+
+
+<script @resources.JavaScript>
+    var calender;
+    function drawCalender() {
+
+        var calendarEl = document.getElementById('calendar');
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            /*contentHeight: 500,*/
+            eventSources: [
+                {
+                    url: '@Url.Action("GetEvents", "Schedules")',
+                    method: 'POST',
+                    extraParams: function () { // a function that returns an object
+                        return {
+                            campusId: $('#Campus').val()
+                        };
+                    },
+                    //{
+                    //    campusId: function () { return $('#Campus').val(); }
+                    //},
+                    failure: function () {
+                        console.error('there was an error while fetching events!');
+                    },
+                    color: 'yellow',   // a non-ajax option
+                    textColor: 'black' // a non-ajax option
+                }
+            ],
+            eventClick: function (info) {
+                console.log(info.event);
+                ShowEventPopup(info.event.extendedProps.ID, info.event.start, info.event.title, info.event.ID, info.event.extendedProps.isholiday, info.event.backgroundColor)
+                // change the border color just for fun
+                //info.el.style.borderColor = 'red';
+            },
+            dateClick: function (info) {
+                console.log(info);
+                //if (IsDateHasEvent(date))
+                //    console.log('date has events');
+                //else
+                ShowEventPopup(0, info.date, '', '');
+            },
+            loading: function (isloading) {
+                if (isloading)
+                    block('#calender');
+                else $('#calender').unblock();
+            }
+        });
+        calendar.render();
+
+        //$('#calender').fullCalendar('destroy');
+        console.log('rendering calender...');
+
+       
+    }
+    drawCalender();
+    function loadEvents() {
+        calendar.refetchEvents();
+ }
+    $(function() {
+
+        $('.ajaxs').on('click',
+            function(e) {
+                e.preventDefault();
+                var title = "HoliDay";
+                var url = '@Url.Action("Holyday")';
+                BootstrapDialog.show({
+                    title: title,
+                    message: $('<div />').load(url),
+                    onhide: function(dialogRef) {
+                        console.log(url);
+                    }
+                });
+                return false;
+            });
+    });
+
+
+    var CalLoading = false;
+
+    function ShowEventPopup(id, date, title, _id,isholiday, color) {
+        if (parseInt(id) > 0) {
+            $('#btnDeset').show();
+            $('#selectedDate').parent().html('Edit Calendar Entry<strong data-id="' + id + '" id="selectedDate"></strong>');
+            $('#selectedDate').html(moment(date).format('MMMM DD YYYY'));
+            $("#antoform-2 .input-date-picker").val('');
+            $("#antoform-2").hide();
+        } else {
+            $('#selectedDate').parent().html('Create Calendar Entry <strong data-id="0" id="selectedDate"></strong>');
+            $("#antoform-2").show();
+        }
+
+        $("#antoform-1 .input-date-picker").datepicker('setDate', new Date(date));
+
+
+        //$('#selectedDate').html(date.format('MMMM DD YYYY'));
+        $('#CalenderModalNew').show();
+        $('#descr').val(title).focus();
+        $('#selectedDate').data('id', id);
+        $('#selectedDate').data('_id', _id);
+        if (color) {
+            $('#CalenderModalNew #holidayColor').val(color);
+        }
+
+        $('#CalenderModalNew #isHolidaycbx').prop(':checked', isholiday);
+
+
+        $('[data-dismiss="modal"]').on('click',
+            function() {
+                $('.modal').hide();
+                $('.modal-backdrop').hide();
+
+                $('#btnDeset').hide();
+            });
+
+    }
+
+    // check if this day has an event before
+    function IsDateHasEvent(date) {
+        var allEvents = [];
+        allEvents = $('#calendar').fullCalendar('clientEvents');
+        var event = $.grep(allEvents,
+            function(v) {
+                return +v.start === +date;
+            });
+        return event.length > 0;
+    }
+
+    //save events to database
+    function SetEvents() {
+        var text = $('#descr').val();
+      
+        if (text=='' || text == null || text == undefined) {
+            //alert("text should be greater then 3 letter");
+            sweetalert("Please enter event description.", "", 'error');
+            $('textarea').focus();
+            return false;
+        }
+        var campus = $('#Campus').val();
+        if (campus == null || campus == 0 || campus == undefined) {
+            $('#Campus').focus();
+            return false;
+        }
+        var id = $('#CalenderModalNew #selectedDate').data('id');
+        var _id = $('#CalenderModalNew #selectedDate').data('_id');
+        var date = moment($('#CalenderModalNew #selectedDate').html());
+        var dt1 = $('#StartDate').val();
+        var dt2 = $('#EndDate').val();
+        if (!dt1) {
+            sweetalert("Please select a valid date.","",'error');
+            return false;
+        }
+
+        var title = $('#CalenderModalNew #descr').val();
+        var color = $('#CalenderModalNew #holidayColor').val();
+        var isholiday = $('#CalenderModalNew #isHolidaycbx').is(':checked');
+        block('#CalenderModalNew');
+        //alert(date);
+        $.post('@Url.Action("SetEvents")',
+            { id: id, dt: dt1, dt2: dt2, title: title, campusId: campus, color: color, isholiday: isholiday },
+            function(data) {
+                if (data.message == 'Save') {
+                    $('.modal').hide();
+                    $('.modal-backdrop').hide();
+                    $('#btnDeset').hide();
+                    //if (_id != '') {
+                    //    $('#calendar').fullCalendar('removeEvents', _id);
+                    //}
+                    //var newEvent = {
+                    //    ID: data.id,
+                    //    title: title,
+                    //    allDay: true,
+                    //    start: date
+                    //};
+                    //$('#calendar').fullCalendar('renderEvent', newEvent);
+                    //$('#calendar').fullCalendar('refetchEvents', { url: '@Url.Action("GetEvents", "Schedules")' + '?campusId=' + $('#Campus').val() });
+                    calendar.refetchEvents();
+                } else {
+                    $('#message').html(data.message);
+                }
+
+            }).always(function () {
+                $('#CalenderModalNew').unblock();
+            });
+    }
+
+    function DeSetEvents() {
+
+        var id = $('#CalenderModalNew #selectedDate').data('id');
+        block('#CalenderModalNew');
+
+        $.post('@Url.Action("DeSetEvents")',
+            { id: id },
+            function(data) {
+                if (data == 'Save') {
+                    //var _id = $('#CalenderModalNew #selectedDate').data('_id');
+                    //$('#calendar').fullCalendar('removeEvents', _id);
+                    calendar.refetchEvents();
+
+                    //$('#calendar').fullCalendar('refetchEvents', { url: '@Url.Action("GetEvents", "Schedules")' + '?campusId=' + $('#Campus').val() });
+                    $('.modal').hide();
+                    $('.modal-backdrop').hide();
+                    $('#btnDeset').hide();
+                } else {
+                    $('#message').html(data);
+                }
+                $('#CalenderModalNew').unblock();
+
+            });
+    }
+</script>
+<!-- /FullCalendar -->

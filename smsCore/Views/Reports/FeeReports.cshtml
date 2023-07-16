@@ -1,0 +1,114 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Fee Reports";
+}
+
+<section id="ReportSection" class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Fee Reports <a href="https://www.youtube.com/watch?v=i8PSMDgkPmg" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a  class="ajax-load" href="@Url.Action("FeeSlip", "FeeReports")">
+                                <img class="img-circle" src="~/Content/Photos/ReportIcons/Fee/fee slip.png" alt="Fee Slip Icon" />
+                                <label>Fee Slip</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a  class="ajax-load" href="@Url.Action("DuesStatement", "FeeReports")">
+                                <img class="img-circle" src="~/Content/Photos/ReportIcons/Fee/dues.png" alt="Slip Icon" />
+                                <label> Dues Statement</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a  class="ajax-load" href="@Url.Action("ReceivedFeeByUsers", "FeeReports")">
+                                <img class="img-circle" src="~/Content/Photos/ReportIcons/Fee/recieved fee.png" alt="Slip Icon" />
+                                <label> Received Fee By Users</label>
+                            </a>
+                        </li>
+                        @*<li>
+                                <a href="@Url.Action("ReceivedFees","FeeReports")">
+                                    <img class="img-circle" src="~/Content/Photos/ReportIcons/Fee/recieved fee.png" alt="Slip Icon" />
+                                    <label>Received Fees</label>
+                                </a>
+                            </li>*@
+                        <li>
+                            <a  class="ajax-load" href="@Url.Action("ClassWiseListOFFeeGroup", "FeeReports")">
+                                <img class="img-circle" src="~/Content/Photos/ReportIcons/Fee/class wise feee.png" alt="Slip Icon" />
+                                <label> Class Wise List OF Fee Group</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a  class="ajax-load" href="@Url.Action("FeeGroupList", "FeeReports")">
+                                <img class="img-circle" src="~/Content/Photos/ReportIcons/Fee/group fee list.png" alt="Slip Icon" />
+                                <label> Fee Group List</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a  class="ajax-load" href="@Url.Action("DuesStatementAmount", "FeeReports")">
+                                <img class="img-circle" src="~/Content/Photos/ReportIcons/Fee/Due ammount.png" alt="" />
+                                <label> Dues Statement[Amount]</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a  class="ajax-load" href="@Url.Action("FeeRecordRegister", "FeeReports")">
+                                <img class=" img-circle" src="~/Content/Photos/ReportIcons/Fee/fee record register.png" alt="User profile picture" />
+                                <label> Fee Record Register</label>
+                            </a>
+                        </li>
+                        @*<li>
+                                <a href="@Url.Action("ReceiptCopy","FeeReports")">
+                                    <img class="img-responsive img-circle" src="~/Content/Photos/ReportIcons/Fee/receipt copy.png" alt="User profile picture" />
+                                    <label> Receipt Copy</label>
+                                </a>
+                            </li>*@
+                        <li>
+                            <a  class="ajax-load" href="@Url.Action("ExemptFromLateFee", "FeeReports")">
+                                <img class="img-responsive img-circle" src="~/Content/Photos/ReportIcons/Fee/exempt from late fee.png" alt="User profile picture" />
+                                <label> Exempt From Late Fee</label>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a  class="ajax-load" href="@Url.Action("FeeStatementByClass", "FeeReports")">
+                                <img class="img-responsive img-circle" src="~/Content/Photos/ReportIcons/Fee/exempt from late fee.png" alt="User profile picture" />
+                                <label> Monthly Fee Received Statement By Class</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="ajax-load"  href="@Url.Action("FeeDueStatementByClass", "FeeReports")">
+                                <img class=" img-circle" src="~/Content/Photos/ReportIcons/Fee/fee record register.png" alt="User profile picture" />
+                                <label>Monthly Fee Due Statement By Class</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load"  href="@Url.Action("SholarshipList", "FeeReports")">
+                                <img class=" img-circle" src="~/Content/Photos/ReportIcons/Fee/group fee list.png" alt="User profile picture" />
+                                <label>Scholarship Record List</label>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+
+    $('#ReportSection a.ajax-load').on('click', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+
+    });
+
+</script>

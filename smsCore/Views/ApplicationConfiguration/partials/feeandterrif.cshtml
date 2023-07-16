@@ -1,0 +1,163 @@
+﻿@using Utilities;
+@using smsCore.Data.Helpers;
+
+@{
+    ViewBag.Title = "Create";
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+
+<form asp-action="Create" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess">
+
+    <div class="row">
+        <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <fieldset class="fieldset">
+                <legend>
+                    Student
+                </legend>
+                <div class="row">
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>Attendance Late Fee</label>
+                        <div class="controls">
+                            <input type="text" name="LateFee" id="stdLateFee" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "LateFee").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>Absent Fine</label>
+                        <div class="controls">
+                            <input type="text" name="StudentAbsentFine" id="stdAbsentFine" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "StudentAbsentFine").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>Late Coming Fine</label>
+                        <div class="controls">
+                            <input type="text" name="StudentLateComingFine" id="stdLateComingFine" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "StudentLateComingFine").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>Attendance Alert Charges</label>
+                        <div class="controls">
+                            <input type="text" name="AttendanceCharges" id="stdAttendanceAlertCharges" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "AttendanceCharges").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>Result Alert Charges</label>
+                        <div class="controls">
+                            <input type="text" name="ResultCharges" id="stdAlertCharges" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "ResultCharges").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>Received Fee Alert Charges</label>
+                        <div class="controls">
+                            <input type="text" name="FeeReceivedCharges" id="stdReceivedFeeAlertCharges" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "FeeReceivedCharges").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 form-group ">
+                        <label>Fee Issued Alert Charges</label>
+                        <div class="controls">
+                            <input type="text" name="FeeIssuedCharges" id="stdFeeIssuedAlertCharges" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "FeeIssuedCharges").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-12 pt-3">
+                        <h3>Late Received Fee Fine</h3>
+                    </div>
+                    <div class="col-12 col-md-8 form-group ">
+                        <label>Late Fee Cycle</label>
+                        <div class="controls">
+                            <select name="ApplyDailyLateFee" class="controls form-control has-feedback-left">
+                                @*<option value="True" @(existings.Where(w => w.PropertyName == "ApplyDailyLateFee").Select(s => s.PropertyValue).FirstOrDefault() == "True" ? "selected" : "")>Apply Daily Late Fee</option>
+                                <option value="False" @(existings.Where(w => w.PropertyName == "ApplyDailyLateFee").Select(s => s.PropertyValue).FirstOrDefault() == "False" ? "selected" : "")>Apply Late Fee Once</option>*@
+
+                            </select>
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4 form-group ">
+                        <label>Late Fee Amount</label>
+                        <div class="controls">
+                            <input type="text" name="LateReceivedFeeFine" id="LateReceivedFeeFine" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "LateReceivedFeeFine").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+        <div class="col-12 col-md-6">
+            <fieldset class="fieldset">
+                <legend>
+                    Staff
+                </legend>
+                <div class="row">
+                    <div class="col-12 col-md-6 form-group has-feedback">
+                        <label>Absent Fine</label>
+                        <div class="controls">
+                            <input type="text" name="StaffAbsentFine" id="staffAbsentFine" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "StaffAbsentFine").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 form-group has-feedback">
+                        <label>Late Coming Fine</label>
+                        <div class="controls">
+                            <input type="text" name="StaffLateComingFine" id="staffLateComingFine" class="form-control has-feedback-left" maxlength="6" value="@existings.Where(w => w.PropertyName == "StaffLateComingFine").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset class="fieldset">
+                <legend>
+                    Bank Details
+                </legend>
+                <div class="row">
+                    <div class="col-12 form-group ">
+                        <label>Bank Details</label>
+                        <div class="controls">
+                            <input type="text" name="bankdetails" id="bankdetails" class="form-control has-feedback-left" value="@existings.Where(w => w.PropertyName == "bankdetails").Select(s => s.PropertyValue).FirstOrDefault()" />
+                            <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12 float-right">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+
+    </div>
+    </form>
+
+@*@using (Ajax.BeginForm("Create", "ApplicationConfiguration", new System.Web.Mvc.Ajax.AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "CreatemainForm #server-progress", OnBegin = "begin" }, new { id = "CreatemainForm" }))
+{
+}*@
+
+

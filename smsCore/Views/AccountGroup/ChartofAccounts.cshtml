@@ -1,0 +1,137 @@
+﻿@inject StaticResources resources
+@{
+    ViewBag.Title = "Create";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumbs">
+    <ul class="breadcrumb">
+        <li>
+            <i class="ace-icon fa fa-home home-icon"></i>
+            <a href="@Url.Action("Index", "Dashboard", new {area = "admin"})">Dashboard</a>
+        </li>
+        <li class="active">
+            <b>Chart of Accounts</b>
+        </li>
+    </ul><!-- /.breadcrumb -->
+
+</div>
+
+
+@*@if (sms.Helpers.EnumManager.Modules.frmAccountGroup.Permissions().)*@
+
+<div class="row">
+    <div id="account-gridContainer" class="col-12">
+        <table id="jqgAccount" cellpadding="0" cellspacing="0"></table>
+        <div id="jqgpAccount" style="text-align: center;"></div>
+
+
+    </div>
+    <div class="col-12">
+
+        <table id="jqgTreeGrid" cellpadding="0" cellspacing="0"></table>
+    </div>
+</div>
+
+
+<script @resources.JavaScript>
+    function reloadGridData() {
+        $('#jqgAccount').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    $(document).ready(function() {
+
+        $('#jqgAccount').jqGrid({
+            treeGrid: true,
+            treeGridModel: 'adjacency',
+            ExpandColumn: 'elementName',
+            ExpandColClick: true,
+            //url from wich data should be requested
+            url: '@Url.Action("GetAccountTypes", "AccountGroup", new {area = "admin"})',
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'Post',
+            //columns names
+            colNames: ['id', 'Accounts', 'transaction'],
+            //columns model
+            colModel: [
+                { name: 'id', index: 'id', width: 1, hidden: true, key: true },
+                { label: 'Name', name: 'elementName', index: 'elementName', align: 'left' },
+                { label: 'transaction', name: 'transaction', index: 'transaction', hidden: true },
+            ],
+            caption: 'Chart of Accounts',
+            height: 'auto',
+            //gridComplete: initGrid
+        });
+
+
+        var DataGrid = $('#jqgAccount');
+
+        //sets the grid size initially
+        DataGrid.jqGrid('setGridWidth', parseInt($('#account-gridContainer').width()));
+
+        //handles the grid resize on window resize
+        $(window).resize(function() {
+            DataGrid.jqGrid('setGridWidth', parseInt($('#account-gridContainer').width()));
+        });
+    });
+
+    @*function initGrid() {
+
+
+                $("#jqgAccount").contextmenu({
+                    delegate: ".jqgrow",
+                    menu: [
+                      { title: "Add New Child", cmd: "add", uiIcon: "ui-icon-plusthick", disabled: disableadd },
+                      { title: "----" },
+                      { title: "Edit", cmd: "edit", uiIcon: "ui-icon-pencil", disabled: disable },
+                      { title: "----" },
+                      { title: "Delete", cmd: "del", uiIcon: "ui-icon-trash", disabled: disable },
+                    ],
+                    beforeOpen: function (event, ui) {
+
+                    },
+                    select: function (event, ui) {
+                        //alert("select " + ui.cmd + " on " + ui.target.text());
+                        var id = $(ui.target.closest('tr')).find('td[aria-describedby="jqgAccount_id"]').text();
+                        var type = $(ui.target.closest('tr')).find('td[aria-describedby="jqgAccount_type"]').text();
+                        var trans = $(ui.target.closest('tr')).find('td[aria-describedby="jqgAccount_transaction"]').text();
+                        var title = '';
+                        var url = '';
+                        if (ui.cmd == 'add') {
+                            url = '@Url.Action("CreateChartOfAccount", "AccountGroup")';
+                            url += '?parentid=' + id;// + '&type=' + type;
+                            title = 'Add New ' + type;
+                        }
+                        else if (ui.cmd == 'edit') {
+                            url = '@Url.Action("EditChartOfAccount", "Accounts", new { area = "admin" })';
+                            url += '?id=' + id + '&type=' + type;
+                            title = 'Edit ' + type;
+                        }
+                        else if (ui.cmd == 'del') {
+                            url = '@Url.Action("DeleteChartOfAccount", "Accounts", new { area = "admin" })';
+                            url += '?id=' + id;
+                            title = 'Delete ';
+                        }
+
+                        BootstrapDialog.show({
+                            title: title,
+                            message: $('<div />').load(url)
+                        });
+                    }
+                });
+            }
+            function disableadd(event, ui) {
+                var trans = $(ui.target.closest('tr')).find('td[aria-describedby="jqgAccount_transaction"]').text();
+                return (JSON.parse(trans) == true);
+            }
+            function disable(event, ui) {
+                var type = $(ui.target.closest('tr')).find('td[aria-describedby="jqgAccount_id"]').text();
+                return type.startsWith('type');
+            }
+            *@
+
+</script>

@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "CreateRole";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+
+<div class="space-6"></div>
+<div class="container" style="padding-left: 20px; padding-right: 20px;">
+    <div class="page-header">
+        <h4>Create Role</h4>
+    </div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="">
+            <div class="row-fluid">
+                <div class="clearfix">
+                    <div class="clearfix">
+                        <div class="row-fluid">
+                            <div class="span8">
+
+                                <div class="control-group">
+                                    @Html.Label("Role")<font class="text-danger">*</font>
+                                    <div class="controls mb-4">
+                                        @Html.TextBox("RoleName", null, new {@class = "form-field span6", required = "true", placeholder = "Enter your Role..."})
+                                        @Html.ValidationMessage("RoleName")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="clearfix mr-4">
+                        <div class="span12">
+                            <div class="form-actions">
+                                <div class="btn-group">
+                                    <a href="@Url.Action("Authentications")" class="btn btn-success float-right ml-1">Back to List</a>
+                                    <input type="submit" value="Register" class="btn btn-primary float-right"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

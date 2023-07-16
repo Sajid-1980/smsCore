@@ -1,0 +1,150 @@
+﻿@model Visitor
+
+@{
+
+    string title = "Visitor";
+    string action = "Index";
+    string createAction = "Create";
+    string listdataAction = "VisitorList";
+    string deleteMasterAction = "DeleteVisitor";
+
+    ViewBag.Title = title;
+    bool edit = Model != null;
+    DateTime? date = null;
+
+    if (edit)
+    {
+        date = Model.Date;
+    }
+
+    DateTime? cdate = null;
+
+    if (edit)
+    {
+        date = Model.Date;
+    }
+}
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Admin
+            </li>
+            <li class="active">
+                @title
+            </li>
+
+        </ul>
+    </div>
+}
+<section class="content">
+   @* @using (Ajax.BeginForm(action, "Accounts", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reset", OnComplete = "completed", LoadingElementId = "PaymentVouchermainForm #server-progress", OnBegin = "begin" }, new { id = "PaymentVouchermainForm" }))
+    {*@
+    <form asp-action="Create" asp-controller="Visitor" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="PaymentVouchermainForm" data_reset="true">
+        <div class="row">
+            @Html.HiddenFor(m => Model.Id)
+            <input type="hidden" name="VistorType" value="Front Desk" />
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h3 class="card-title">@title Creation</h3>
+                    </div><!-- /.box-header -->
+
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 col-md-6">
+                                <label>Visitor Name <span class="asterisk">*</span></label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control", placeholder = "Name", required = "" })
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Name")
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label>Relationship <span class="asterisk">*</span></label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Relationship, new { @class = "form-control", placeholder = "Relationship", required = "" })
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Relationship")
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label>National Identity Number <span class="asterisk">*</span></label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Cnic, new { @class = "form-control", placeholder = "National Identity Number", required = "" })
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Cnic")
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label>Contact <span class="asterisk">*</span></label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Contact, new { @class = "form-control", placeholder = "Contact Number", required = "" })
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Contact")
+                                </div>
+                            </div>
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                          {
+                              Label = "Date",
+                              ParentContainerID = "entry-date",
+                              ColCssClass = "col-6 col-md-2",
+                              ShowAltField = false,
+                              DateFieldId = "visitDate",
+                              DateFieldName = "VisitDate",
+                              KeepDataFieldReadOnly = true,
+                              DefaultDate = date
+                          })
+
+                            <div class="col-6 col-md-7">
+                                <label>Description/Purpose</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.Description, new { @class = "form-control number-only has-feedback-left", placeholder = "Description" })
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("Description")
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer px-2">
+                        <div class="row">
+                            <div class="form-group col-12 pb-2 mt-3 text-right">
+                                <button type="submit" value="Create" class="btn btn-primary sico-btn pull-right">
+                                    <i class="fa fa-save mr-2"></i> <span>
+                                        <i id="server-progress" style="display:none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+
+                                <a href="@Url.Action(listdataAction, "Accounts")" aria-label="Back to List" class="btn btn-dark ajax-load-menu float-left"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to List</a>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+  @*  }*@
+  </form>
+</section>
+<script>
+    $('#PaymentVouchermainForm').validate();
+    $('.select2').select2({ 'width': '100%' });
+    $(document).ready(function () {      
+
+    });
+</script>

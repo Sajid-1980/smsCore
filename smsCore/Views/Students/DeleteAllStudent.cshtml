@@ -1,0 +1,203 @@
+﻿@model Models.ExpellDetail
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "DeleteAllStudent";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Delete All Student
+        </li>
+    </ul>
+</div>
+<section class="content" id="sessionstudent">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "sessionstudent", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = true, ShowCampus = true, ShowClasses = true, ShowSections = true, ShowSession = true })
+
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3>Students list</h3>
+                </div>
+                <div class="controls">
+                    <div class="col-12">
+                        @Html.EJS().Grid("list").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                   {
+                       col.Type("checkbox").Width("50").Add();
+                       col.Template("${sno(index)}").HeaderText("S.No").Width("50").TextAlign(TextAlign.Left).Add();
+                       col.Field("RegistrationNo").HeaderText("Reg. No").Width("60").TextAlign(TextAlign.Left).Add();
+                       col.Field("StudentName").HeaderText("Name").Width("120").TextAlign(TextAlign.Left).Add();
+                       col.Field("FName").HeaderText("Father's Name").Width("100").TextAlign(TextAlign.Left).Add();
+                       col.Field("Class").HeaderText("Class").Width("100").TextAlign(TextAlign.Left).Add();
+                       col.Field("Section").HeaderText("Section").Width("100").TextAlign(TextAlign.Left).Add();
+                   }).PageSettings(page => page.PageSize(15)).Toolbar(new List<string> { "ColumnChooser", "Search" }).Render()
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <form asp-action="DeleteAllStudents" asp-controller="Students"
+          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="delDetails" data_reset="true">
+   
+    @* @using (Ajax.BeginForm("DeleteAllStudents", "Students", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "delDetails #server-progress", OnBegin = "begin" }, new { id = "delDetails", enctype = "multipart/form-data" }))
+    {*@
+ 
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ID)
+    @Html.HiddenFor(model => model.StudentID)
+    @Html.HiddenFor(model => model.UserID)
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6 form-group has-feedback">
+                    <label>Character</label>
+                    <div class="controls">
+
+                        @Html.TextBoxFor(model => model.Particular, new { @class = "form-control has-feedback-left", placeholder = "Character" })
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Particular)
+                    </div>
+                </div>
+
+                <div class="col-sm-3 form-group has-feedback">
+                    <label>Date</label>
+                    <div class="controls">
+                        
+                        @Html.TextBoxFor(model => model.EntryDate, new { @class = "form-control has-feedback-left", placeholder = "Date" })
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.EntryDate)
+                    </div>
+                </div>
+
+                <div class="col-sm-3 form-group has-feedback">
+                    <label>SLC No.</label>
+                    <div class="controls">
+
+                        @Html.TextBoxFor(model => model.SLCNo, new { @class = "form-control has-feedback-left", placeholder = "SLC No.", value = "0" })
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.SLCNo)
+                    </div>
+                </div>
+
+                <div class="col-sm-3 form-group has-feedback">
+                    <label>Last Class</label>
+                    <div class="controls">
+                        
+                        @Html.TextBoxFor(model => model.LastClass, new { @class = "form-control has-feedback-left", placeholder = "Last Class", @readonly = "readonly" })
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.LastClass)
+                    </div>
+                </div>
+
+                <div class="col-sm-3 form-group has-feedback">
+                    <label>Conduct</label>
+                    <div class="controls">
+                        
+                        @Html.TextBoxFor(model => model.Conduct, new { @class = "form-control has-feedback-left", placeholder = "Conduct", value = "Satisfactory" })
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Conduct)
+                    </div>
+                </div>
+
+                <div class="col-sm-3 form-group has-feedback">
+                    <label>Last Section</label>
+                    <div class="controls">
+                        
+                        @Html.TextBoxFor(model => model.LastSection, new { @class = "form-control has-feedback-left", placeholder = "Last Section", @readonly = "readonly" })
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.LastSection)
+                    </div>
+                </div>
+
+                <div class="col-sm-3 form-group has-feedback">
+                    <label>Last Campus</label>
+                    <div class="controls">
+
+                        @Html.TextBoxFor(model => model.LastCampus, new { @class = "form-control has-feedback-left", placeholder = "Last Campus", @readonly = "readonly" })
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.LastCampus)
+                    </div>
+                </div>
+
+                <div class="col-sm-3 form-group has-feedback">
+                    <label>Type</label>
+                    <div class="controls">
+
+                        @Html.TextBoxFor(model => model.ExpellType, new { @class = "form-control has-feedback-left", placeholder = "Expell Type", value = "" })
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.ExpellType)
+                    </div>
+                </div>
+
+                <div class="col-sm-6 form-group has-feedback">
+                    <label>Reason/Notes</label>
+                    <div class="controls">
+
+                        @Html.TextBoxFor(model => model.Reason, new { @class = "form-control has-feedback-left", placeholder = "Reason/Notes", value = "" })
+                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(model => model.Reason)
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                <button type="button" class="btn btn-primary float-right mb-3" id="dltbtn"><i class="fa fa-trash"></i> Delete</button>
+            </div>
+        </div>
+    </div>
+   @* }*@
+   </form>
+</section>
+<script @resources.JavaScript>
+
+    $('#btnSearch').on('click',
+        function() {
+            var yearId = $('#Session').val();
+            var campusId = $('#Campus').val();
+            var classId = $('#Classes').val();
+            var sectionid = $('#Sections').val();
+
+            var url1 = '@Url.Action("GetStudentsListForDelete")';
+            url1 += '?clasId=' + classId + '&sectionid' + sectionid + '&yearId=' + yearId + '&campusId=' + campusId;
+            var grid = document.getElementById("list").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+</script>
+@Html.EJS().ScriptManager()

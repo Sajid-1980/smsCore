@@ -1,0 +1,148 @@
+﻿@using Models
+@inject StaticResources resources
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                <a href="@Url.Action("AttendanceReports", "Reports")">Attendance Report</a>
+            </li>
+            <li class="active">
+                Student Consecutive Attendance
+            </li>
+        </ul>
+    </div>
+
+
+<section class="content" id="consuctiveAttendance-container">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-4 col-md-3 form-group has-feedback">
+                            <label>Reg No</label>
+                            <div class="controls">
+                                <div>
+                                    <input type="text" id="regno" class="form-control" />
+                                </div>
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "consuctiveAttendance-container", ColCssClass = "col-sm-3  form-group has-feedback", ShowClasses = true, ShowCampus = true, ShowSections = true })
+
+                        <div class="col-12 col-sm-3 col-md-3 form-group has-feedback">
+                            <label>Attendance Type</label>
+                            <div class="controls">
+                                <div>
+                                    <select id="attendancetype" class="form-control">
+                                        <option value="Leave">Leave</option>
+                                        <option value="Absent">Absent</option>
+                                    </select>
+                                </div>
+                                <span class="fa fa-address-card form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-left" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_attendance_consective",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Consective Attendance Report",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+                        new Column{ FieldName="C2", HeaderText="LCM", AutoFit=true },
+                        new Column{ FieldName="C3", HeaderText="ACM", AutoFit=true },
+                        new Column{ FieldName="C1", HeaderText="LC", AutoFit=true },
+
+                        }
+                };
+            }
+            @Html.Partial("_grid", grid)
+            @*@Html.EJS().Grid("GridS").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+        {
+            //col.Field("SNo").HeaderText("S.No").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+            col.Field("AdmissionID").HeaderText("Reg.No").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("StudentName").HeaderText("Name").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("FName").HeaderText("FName").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("ClassName").HeaderText("Class").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("C2").HeaderText("LCM").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("C3").HeaderText("ACM").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("C1").HeaderText("LC").Width("80").TextAlign(TextAlign.Left).Add();
+        }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "Search", "ColumnChooser" }).Render()*@
+       
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+
+    $('#checktime').on('change',
+        function() {
+            if ($(this).is(':checked')) {
+                $('#timefrom').attr('readonly', false);
+                $('#timeto').attr('readonly', false);
+            } else {
+                $('#timefrom').attr('readonly', true);
+                $('#timeto').attr('readonly', true);
+            }
+        });
+    $('#btnSearch').on('click',
+        function() {
+            var attendancetype = $('#attendancetype').val();
+            var classId = $('#Classes').val();
+            var campusId = $('#Campus').val();
+            var sectionId = $('#Sections').val();
+            var selectdate = $('#selectdate').val();
+            if ($('#Sections').val() == null) {
+                sectionId = 0;
+            }
+            var url1 = '@Url.Action("GetConsecutiveAttendanceDatatable")';
+            url1 += '?classId=' + classId + '&campusId=' + campusId + '&sectionId=' + sectionId + '&regno=' + $('#regno').val() + '&attendancetype=' + attendancetype;
+            var messageTop = 'Leave List as on' + @DateTime.Now.ToString("dd/MM/yyyy");
+            $.get(url1,
+                null,
+                function (data) {
+                    var gridObj = document.getElementById("@grid.GridId").ej2_instances[0];
+                    // Refreshes the grid data source
+                    gridObj.dataSource = (data);
+                });
+        });
+
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("GridS").ej2_instances[0];
+    //    if (args.item.id === 'GridS_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'GridS_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+    //function reloadGridData() {
+    //    var gird = document.getElementById('GridS').ej2_instances[0];
+    //    gird.refresh();
+    //}
+</script>
+@Html.EJS().ScriptManager()

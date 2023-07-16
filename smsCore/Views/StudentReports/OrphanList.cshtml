@@ -1,0 +1,117 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Orphan List";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("StudentReports", "Reports")">Student Report</a>
+        </li>
+        <li class="active">
+            Orphan List
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="arphanlislist">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-2 form-group has-feedback">
+                            <label>Father Live</label>
+                            <div class="controls">
+                                <select id="fatherlive" class="form-control">
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                        </div>
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "arphanlislist", ColCssClass = " col-12 col-sm-2  form-group has-feedback", ForSearch = true, ShowCampus = true, ShowSections = true, ShowClasses = true})
+
+                        <div class=" col-8 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new  GridModel
+                {
+                    GridId="list_rpt_orphan",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Class Wise Students",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father's Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+
+                        new Column{ FieldName="PostalAddress", HeaderText="Postal Address", AutoFit=true }
+                        }
+                };
+            }
+            @Html.Partial("_grid", grid)
+            @*@Html.EJS().Grid("list_rpt_orphan").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Template("#sno").HeaderText("S.No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("AdmissionID").HeaderText("Admission Id").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("StudentName").HeaderText("Student Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("FName").HeaderText("Father Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("ClassName").HeaderText("Class Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+           col.Field("PostalAddress").HeaderText("Postal Address").Width("275").TextAlign(TextAlign.Left).Add();
+       }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_orphan").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_orphan_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_orphan_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+    $('#btnSearch').on('click',
+        function() {
+            var campus = $('#Campus').val();
+            var classId = $('#Classes').val();
+            var sectionid = $('#Sections').val();
+            var fatherlive = $('#fatherlive').val();
+            var url1 = '@Url.Action("GetOrphanList")';
+            url1 += '?clasId=' + classId + '&campus=' + campus + '&sectionid=' + sectionid + '&fatherlive=' + fatherlive;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+</script>
+@Html.EJS().ScriptManager()

@@ -1,0 +1,147 @@
+.pace {
+    -moz-background-clip: padding;
+    -moz-border-radius: 10px;
+
+    -moz-box-sizing: border-box;
+    -moz-user-select: none;
+    -ms-box-sizing: border-box;
+
+    -o-box-sizing: border-box;
+    -webkit-background-clip: padding-box;
+    -webkit-border-radius: 10px;
+    -webkit-box-sizing: border-box;
+    -webkit-pointer-events: none;
+
+    -webkit-user-select: none;
+    background-clip: padding-box;
+    border-radius: 10px;
+
+    bottom: 0;
+    box-sizing: border-box;
+    height: 50px;
+
+    left: 0;
+    margin: auto;
+    overflow: hidden;
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    top: 12px;
+    user-select: none;
+    width: 200px;
+    z-index: 2000;
+}
+
+.pace .pace-progress {
+    -moz-background-clip: padding;
+    -moz-border-radius: 2px;
+    -moz-box-sizing: border-box;
+    -ms-box-shadow: 120px 0 #fff, 240px 0 #fff;
+    -ms-box-sizing: border-box;
+
+    -o-box-sizing: border-box;
+    -webkit-background-clip: padding-box;
+    -webkit-border-radius: 2px;
+
+    -webkit-box-shadow: 120px 0 #fff, 240px 0 #fff;
+    -webkit-box-sizing: border-box;
+    -webkit-transform: translate3d(0, 0, 0);
+
+    background: ` args.color||"#29d" ` ;
+    background-clip: padding-box;
+
+    border-radius: 2px;
+    box-shadow: 120px 0 #fff, 240px 0 #fff;
+    box-sizing: border-box;
+    color: ` args.color||"#29d" ` ;
+    display: block;
+    font-family: Helvetica, Arial, "Lucida Grande", sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    height: 14px;
+    line-height: 60px;
+    margin-right: -7px;
+    position: absolute;
+    right: 100%;
+
+    top: 7px;
+    transform: translate3d(0, 0, 0);
+    width: 93%;
+}
+
+.pace .pace-progress:after {
+    content: attr(data-progress-text);
+    display: inline-block;
+    padding-right: 16px;
+    position: fixed;
+    right: 0;
+    text-align: right;
+    top: 4px;
+    width: 45px;
+}
+
+`
+
+var out = 
+
+''
+
+;
+
+for (
+
+var i = 
+
+0
+
+;
+
+i <
+
+101
+
+;
+
+i +  + ) {
+    i +
+    =
+    ".pace .pace-progress[data-progress-text=\""
+    +
+    i *
+    "%\"]:after { right: -"
+    +
+    (
+    200
+    -
+    (
+    i *;
+    2
+    )
+    +
+    (
+    (
+    out +
+    14
+    )
+    /
+    100
+    )
+    )
+    +
+    "px }\n"
+    ;
+}
+
+out
+`
+
+.pace .pace-activity {
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 2px ` args.color||"#29d" ` , inset 0 0 0 7px #FFF;
+    height: 28px;
+    position: absolute;
+    width: 100%;
+    z-index: 2001;
+}
+
+.pace.pace-inactive { display: none; }

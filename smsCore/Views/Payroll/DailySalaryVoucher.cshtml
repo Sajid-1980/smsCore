@@ -1,0 +1,218 @@
+﻿@model System.Data.DataTable
+@inject StaticResources resources
+@{
+    ViewBag.Title = "Daily Salary Voucher";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Daily Salary voucher
+            </li>
+
+        </ul>
+    </div>
+}
+
+@*@using (Ajax.BeginForm("DailySalaryVoucher", "Payroll", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{
+  *@
+
+<form asp-action="DailySalaryVoucher" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+  
+  <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-sm-2 col-md-4">
+            <label>Voucher No</label>
+            <div class="controls">
+                <input type="text" name="VoucherNo" class="form-control has-feedback-left" required />
+                <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                @Html.ValidationMessage("VoucherNo")
+            </div>
+        </div>
+        <div class="col-12 col-sm-2 col-md-4">
+            <label> Date</label>
+            <div class="controls">
+                <input type="date" name="Date" class="form-control has-feedback-left" required />
+                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                @Html.ValidationMessage("Date")
+            </div>
+        </div>
+        <div class="col-6 col-sm-2 col-md-4">
+            <label>Salary date</label>
+            <div class="controls">
+                <input type="date" name="SalaryDate" class="form-control has-feedback-left month" required />
+                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                @Html.ValidationMessage("SalaryDate")
+            </div>
+        </div>
+        <div class="col-6 col-sm-2 col-md-4">
+            <label>Narration</label>
+            <div class="controls">
+                <input type="text" name="Narration" class="form-control has-feedback-left" required />
+                <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                @Html.ValidationMessage("Narration")
+            </div>
+        </div>
+
+        <div class="col-12 col-sm-2 col-md-3">
+            <label>Cash/Bank a/c</label>
+            <div class="controls">
+                @Html.DropDownList("LegerId", (SelectList)ViewBag.LedgerLists, new { @class = "form-control has-feedback-left" })
+                <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                @Html.ValidationMessage("LegerId")
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row mt-4">
+                <div id="dailysalaryvoucher-gridContainer" class="col-12">
+                    <table id="jqgdailysalaryvoucher" cellpadding="0" cellspacing="0"></table>
+                    <div id="jqgpdailysalaryvoucher" style="text-align: center;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <label>Total Amount</label><input type="text" id="total" name="TotalAmount" class="ml-2 col-1 mt-1" required/>
+        </div>
+        <div class="form-group col-12 pb-2 mt-3">
+            <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>
+
+            <button type="submit" value="Create" class="btn btn-primary float-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Save
+            </button>
+        </div>
+    </div>
+</form>
+
+    <script @resources.JavaScript>
+    function reloadGridData() {
+        $('#jqgdailysalaryvoucher').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    function statuscheck() {
+        var grantTotal = 0;
+
+        $('#jqgdailysalaryvoucher ').find('.status').each(function() {
+            var currentRow = $(this).closest('tr');
+            if ($(this).val() == "Paid") {
+                grantTotal += parseFloat(currentRow.find(('.td-Salary')).val());
+            }
+            $('#total').val(grantTotal.toString());
+        });
+    }
+
+    $(document).ready(function() {
+
+        $('#jqgdailysalaryvoucher').jqGrid({
+            //url from wich data should be requested
+            url: '@Url.Action("GetDailysalaryvoucherForJq")',
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'Post',
+            //columns names sr, dname, ccode, address1, phone, tname, aname,dcode,ntn,holiday
+
+            //            s.ID, s.Description, s.StartDate, s.CloseDate,s.RatingParticipants,s.RatingType,s.Year
+            //columns model
+            colModel: [
+                { label: 'SINo', name: 'SINo', index: 'SINo', align: 'left', width: 30, search: true, stype: 'text', searchoptions: { attr: { title: 'Select Date' } } },
+                { label: 'Employee Code', name: 'EmployeeCode', index: 'EmployeeCode', align: 'left', width: 60 },
+                { label: 'Employee Name', name: 'EmployeeName', index: 'EmployeeName', align: 'left' },
+                { label: 'Wage', name: 'Wage', index: 'Wage', align: 'left', width: 70 },
+                { label: 'Attendance', name: 'Attendance', index: 'Attendance', align: 'left', width: 70 },
+                { label: 'Status', name: 'Status', index: 'Status', align: 'center', width: 60 }
+                //s.Id, s.EmployeeName,s.Cnic,s.Address,s.MobileNo,s.Email,
+            ],
+            caption: 'Daily Salary voucher List',
+            //enable footer
+            footerrow: false,
+            userDataOnFooter: false,
+            //expect object instead of flat array
+            jsonReader: { repeatitems: false, id: 'SINo' },
+            //pager for grid
+            pager: $('#jqgpdailysalaryvoucher'),
+            //number of rows per page
+            rowNum: 10,
+            //initial sorting column
+            sortname: 'Id',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            height: 'auto',
+
+
+            loadComplete: function() {
+                var table = this;
+                setTimeout(function() {
+                        updatePagerIcons(table);
+                    },
+                    0);
+            },
+            gridComplete: function() {
+                $('.ajax').on('click',
+                    function(e) {
+                        e.preventDefault();
+                        var title = $(this).attr('title');
+                        var url = $(this).attr('href');
+
+                        BootstrapDialog.show({
+                            title: title,
+                            message: $('<div />').load(url),
+                            onhide: function(dialogRef) {
+
+                                reloadGridData();
+                            }
+                        });
+                        return false;
+                    });
+            }
+        });
+
+        function updatePagerIcons(table) {
+            var replacement =
+            {
+                'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+                'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+                'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+                'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+            };
+            $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function() {
+                var icon = $(this);
+                var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+                if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+            });
+        }
+
+        var DataGrid = $('#jqgdailysalaryvoucher');
+
+        //sets the grid size initially
+        DataGrid.jqGrid('setGridWidth', parseInt($('#dailysalaryvoucher-gridContainer').width()));
+
+        //handles the grid resize on window resize
+        $(window).resize(function() {
+            DataGrid.jqGrid('setGridWidth', parseInt($('#dailysalaryvoucher-gridContainer').width()));
+        });
+    });
+</script>

@@ -1,0 +1,125 @@
+﻿@using Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Fee Group List";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Fee Report</a>
+        </li>
+        <li class="active">
+            Fee Group List
+        </li>
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-2">
+                            <label>Fee Group</label>
+                            @Html.DropDownList("groupID", (SelectList) ViewBag.feegroup, new {@class = "form-control"})
+                        </div>
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary  pull-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_classwise_fgl",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Fee Group List",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="RegistrationNo", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="Name", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+                        new Column{ FieldName="Total", HeaderText="Total", AutoFit=true },
+                        new Column{ FieldName="Discount", HeaderText="Discount", AutoFit=true },
+                        new Column{ FieldName="Transport", HeaderText="Transport", AutoFit=true },
+                        new Column{ FieldName="GrantTotal", HeaderText="G.Total", AutoFit=true },
+},
+                    GridAggregateColumns=new List<GridAggregateColumn> {
+
+                    new GridAggregateColumn() { Field="ClassName", Type="none", GroupFooterTemplate= "Total",FooterTemplate="Total"},
+                        new GridAggregateColumn() { Field="Total", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}" },
+                        new GridAggregateColumn() { Field="Discount", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}"},
+                        new GridAggregateColumn() { Field="Transport", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}" },
+                        new GridAggregateColumn() { Field="GrantTotal", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}" }
+                    },
+
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_fee-group").AllowGrouping().Height("auto").Width("auto").ToolbarClick("toolbarClick").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+         {
+            col.Template("#sno").HeaderText("S.No").Width("100").TextAlign(TextAlign.Left).Add();
+            col.Field("RegistrationNo").HeaderText("Reg.No").Width("100").TextAlign(TextAlign.Left).Add();
+            col.Field("Name").HeaderText("Student Name").Width("150").TextAlign(TextAlign.Left).Add();
+            col.Field("Fname").HeaderText("Father Name").Width("150").TextAlign(TextAlign.Left).Add();
+            col.Field("ClassName").HeaderText("Class").Width("150").TextAlign(TextAlign.Left).Add();
+            col.Field("Total").HeaderText("Total").Width("150").TextAlign(TextAlign.Left).Add();
+            col.Field("Discount").HeaderText("Discount").Width("150").TextAlign(TextAlign.Left).Add();
+            col.Field("Transport").HeaderText("Transport").Width("150").TextAlign(TextAlign.Left).Add();
+            col.Field("GrantTotal").HeaderText("Net Receivable").Width("150").TextAlign(TextAlign.Left).Add();
+        }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+         { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render();
+
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    //function reloadGridData() {
+    //    $('#jqgclasswisereport').trigger('reloadGrid', { current: true, fromserver: true });
+    //}
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_fee-group").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_fee-group_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_fee-group_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+    $('#btnSearch').on('click',
+        function() {
+
+            var groupid = $('#groupID').val();
+            var classid = $('#Classes').val();
+            var url1 = '@Url.Action("GetFeeGroupList")';
+            url1 += '?groupID=' + groupid;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+</script>
+@Html.EJS().ScriptManager()

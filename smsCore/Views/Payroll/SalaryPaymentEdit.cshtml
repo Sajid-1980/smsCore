@@ -1,0 +1,167 @@
+﻿@model tbl_SalaryPayment
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Salary Payment Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Salary Payment Edit
+            </li>
+
+        </ul>
+    </div>
+}
+<div>
+    <div class="card-header with-border">
+        Salary Payment Edit
+    </div>
+  @*  @using (Ajax.BeginForm("SalaryPaymentEdit", "Payroll", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "frmsalarypaymentedit", data_reset = "true" }))
+    {*@
+    <form asp-action="SalaryPaymentEdit" asp-controller="Payroll"
+          data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="frmsalarypaymentedit" data_reset="true">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-12">
+                    <div id="message">
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels
+         {
+             ParentContainerID = "frmsalarypaymentedit",
+             ColCssClass = "col-12 col-sm-6 has-feedback",
+             CampusFieldName = "CampusID",
+             EmployeeFieldName = "EmployeeId",
+             ShowCampus = true,
+             ShowEmployee = true,
+             EmployeeID=Model.MonthlySalary.EmployeeId,
+             CampusID=Model.MonthlySalary.Employee.CampusID
+         })
+                <div class="col-12"></div>
+                @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+{
+Label = "Salary Month:",
+PickerType = "month",
+Format = "MM yy",
+ParentContainerID = "mont-date-edit",
+ColCssClass = "col-12 col-sm-6",
+ShowAltField = true,
+AltFieldId = "month",
+AltFieldName = "Month",
+AltFieldFormat = "dd/mm/yy",
+DateFieldId = "monthpick",
+DateFieldName = "monthpick",
+KeepDataFieldReadOnly = true,
+DefaultDate = Model.MonthlySalary.ForMonth
+})
+                <div class="col-12 col-sm-6">
+                    <label>Vourcher No</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(m => m.VoucherNo, new { @class = "small form-control", required = "true" })
+                        <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessageFor(m => m.VoucherNo)
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <label>Amount</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(m => m.Amount, new { @class = "small form-control", required = "true" })
+                                        <span class="fa fa-sort-amount-asc form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(m => m.Amount)
+                                    </div>
+                </div>
+
+                <div class="col-12 col-sm-6">
+                    <label>Cash/Bank a/c</label>
+                    <div class="controls">
+                        @Html.DropDownListFor(m => m.LedgerId, (SelectList)ViewBag.LedgerLists, new { @class = "form-control", id = "cashbank" })
+                        <span class="fa fa-sort-amount-asc form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("LedgerId")
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6">
+                    <label>Check No</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(m => m.Chequenumber, new { @class = "form-control", @readonly = "true", id = "chequenumber" })
+                                        <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(m => m.Chequenumber)
+                                    </div>
+                </div>
+                @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+{
+Label = "Check Date:",
+PickerType = "date",
+ParentContainerID = "check-date-edit",
+ColCssClass = "col-12 col-sm-6",
+AltFieldFormat = "dd/mm/yy",
+DateFieldId = "chequeDate",
+DateFieldName = "chequeDate",
+KeepDataFieldReadOnly = true,
+DefaultDate=Model.ChequeDate
+})
+
+                <div class="col-6 col-sm-6">
+                    <label>Payment Type</label>
+                    <div class="controls">
+                        <select name="PaymentType" class="form-control">
+                           @* <option @(Model.VoucherTypeId == (int)PublicVariables.EnumVoucherTypeDefaults.Payment_Voucher ? "selected" : "") value="normal">Regular Payment</option>
+                            <option @(Model.VoucherTypeId == (int)PublicVariables.EnumVoucherTypeDefaults.Advance_Payment ? "selected" : "") value="advance">Advance Payment</option>*@
+
+                        </select>
+                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <label>Notes</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(m => m.Narration, new { @class = "form-control" })
+                                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(m => m.Narration)
+                                    </div>
+                </div>
+                <div class="form-group col-12 pb-2 mt-3">
+                    @* <a href="@Url.Action("Index", "Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>*@
+
+                </div>
+
+            </div>
+        </div>
+        <div class="card-footer text-right">
+            <button type="reset" value="New" class="btn btn-primary float-right "><i class="fa fa-refresh mr-1"></i>New</button>
+            <button type="submit" value="Create" class="btn btn-primary float-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Save
+            </button>
+        </div>
+    </form>
+</div>
+<script @resources.JavaScript>
+    $('#cashbank').on('change',
+        function () {
+            if ($('#cashbank option:selected').html() == "Cash") {
+                $('#chequedate').attr("readonly", true);
+                $('#chequenumber').attr("readonly", true);
+            } else {
+                $('#chequedate').attr("readonly", false);
+                $('#chequenumber').attr("readonly", false);
+            }
+        });
+</script>

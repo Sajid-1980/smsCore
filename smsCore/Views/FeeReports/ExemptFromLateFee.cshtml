@@ -1,0 +1,98 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Exempt From Late Fee";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Fee Report</a>
+        </li>
+        <li class="active">
+            Exempt From Late Fee
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="exemptFromLateFee-container">
+    <div class="row">
+        <div class="col-12">
+            <div id="report-printable" class="card">
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="row">
+                            @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "exemptFromLateFee-container", ColCssClass = "col-12 col-sm-3 col-md-2  form-group has-feedback", ShowCampus = true, ForSearch = true})
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_classwise_latefee",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Late Fee Exampted Students",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father's Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+}
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_fee-exempt-latefee").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+      {
+            col.Template("#sno").HeaderText("S.No").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("AdmissionID").HeaderText("Reg No").Width("150").TextAlign(TextAlign.Left).Add();
+            col.Field("StudentName").HeaderText("Student Name").Width("150").TextAlign(TextAlign.Left).Add();
+            col.Field("FName").HeaderText("Father Name").Width("150").TextAlign(TextAlign.Left).Add();
+            col.Field("ClassName").HeaderText("Class").Width("150").TextAlign(TextAlign.Left).Add();
+        }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+         { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render();
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    $(function () {
+        $('#Campus').trigger('change');
+        $('#Campus').on('change',
+            function () {
+                var url1 = '@Url.Action("GetExemptFromLateFee")';
+                url1 += '?CampusId=' + $('#Campus').val();
+                var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+                grid.dataSource = [];
+                grid.dataSource = new ej.data.DataManager({
+                    url: url1,
+                    adaptor: new ejs.data.UrlAdaptor()
+                });
+            });
+    });
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_fee-exempt-latefee").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_fee-exempt-latefee_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_fee-exempt-latefee_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+</script>
+@Html.EJS().ScriptManager()

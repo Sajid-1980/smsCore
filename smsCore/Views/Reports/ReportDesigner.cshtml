@@ -1,0 +1,69 @@
+﻿
+@model string
+@{
+    ViewBag.Title = "Report Designer";
+    string name = Model.Replace(".", "/");
+}
+<style>
+    #report-designer {
+        height: 60vh;
+        min-height: 400px;
+        width: 100%;
+    }
+</style>
+
+@Styles.Render("~/Content/bold-reports/material/bold.reports.all.min.css")
+@Styles.Render("~/Content/bold-reports/material/bold.reportdesigner.min.css")
+@Styles.Render("~/Scripts/CodeMirror/lib/codemirror.css")
+@Styles.Render("~/Scripts/CodeMirror/addon/hint/show-hint.css")
+
+@Scripts.Render("~/Scripts/bold-reports/common/ej2-base.min.js")
+@Scripts.Render("~/Scripts/bold-reports/common/ej2-data.min.js")
+@Scripts.Render("~/Scripts/bold-reports/common/ej2-pdf-export.min.js")
+@Scripts.Render("~/Scripts/bold-reports/common/ej2-svg-base.min.js")
+@Scripts.Render("~/Scripts/bold-reports/data-visualization/ej2-circulargauge.min.js")
+@Scripts.Render("~/Scripts/bold-reports/data-visualization/ej2-lineargauge.min.js")
+@Scripts.Render("~/Scripts/bold-reports/data-visualization/ej2-maps.min.js")
+
+@Scripts.Render("~/Scripts/CodeMirror/lib/codemirror.js")
+@Scripts.Render("~/Scripts/CodeMirror/addon/hint/show-hint.js")
+@Scripts.Render("~/Scripts/CodeMirror/addon/hint/sql-hint.js")
+@Scripts.Render("~/Scripts/CodeMirror/mode/sql/sql.js")
+@Scripts.Render("~/Scripts/CodeMirror/mode/vb/vb.js")
+@Scripts.Render("~/Scripts/bold-reports/common/bold.reports.common.min.js")
+@Scripts.Render("~/Scripts/bold-reports/common/bold.reports.widgets.min.js")
+@Scripts.Render("~/Scripts/bold-reports/common/bold.report-designer-widgets.min.js")
+<!--Renders the chart item. Add this script, only if your report contains the chart report item.-->
+@Scripts.Render("~/Scripts/bold-reports/data-visualization/ej.chart.min.js")
+@Scripts.Render("~/Scripts/bold-reports/common/ej.unobtrusive.min.js")
+<!-- Report Designer component script-->
+@Scripts.Render("~/Scripts/bold-reports/bold.report-viewer.min.js")
+@Scripts.Render("~/Scripts/bold-reports/bold.report-designer.min.js")
+<style>
+    #designer{
+        height:600px;
+        width:100%;
+    }
+</style>
+<section id="ReportDesignerSection" class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card-body">
+                <div id="report-designer">
+                    @(Html.Bold().ReportDesigner("designer").ReportType(BoldReports.ReportDesignerEnums.ReportType.RDLC).ServiceUrl("/api/ReportDesigner").Create("controlInitialized"))
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+@Html.Bold().ScriptManager()
+
+<script>
+    function controlInitialized(args) {
+        var designer = $('#designer').data('boldReportDesigner');
+        
+        designer.openReport("@(name+".rdlc")");
+    }
+</script>

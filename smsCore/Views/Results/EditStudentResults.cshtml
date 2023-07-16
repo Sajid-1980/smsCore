@@ -1,0 +1,269 @@
+﻿ @model List<Models.Result>
+@inject StaticResources resources
+
+@{
+     
+        Layout = null;
+   
+    //ViewBag.Title = "Add Results";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+}
+
+<style>
+    .control-group {
+        float: left;
+        width: 45% !important;
+    }
+
+    .control-label { padding-top: 10px; }
+</style>
+
+<div class="sico-container my-0 py-1" id="editstudentresult">
+    <div class="row sico-form-col my-0">
+        <h4 class="col-12">Edit Student Result</h4>
+        <div class="col-12">
+            <div id="message">
+            </div>
+        </div>
+        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "editstudentresult", ColCssClass = "col-12 col-sm-6 col-md-3", ForSearch = true, ShowCampus = true, ShowClasses = true, ShowSections = true, ShowExams = true})
+
+        <div class="col-md-4 col-sm-4 col-12 form-group">
+            <label>Student's Reg. No.</label>
+            <div class="controls"><input type="text" name="RegistrationNo" id="RegistrationNo" class="form-control" placeholder="student registration no" /></div>
+        </div>
+        <div class="col-md-12 col-sm-12 col-12 form-group">
+            <button class="btn pull-right margin-top" id="btnSearchResult"><i class="fa fa-search"></i> Search</button>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="sico-container mb-2 py-1" id="resultPanel">
+    <div class="row sico-form-col my-0">
+        <div class="row col-lg-12">
+            <div class="col-12 py-2">
+                <div>
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="d-none">ID</th>
+                            <th>Reg ID</th>
+                            <th>Name</th>
+                            <th>Marks</th>
+                        </tr>
+                        </thead>
+                        <tbody id="newResults"></tbody>
+                    </table>
+
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="checkbox">
+                    <input type="checkbox" class="flat" name="AddExamRemarks" id="AddExamRemarks"/>Add Exam Remarks
+                </div>
+            </div>
+
+            <div class="col-md-12" id="examRemarks">
+                <div class="row">
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Attendance</label>
+                        <input name="Attendance" id="Attendance" class=" form-control"/>
+                    </div>@Html.Hidden("ExamRemarksID")
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Punctuality</label>
+                        @Html.DropDownList("Punctuality", (SelectList) ViewBag.RemarksDetail, new {@class = " form-control select2", multiple = "true"})
+                    </div>
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Confidence</label>
+                        @Html.DropDownList("Confid", (SelectList) ViewBag.RemarksDetail, new {@class = " form-control select2", multiple = "true"})
+                    </div>
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Co Team Work</label>
+                        @Html.DropDownList("CoTeamWork", (SelectList) ViewBag.RemarksDetail, new {@class = " form-control select2", multiple = "true"})
+                    </div>
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Discpline</label>
+                        @Html.DropDownList("Discpline", (SelectList) ViewBag.RemarksDetail, new {@class = " form-control select2", multiple = "true"})
+                    </div>
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Manners</label>
+                        @Html.DropDownList("Manners", (SelectList) ViewBag.RemarksDetail, new {@class = " form-control select2", multiple = "true"})
+                    </div>
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Neatness</label>
+                        @Html.DropDownList("Neatness", (SelectList) ViewBag.RemarksDetail, new {@class = " form-control select2", multiple = "true"})
+                    </div>
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Oral Expression</label>
+                        @Html.DropDownList("OralExp", (SelectList) ViewBag.RemarksDetail, new {@class = " form-control select2", multiple = "true"})
+                    </div>
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Physical Fitness</label>
+                        @Html.DropDownList("PhyFit", (SelectList) ViewBag.RemarksDetail, new {@class = " form-control select2", multiple = "true"})
+                    </div>
+
+
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Social Behaviour</label>
+                        @Html.DropDownList("SocBeh", (SelectList) ViewBag.RemarksDetail, new {@class = " form-control select2", multiple = "true"})
+                    </div>
+                    <div class="controls col-md-2 col-sm-3 col-xs-6">
+                        <label>Remarks</label>
+                        @Html.TextBox("Remarks", null, new {@class = "form-control", multiple = "true", placeholder = "remarks"})
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <button type="button" id="btnSave" class="btn sico-btn pull-right"><i class="fa fa-save pr-2"></i>Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="hidden" id="SubjectDetails">
+
+</div>
+<script @resources.JavaScript>
+
+    $(function() {
+
+
+        $('div#examRemarks .select2').select2({ maximumSelectionLength: 1 });
+        $('#btnSearchResult').click(function() {
+            var regno = $('#RegistrationNo').val();
+
+            $('#ExamRemarksID').val('');
+            $('#Attendance').val('');
+            $('#Remarks').val('');
+            $('div#examRemarks .select2').each(function() { $(this).val('Excellent'); });
+
+
+            $(newResults).html('');
+            var exam = $('#Exams').val();
+            $.getJSON('@Url.Action("GetResultOfStuden", "Results", new {area = "Admin"})',
+                { regno: regno, exam: exam },
+                function(data) {
+                    if (data.type == "success") {
+                        var html = '';
+                        $.each(data.results,
+                            function(key, value) {
+                                $(newResults).append('<tr><td style="display:none;"><span class="ID">' + value.ID + '</span></td><td>' + value.SubjectName + '</td><td><a class="marks" href="#" id="' + value.ObtainedMarks + '" data-type="number" data-url="@Url.Action("EditStudentResults", "Results", new {area = "Admin"})" data-pk="' + value.ID + '" data-placement="top" data-placeholder="Required" data-totalMarks="' + value.TotalMarks + '" data-resultid="' + value.ID + '" data-title="Edit marks for ' + value.SubjectName + '">' + value.ObtainedMarks + '</a> </td><td><i class="fa fa-times" data-id="' + value.ID + '" onclick="Remove(this);">Delete</i></td></tr>');
+
+                            });
+                        //$.each(data.remarks, function (key, value) {
+
+                        if (parseInt(data.remarks.ID) > 0) {
+                            $('#ExamRemarksID').val(data.remarks.ID);
+                            $('#Attendance').val(data.remarks.Attendance);
+                            $('#Confid').val(data.remarks.Confid);
+                            $('#CoTeamWork').val(data.remarks.CoTeamWork);
+                            $('#Discpline').val(data.remarks.Discpline);
+                            $('#Manners').val(data.remarks.Manners);
+                            $('#Neatness').val(data.remarks.Neatness);
+                            $('#OralExp').val(data.remarks.OralExp);
+                            $('#PhyFit').val(data.remarks.PhyFit);
+                            $('#Punctuality').val(data.remarks.Punctuality);
+                            $('#Remarks').val(data.remarks.Remarks);
+                            $('#SocBeh').val(data.remarks.SocBeh);
+                            $('div#examRemarks .select2').select2({ maximumSelectionLength: 1 });
+                            //});
+                        }
+                        $('.marks').editable({
+                            validate: function(v) {
+                                if (parseInt(v) < 0 || parseInt(v) > parseInt($(this).data('totalmarks')))
+                                    return 'Enter a valid Number.';
+                            }
+                        });
+                    } else {
+                        $('#resultPanel').enabled = false;
+                        $('#max-marks').html('No data found for the selected subjects (' + $('#Subjects').val() + ')');
+                    }
+                });
+
+            $('div#examRemarks .select2').select2({ maximumSelectionLength: 1 });
+        });
+
+        $(btnSave).click(function() {
+            var results = Array();
+            var index = 0;
+            $(newResults).find('tr').each(function() {
+                var tr = $(this);
+                var result = {};
+
+                result.ID = 0;
+                result.AdmissionID = tr.find('.ID').html();
+                result.ClassSubjectID = tr.find('.ClassSubjectID').html();
+                result.CheckedBy = "";
+                result.ExamHeldID = tr.find('.ExamHeldID').html(); //ExamHeldID
+                result.ObtainedMarks = tr.find('.marks').html().toLowerCase() == 'a' ? 2000 : tr.find('.marks').html();
+
+                results[index] = result;
+                index++;
+            });
+
+            var remarks = {};
+            if ($('#AddExamRemarks').is(':checked')) {
+                remarks.ID = $('#ExamRemarksID').val();
+                remarks.Attendance = $('#Attendance').val();
+                remarks.Confid = $('#Confid').val();
+                remarks.CoTeamWork = $('#CoTeamWork').val();
+                remarks.Discpline = $('#Discpline').val();
+                remarks.Manners = $('#Manners').val();
+                remarks.Neatness = $('#Neatness').val();
+                remarks.OralExp = $('#OralExp').val();
+                remarks.PhyFit = $('#PhyFit').val();
+                remarks.Punctuality = $('#Punctuality').val();
+                remarks.Remarks = $('#Remarks').val();
+                remarks.SocBeh = $('#SocBeh').val();
+            }
+            //console.log(results);
+            $.ajax({
+                url: '@Url.Action("Create", new {area = "Schools"})',
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                data: '{results:' + JSON.stringify(results) + ',remarks:' + JSON.stringify(remarks) + '}',
+                success: function(data) {
+                    CreateSuccess(data);
+                    $(newResults).find('tr').each(function() { $(this).remove(); });
+                },
+                error: function() {
+                    var data = {};
+                    data.message = "Unable to store the selected configuration values.";
+                    data.type = "error";
+                    CreateSuccess(data);
+                }
+            });
+        });
+
+    });
+
+
+    function Remove(element) {
+
+        BootstrapDialog.confirm({
+            title: 'WARNING',
+            message: 'Warning! Are you sure to delete?',
+            type: BootstrapDialog.TYPE_WARNING, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+            closable: true, // <-- Default value is false
+            draggable: true, // <-- Default value is false
+            btnCancelLabel: 'Do not drop it!', // <-- Default value is 'Cancel',
+            btnOKLabel: 'Drop it!', // <-- Default value is 'OK',
+            btnOKClass: 'btn-warning', // <-- If you didn't specify it, dialog type will be used,
+            callback: function(result) {
+                // result will be true if button was click, while it will be false if users close the dialog directly.
+                if (result) {
+                    $.post('@Url.Action("Delete", "Results", new {area = "Admin"})',
+                        { id: $(element).data('id') },
+                        function(data) {
+                            CreateSuccess(data);
+                            $(element).closest('tr').remove();
+                        },
+                        'json');
+                }
+            }
+        });
+
+
+    }
+</script>

@@ -1,0 +1,49 @@
+﻿@model  FeeType
+
+@{
+    ViewBag.Title = "Delete";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<h4>Are you sure you want to delete This !!.</h4>
+
+<dl class="dl-horizontal">
+    <dt>
+        @Html.DisplayNameFor(modelitem => modelitem.TypeName)
+    </dt>
+
+    <dd>
+        @Html.DisplayFor(modelitem => modelitem.TypeName)
+    </dd>
+
+
+</dl>
+@*@using (Ajax.BeginForm("FeeTypeDelete", "Fee", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "FeeTypeDeleteForm #server-progress", OnBegin = "begin"}, new {id = "FeeTypeDeleteForm"}))
+{*@
+        
+<form asp-action="FeeTypeDelete" asp-controller="Fee"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeTypeDeleteForm" data_reset="true">
+        
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+        @Html.HiddenFor(Model => Model.Id)
+        @*<form id="#loadForm">*@
+        @Html.AntiForgeryToken()
+        <div class="col-12">
+            <button type="submit" value="Create" class="btn btn-danger pull-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Delete
+            </button>
+        </div>
+    </div>
+</form>

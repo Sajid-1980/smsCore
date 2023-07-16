@@ -1,0 +1,318 @@
+﻿@using System.Data
+@model System.Data.DataTable
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Budget Edit
+            </li>
+
+        </ul>
+    </div>
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                   @* @using (Ajax.BeginForm("Edit", "Budget", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+                    {*@
+
+                    <form asp-action="Edit" asp-controller="Budget"
+                          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+      
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        @Html.AntiForgeryToken()
+                        <div class="row">
+                            @{ var j = 1; }
+                            @foreach (DataRow item in Model.Rows)
+                            {
+                                if (j == 1)
+                                {
+                                    <input type="hidden" name="BudgetmasterId" value="@item["masterid"]" id="masterId"/>
+                                    <div class="col-12 col-md-4">
+                                        <label>Budget Name</label>
+                                        <div class="controls">
+                                            <input type="text" name="budgetName" value="@item["BudgetName"]" class="form-control has-feedback-left" />
+                                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("Name")
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 col-md-4">
+                                        <label>From Date</label>
+                                        <div class="controls">
+                                            <input type="text" name="FromDate" value="@item["fromDate"]" class="form-control has-feedback-left" />
+                                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("FromDate")
+                                        </div>   </div>
+                                    <div class="col-12 col-md-4">
+                                        <label>To Date</label>
+                                        <div class="controls">
+                                            <input type="text" name="ToDate" value="@item["ToDate"]" class="form-control has-feedback-left" />
+                                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("ToDate")
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <label>Type</label>
+                                        <div class="controls">
+                                            @Html.DropDownList("Type", new SelectList(new[] { "Account Ledger", "Account Group" }, Model == null ? null : "Type"), new { @class = "form-control has-feedback-left" })
+                                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("Type")
+                                        </div>
+                                    </div>
+                                    <div class="col-12 col-md-4">
+                                        <label>Narration</label>
+                                        <div class="controls">
+                                            <input type="text" name="Narration" value="@item["Narration"]" class="form-control has-feedback-left" />
+                                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                            @Html.ValidationMessage("Narration")
+                                        </div>
+                                    </div>
+                                }
+                                j++;
+                            }
+                        </div>
+
+                        <div class="row no-gutters  mt-4">
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover " border="1">
+                                    <thead class="bg-info">
+                                    <tr>
+                                        <th>
+                                            S.No
+                                        </th>
+                                        <th>
+                                            Particular
+                                        </th>
+                                        <th>
+                                            Dr/Cr
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                        <th style="width: 10px">
+                                            <button type="button" class="float-right" id="add" style="background-color: transparent; border: none; font-size: 15px;">
+                                                <i class="fa fa-plus-circle"></i>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    @{ var i = 1; }
+                                    <tbody id="tablebody">
+                                    @foreach (DataRow item in Model.Rows)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <input type="hidden" id="" class="form-control " name="DetailsId" value="@item["budgetDetailsId"]"/>
+
+                                                @i
+                                            </td>
+
+                                            <td>
+                                                <input type="hidden" name="Particuler" value="@item["dgvcmbParticular"]" id="LedgerId"/>
+                                                @item["dgvcmbParticular"]
+                                            </td>
+                                            <td>
+                                                <input type="hidden" name="DrCr" id="DrCr" class="DrCr" onchange="changeamount(this)" value=" @item["dgvcmbDrOrCr"]"/>
+                                                @item["dgvcmbDrOrCr"]
+                                            </td>
+                                            <td>
+                                                <input type="text" id="_amount" class="form-control _Amount" onchange="changeamount(this)" name="Amount" value="@item["dgvtxtAmount"]"/>
+                                            </td>
+                                            <td>
+                                                <a href="#" onclick="removeRow(this, @item["budgetDetailsId"], @item["dgvtxtAmount"], '@item["dgvcmbDrOrCr"]')" class="danger">
+                                                    <i class="fa fa-times-circle" style="color: red; float: right; font-size: 15px;"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        i++;
+                                    }
+                                    </tbody>
+                                </table>
+
+                                <div class="col-sm-12">
+                                    <label class="float-right m-l-40">
+                                        Total Dr
+                                        <input type="text" id="totalDr" value="" name="totalDr" class="m-l-20" readonly/>
+                                    </label>
+                                    <label class="float-right m-l-40">
+                                        Total Cr
+                                        <input type="text" id="totalCr" value="0" name="totalCr" class="m-l-20" readonly/>
+                                    </label>
+                                </div>
+
+                            </div>
+                            <div class="form-group col-12 pb-2 mt-3">
+                                <a href="@Url.Action("Index", "Budget")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back</a>
+                                <button type="submit" id="create" class="btn btn-primary float-right mr-2" name="save">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="d-none">
+                        @Html.DropDownList("LedgerId", (SelectList) ViewBag.LedgerId, new {@class = "form-control"})
+
+                        @Html.DropDownList("DrCr", new SelectList(new[] {"Dr", "Cr"}, null), new {@class = "form-control has-feedback-left crdr"})
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function removeRow(selector) {
+    //    if ($('#tablebody tr').length > 1) {
+    //        var clickedA = $(selector);
+    //        var CurrentRow = clickedA.closest('tr');
+    //        var amount = CurrentRow.find("#Amounts").val();
+    //        var crdr = CurrentRow.find("#DrCr").val();
+    //        var totalDr = $('#totalDr').val();
+    //        var totalCr = $('#totalCr').val();
+    //        if (crdr == "Dr") {
+    //            totalDr = $('#totalDr').val() - amount;
+    //        }
+    //        if (crdr == "Cr") {
+    //            totalCr = $('#totalCr').val() - amount;
+    //        }
+    //        $(selector).closest('tr').remove();
+    //        $('#totalDr').val(totalDr);
+    //        $('#totalCr').val(totalCr);
+    //    }
+    //}
+    function reloadGridData() {
+        location.reload();
+    }
+
+    function removeRow(selector, id, amount, crdr) {
+        if ($('#tablebody tr').length > 1) {
+            var clickedA = $(selector);
+            var CurrentRow = clickedA.closest('tr');
+            var totalamount = CurrentRow.find("#Amounts").val();
+            var crdr = CurrentRow.find("#DrCr").val();
+            var totalDr = parseInt($('#totalDr').val());
+            var totalCr = parseInt($('#totalCr').val());
+            if (id > 0) {
+                $(selector).find('#delete-loader').toggle();
+                var masterId = $('#masterId').val();
+                var url = '@Url.Action("DeleteBudgetDetails", "budget")';
+                url += '?id=' + id + '&masterId=' + masterId + '&amount=' + amount + '&crdr=' + crdr;
+                $.post(url,
+                    function(data) {
+                        if (data == "true") {
+                            location.reload();
+                        } else {
+                            alert('An error occured while trying to remove the record. Please try again later.');
+                        }
+                        $(selector).find('#delete-loader').toggle();
+                    });
+            } else {
+                if (crdr == "Dr") {
+                    totalDr = parseInt($('#totalDr').val()) - parseInt(totalamount);
+                }
+                if (crdr == "Cr") {
+                    totalCr = parseInt($('#totalCr').val()) - parseInt(totalamount);
+                }
+
+                $(selector).closest('tr').remove();
+                $('#totalDr').val(totalDr);
+                $('#totalCr').val(totalCr);
+            }
+        }
+    }
+
+    $(document).ready(function() {
+        var Total = 0;
+        var Total2 = 0;
+        $('#tablebody tr').each(function() {
+            if ($(this).find('#DrCr').val() == "Dr") {
+                Total += parseFloat($(this).find('._Amount:first').val().trim());
+            } else {
+                Total2 += parseFloat($(this).find('._Amount:first').val().trim());
+            }
+        });
+        $('#totalDr').val(Total);
+        $('#totalCr').val(Total2);
+
+        $('#add').on('click',
+            function() {
+                var i = $('#tablebody tr').length + 1;
+                var select = $('select[name="LedgerId"]:first').html();
+                var drcr = $('select[name = "DrCr"]:first').html();
+                var html = '<tr><td>' + i + '</td><td class="tdGroupid"><select name="Particuler" id="LedgerId" class="form-control" > ' + select + '</select></td><td class="drcr"><select name="DrCr" id="DrCr" onchange="changeamount(this)" class="form-control DrCr" > ' + drcr + '</select></td> <td><input type="text" id="_amount" class="form-control _Amount" onchange="changeamount(this)" name="Amount" value="0" /></td><td><a href="#" onclick="removeRow(this)"><i class="fa fa-times-circle" style="color:red;font-size:15px;float:right"></i></a></td></tr>';
+                $('#tablebody').append(html);
+                $('#tablebody tr ._Amount').each(function() {
+
+                    $(this).unbind('change');
+
+                    $(this).on('change',
+                        function() {
+                            var grantTotal = 0;
+                            var grantTotal2 = 0;
+                            $('#tablebody tr').each(function() {
+
+                                if ($(this).find('#DrCr').val() == "Dr") {
+                                    grantTotal += parseFloat($(this).find('._Amount:first').val().trim());
+                                } else {
+                                    grantTotal2 += parseFloat($(this).find('._Amount:first').val().trim());
+                                }
+
+                            });
+
+                            $('#totalCr').val(grantTotal2);
+                            $('#totalDr').val(grantTotal);
+
+                        });
+                });
+            });
+    });
+
+    function changeamount(selector) {
+        var grantTotal = 0;
+        var grantTotal2 = 0;
+        var currrent = $(selector).closest('tr');
+        $('#tablebody').find('.DrCr').each(function() {
+            if ($(this).val() == "Dr") {
+                var ss = $(this).closest('tr');
+                grantTotal += parseInt(ss.find('._Amount').val().trim());
+            } else {
+                var ss = $(this).closest('tr');
+                grantTotal2 += parseInt(ss.find('._Amount').val().trim());
+            }
+        });
+        $('#totalDr').val(grantTotal);
+        $('#totalCr').val(grantTotal2);
+
+    }
+
+</script>

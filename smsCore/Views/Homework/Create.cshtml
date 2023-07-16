@@ -1,0 +1,238 @@
+﻿@using sms.Models
+@model Homework
+@inject StaticResources resources
+
+
+@{
+    ViewBag.Title = "Create Honework";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+<head>
+    <script src="https://cdn.ckeditor.com/4.13.1/standard/ckeditor.js"></script>
+</head>
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Add Homework
+        </li>
+
+    </ul>
+</div>
+
+<div class="container" id="addHomework">
+   @* @using (Ajax.BeginForm("Create", "Homework", new AjaxOptions { HttpMethod = "POST",OnSuccess= "reloadGridData", OnComplete = "completed", LoadingElementId = "addHomeworkForm #server-progress", OnBegin = "begin" }, new { id = "addHomeworkForm", enctype = "multipart/form-data", data_reset = "true" }))
+    {*@
+    <form asp-action="Create" asp-controller="Homework"
+          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="addHomeworkForm" data_reset="true">
+                   
+
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        <div class="row">
+
+            <div class="col-12 ">
+                <div class="row">
+                    <div class="col-12">
+                        <div id="message">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row ">
+
+                    @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "addHomework", ColCssClass = "col-12 col-sm-4 col-md-4", ShowSubjects = true, ShowCampus = true, ShowClasses = true, ShowSections = true })
+
+                    @Html.Partial("_PartialDate", new PartialDateViewModels
+                    {
+                        Label = "Homework Date",
+                        ParentContainerID = "adm-date",
+                        ColCssClass = "col-12 col-sm-4 date",
+                        ShowAltField = false,
+                        DateFieldId = "HomeworkDate",
+                        DateFieldName = "HomeworkDate",
+                        KeepDataFieldReadOnly = true,
+                        DefaultDate = DateTime.Now
+                    })
+
+                    @Html.Partial("_PartialDate", new PartialDateViewModels
+                   {
+                       Label = "Submission Date",
+                       ParentContainerID = "adm-date",
+                       ColCssClass = "col-12 col-sm-4 date",
+                       ShowAltField = false,
+                       DateFieldId = "subDate",
+                       DateFieldName = "SubmissionDate",
+                       KeepDataFieldReadOnly = true,
+                       DefaultDate = DateTime.Now
+                   })
+                    <div class="col-12 col-sm-4  has-feedback">
+                        <label>Attach Document</label>
+                        <input type="file" data-preview="stdTaskView" name="attachHw" id="attachHomework" class="form-control p-1" style="height: 35px;" />
+                    </div>
+
+                    <div class="col-12 col-sm-4  has-feedback">
+                        <label>Description</label>
+                        <div class="controls">
+                            @Html.TextAreaFor(model => model.description, new { @class = "form-control has-feedback-left input-lg textarea-editor", type = "text" })
+                                                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.description)
+                                            </div>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2 mb-5">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fa fa-book"></i> Homework List 
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+
+                                @Html.EJS().Grid("GridS").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                           {
+                               col.Field("CampusName").HeaderText("Campus").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                               col.Field("ClassName").HeaderText("Class").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                               col.Field("Subject").HeaderText("Subject").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                               col.Field("HomeworkDate").HeaderText("HomeworkDate").Width("80").Format("dd/MM/yyyy").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                               col.Field("SubmissionDate").HeaderText("SubmissionDate").Width("80").Format("dd/MM/yyyy").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                               col.Field("description").HeaderText("Description").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                               col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(TextAlign.Left).Add();
+                           }).FilterSettings(filter => { filter.Type(Syncfusion.EJ2.Grids.FilterType.CheckBox); }).AllowSorting(true).PageSettings(page => page.PageSize(5)).Toolbar(new List<string>()
+                          { "PdfExport", "Print", "ExcelExport", "Search" ,"ColumnChooser" }).Render()
+                            </div>
+
+                            <script type="text/x-jsrender" id="action">
+                                <a title="Edit" class="editL" id="${Id}" href="/Homework/Edit/${Id}"><i class="fa fa-edit"></i></a>
+                                <a title="Delete" class="delete" id="${Id}" href="/Homework/Delete/${Id}"><i class="fa fa-trash ml-2"></i></a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>
+</div>
+
+@Html.EJS().ScriptManager()
+
+<script @resources.JavaScript>
+    CKEDITOR.replace('description')
+    function reloadGridData() {
+        var classid = $('#Classes').val();
+        var sectionid = $('#Sections').val();
+        var subjectid = $('#Subjects').val();
+        var campusId = $('#Campus').val();
+        var url1 = '@Url.Action("GeHomeworkList")';
+        url1 += '?classid=' + classid + '&sectionid=' + sectionid + '&campusId=' + campusId + '&subjectid=' + subjectid;
+
+        var grid = document.getElementById("GridS").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    
+    $(document).ready(function () {
+
+
+        $('#updatebtn').prop('disabled', true);
+        $("#attachHomework").change(function () {
+            // Get uploaded file extension
+            var extension = $(this).val().split('.').pop().toLowerCase();
+            // Create array with the files extensions that we wish to upload
+            var validFileExtensions = ['doc', 'docx', 'pdf'];
+            //Check file extension in the array.if -1 that means the file extension is not in the list.
+            if ($.inArray(extension, validFileExtensions) == -1) {
+                alert("Sorry!! Upload only 'doc', 'docx', 'pdf' file")
+                // Clear fileuload control selected file
+                $(this).replaceWith($(this).val('').clone(true));
+                //Disable Submit Button
+                $('#updatebtn').prop('disabled', true);
+            } else {
+                // Check and restrict the file size to 128 KB.
+                if ($(this).get(0).files[0].size > (131072)) {
+                    alert("Sorry!! Max allowed file size is 128 kb");
+                    // Clear fileuload control selected file
+                    $(this).replaceWith($(this).val('').clone(true));
+                    //Disable Submit Button
+                    $('#updatebtn').prop('disabled', true);
+                } else {
+                    //Enable Submit Button
+                    $('#updatebtn').prop('disabled', false);
+                }
+            }
+        });
+        $("#updatebtn").click(function () {
+            if ($("#HomeworkDate").val() = null || $("#subDate").val()) {
+                alert("Please fill out required fields(*)");
+                return false;
+            }
+            return true;
+        });
+      });
+
+    
+    // Modal For Delete HW List //
+    $('#GridS').on('click',
+        'a.delete',
+        function (e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            var title = "Delete Homework";
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+    // Modal For Edit HW List //
+    $('#GridS').on('click',
+        'a.editL',
+        function (e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            var heading = "Edit Homework"
+            BootstrapDialog.show({
+                title: heading,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>

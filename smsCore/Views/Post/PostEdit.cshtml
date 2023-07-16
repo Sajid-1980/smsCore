@@ -1,0 +1,83 @@
+﻿@model PublicContentPost
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
+@*@using (Html.BeginForm("PostEdit", "Post", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{*@
+<form asp-action="PostEdit" asp-controller="PostEdit"  data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed"   class="form-horizontal form-label-left input_mask" >
+       
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    <div class="container" style="padding-top:65px">
+        <p><h4>ContentPost</h4></p>
+        <form  method="post" class="mt-5">
+            <div class="row">
+                <div class="col-12 col-sm-8  col-md-9  has-feedback">
+                    <label class="control-label">Title</label>
+                    <div class="controls">
+                        @Html.EditorFor(model => model.PostTitle, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.PostTitle, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 col-md-3 form-group">
+                    <label for="basicinput">PostType</label>
+                    <div class="controls"> @Html.DropDownListFor(model => model.PostCategoryId, (SelectList)ViewBag.posttype, new { @class = "form-control" })</div>
+
+                </div>
+
+                <div class="col-12 has-feedback">
+                    <label class="control-label">
+                        Content/Description
+                    </label>
+                    <div class="controls">
+                        <textarea class="form-control input-lg textarea-editor" cols="20" id="Message"
+                                  name="PostContent" placeholder="PostContent" rows="20" style="resize:none;width:40px;"></textarea>
+                        @Html.ValidationMessageFor(model => model.PostContent, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 has-feedback">
+                    @Html.LabelFor(model => model.PreviewImage, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="controls">
+                        <input type="file" class="form-control-file" id="PreviewImage" name="PreviewImage">
+                        @Html.ValidationMessageFor(model => model.PreviewImage, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-12 col-sm-6 col-md-3 has-feedback">
+                    @Html.LabelFor(model => model.DetailImage, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="controls">
+                        <input type="file" class="form-control-file" id="DetailImage" name="DetailImage">
+                        @Html.ValidationMessageFor(model => model.DetailImage, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-12 col-md-12">
+                    <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary pull-right mt-5 mr-2">
+
+                        Save
+                    </button>
+                </div>
+
+            </div>
+        </form>
+
+
+    </div>
+
+    </form>
+@section Scripts
+{
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.js"></script>
+
+    <script src="/Scripts/jquery-1.10.2.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.textarea-editor').summernote(
+                {
+                    height: 300,                 // set editor height
+                    minHeight: null,             // set minimum height of editor
+                    maxHeight: null,             // set maximum height of editor
+                    focus: true                  // set focus to editable area after initializing summernote
+                });
+        });
+    </script>
+
+}

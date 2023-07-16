@@ -1,0 +1,76 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Report Designer";
+}
+<style>
+    #report-designer{
+        height:60vh;
+    }
+</style>
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        @*<li class="active">
+                <a href="@Url.Action("StudentReports","Reports")">Student Report</a>
+            </li>*@
+        <li class="active">
+            Report Designer
+        </li>
+    </ul>
+</div>
+<section id="ReportDesignerSection" class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Student Reports</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="report-designer">
+
+                </div>
+            </div>
+            <div class="card-footer text-right">
+                <button class="btn btn-primary" onclick="newTab()">Preview</button>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<link href="/assets/reportbro-designer/ext/spectrum.css" rel="stylesheet" type="text/css" />
+<link href="/assets/reportbro-designer/reportbro.css" rel="stylesheet" type="text/css" />
+<script src="/assets/reportbro-designer/ext/jquery.js"></script>
+<script src="/assets/reportbro-designer/ext/autosize.js"></script>
+<script src="/assets/reportbro-designer/ext/JsBarcode.all.min.js"></script>
+<script src="/assets/reportbro-designer/ext/spectrum.js"></script>
+<script src="/assets/reportbro-designer/reportbro.js"></script>
+<script @resourse.JavaScript>
+
+    var rb = $('#report-designer').reportBro({
+            localStorageReportKey: 'reportBroDemoDefault',
+            //remove reportServerUrl if you want to use the default report server for a quick start
+        reportServerUrl: '/Reports/ReportDesigner',
+            additionalFonts: [{ name: 'Tangerine', value: 'tangerine' }, { name: 'Lobster', value: 'lobster' }]
+        });
+    $('#report-designer').reportBro('loadLocalReport');
+  
+    function save() {
+        let html = $('#rbro_document_panel').html();
+
+    }
+
+    function newTab() {
+        let html = $('#rbro_document_panel').html();
+        console.log(html);
+        var w = window.open();
+
+        $(w.document.body).html(html);
+    }
+</script>

@@ -1,0 +1,198 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Received Fee";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Fee Report</a>
+        </li>
+        <li class="active">
+            Transport Received Fee List
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="recievedFee-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-2 col-sm-3">
+                            <label>regno</label>
+                            <input type="text" id="regno" class="form-control"/>
+                        </div>
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "recievedFee-container", ColCssClass = "col-12 col-sm-3 col-md-2  form-group has-feedback", ShowCampus = true, ShowClasses = true})
+                        <div class="col-12 col-sm-3 col-lg-1  col-md-2 form-group has-feedback mt-4">
+                            <label><input type="checkbox" id="range"/> Range</label>
+                        </div>
+                        <div class="col-12 col-sm-3 col-md-2">
+                            <label>From Date</label>
+                            <input id="fromdate" class="date form-control" readonly/>
+                        </div>
+                        <div class="col-12 col-sm-3 col-md-2">
+                            <label>To Date</label>
+                            <input id="todate" class="date form-control" readonly/>
+                        </div>
+                        <div class="col-12 col-sm-3 col-md-2 form-group has-feedback">
+                            <label>Category</label>
+                            <select id="category" class="form-control has-feedback">
+                                <option value="AllStudents">All Students</option>
+                                <option value="PresentStudents">Present Students</option>
+                                <option value="ExStudents">Ex Students</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent  btn-primary  pull-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new  GridModel
+                {
+                    GridId="list_rpt_classwise_rsf",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Received Fee Statement",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+                        new Column{ FieldName="ForMonth", HeaderText="Month", AutoFit=true },
+                        new Column{ FieldName="DueDate", HeaderText="Due Date", AutoFit=true },
+                        new Column{ FieldName="Total", HeaderText="Month", AutoFit=true },
+                        new Column{ FieldName="Received", HeaderText="Received", AutoFit=true }
+},
+                    GridAggregateColumns=new List<GridAggregateColumn> {
+
+                    new GridAggregateColumn() { Field="DueDate", Type="none", GroupFooterTemplate= "Total",FooterTemplate="Total"},
+                        new GridAggregateColumn() { Field="Total", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}" },
+                        new GridAggregateColumn() { Field="Received", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}"}
+                    },
+
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("fee").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().ToolbarClick("toolbarClick").Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+            {
+                col.Field("AdmissionID").HeaderText("Reg No").Width("50").TextAlign(TextAlign.Left).Add();
+                col.Field("StudentName").HeaderText("Name").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("ClassName").HeaderText("Class").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("ForMonth").HeaderText("Month").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("DueDate").HeaderText("Due Date").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Total").HeaderText("Total").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Received").HeaderText("Received").Width("80").TextAlign(TextAlign.Left).Add();
+            }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "search" }).Render()*@
+       
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("fee").ej2_instances[0];
+    //    if (args.item.id === 'fee_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'fee_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+    $(function() {
+        $('.date').inputmask({ mask: '99/99/9999' });
+        $(".date").datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            showAnim: "clip",
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            yearRange: "-50:+0"
+        });
+
+        $(".date").on('change', function() {
+            var val = $(this).val();
+            try {
+                var mo = moment(val, 'YYYY-MM-DD');
+                if (mo._d == 'Invalid Date') {
+                    $(this).closest('div').append('<span class="nosubmit conversion-error text-danger">Please select a valid date</span>');
+                } else {
+                    $(this).closest('div').find('.conversion-error').remove();
+                }
+                //console.log(mo)
+                //alert('converted',mo);
+            } catch{
+                alert('conversion error');
+        };
+    }); });
+
+    $('#range').on('click',
+        function() {
+            if ($(this).is(':checked')) {
+                $('#fromdate').attr('readonly', false);
+                $('#todate').attr('readonly', false);
+            } else {
+                $('#fromdate').attr('readonly', true);
+                $('#todate').attr('readonly', true);
+            }
+        });
+    $('#btnSearch').on('click',
+        function() {
+            var fromdate = $('#fromdate').val();
+            var regno = $('#regno').val();
+            if (regno == null) {
+                regno = "";
+            }
+            var todate = $('#todate').val();
+            if ($('#fromdate').val() == "") {
+                $('#fromdate').focus();
+            }
+            if ($('#todate').val() == "") {
+                $('#todate').focus();
+            }
+            if ($('#range').is(':checked')) {
+                range = "true";
+            }
+            var url1 = '@Url.Action("GetReceivedFeeForTransport")';
+            url1 += '?fromdate=' + fromdate + '&todate=' + todate + '&classId=' + $('#Classes').val() + '&regno=' + regno + '&category=' + $('#category').val();
+            $.get(url1,
+                null,
+                function(data) {
+                    console.log(data);
+                    var gridList = document.getElementById("@grid.GridId").ej2_instances[0];
+                    gridList.dataSource = (data);
+                });
+        });
+
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("fee").ej2_instances[0];
+    //    if (args.item.id === 'fee_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'fee_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+</script>
+@Html.EJS().ScriptManager()

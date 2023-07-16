@@ -1,0 +1,64 @@
+﻿@model  ApplicationUser
+@{
+    ViewBag.Title = ""; // "Create";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<hgroup class="title">
+    @*<h1>@ViewBag.Title</h1>
+    <h2>Edit user account.</h2>*@
+</hgroup>
+
+@*@using (Html.BeginForm("Edit", "Users", FormMethod.Post, new {enctype = "multipart/form-data"}))
+{*@
+
+    
+
+<form asp-action="Edit" asp-controller="Users"  data-ajax="true" data-ajax-method="post" enctype="multipart/form-data"   class="form-horizontal form-label-left input_mask"  >
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+
+    <fieldset>
+        @*<legend>Registration Form</legend>*@
+        <ol>
+            <li>
+                @Html.LabelFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.UserName)
+                @Html.HiddenFor(m => m.Id)
+
+            </li>
+            @*<li>
+                @Html.LabelFor(m => m.Email)
+                @Html.TextBoxFor(m => m.Email)
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Mobile)
+                @Html.TextBoxFor(m => m.Mobile)
+            </li>
+            <li>
+                @Html.LabelFor(m => m.UserName)
+                @Html.TextBoxFor(m => m.UserName)
+            </li>
+            
+            <li>
+            <img src="@Model.ProfilePic"  class="img-thumbnail"/>
+            </li>
+            <li>
+                @Html.LabelFor(m => m.ProfilePic)
+                @Html.TextBox("ProfilePicFile", null, new { type = "file" })
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Status)
+                @Html.CheckBoxFor(m => m.Status)
+            </li>*@
+        </ol>
+        <input type="submit" value="Register"/>
+    </fieldset>
+</form>
+
+@section Scripts {
+    @*@Scripts.Render("~/bundles/jqueryval")*@
+}

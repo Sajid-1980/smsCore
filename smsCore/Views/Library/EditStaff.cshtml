@@ -1,0 +1,109 @@
+﻿@model Models.LibraryIssuedBooksToStaff
+@{
+    ViewBag.Title = "EditStaff";
+}
+
+    @*@using (Ajax.BeginForm("EditStaff", "Library", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "editLibraryIssuedForm #server-progress", OnBegin = "begin"}, new {id = "editLibraryIssuedForm", enctype = "multipart/form-data"}))
+    {*@
+<form asp-action="EditStaff" asp-controller="Library" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editLibraryIssuedForm" data_reset="true">
+     
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3 class="text-primary">Edit Staff Book List</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+
+                    @Html.HiddenFor(model => model.ID)
+
+
+                    <div class="col-12 col-sm-6  has-feedback">
+                        <label> Books Name <font class="text-danger">*</font></label>
+                        <div  class="controls">
+                            @Html.DropDownListFor(model => model.LibraryBookRecord.LibraryBookList.Title, (SelectList)ViewBag.LibraryBookRecordId, new { @class = "form-control has-feedback-left" })
+                            <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.LibraryBookRecord.LibraryBookList.Title)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6  has-feedback">
+                        <label>Staff Name <font class="text-danger">*</font></label>
+                        <div  class="controls">
+                            @Html.DropDownListFor(model => model.StaffID, (SelectList)ViewBag.StaffID, new { @class = "form-control has-feedback-left" })
+                                                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.StaffID)
+                                            </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 has-feedback">
+                        <label>Book Condition <font class="text-danger">*</font></label>
+                        <div  class="controls">
+                            @Html.TextBoxFor(model => model.BookCondition, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                            <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.BookCondition)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 has-feedback">
+                        <label>Return Date <font class="text-danger">*</font></label>
+                        <div class="controls" >
+                            @Html.TextBoxFor(model => model.ReturnDate, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                            <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.ReturnDate)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 has-feedback">
+                        <label>Due Date <font class="text-danger">*</font></label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.DueDate, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                            <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.DueDate)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 has-feedback">
+                        <label>Issued Date <font class="text-danger">*</font></label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.IssuedDate, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                                                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.IssuedDate)
+                                            </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 has-feedback">
+                        <label>Remarks <font class="text-danger">*</font></label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control has-feedback-left", required = "true", type = "text" })
+                            <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessageFor(model => model.Remarks)
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-4 mr-2 m-md-2">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </form>

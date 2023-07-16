@@ -1,0 +1,183 @@
+﻿@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Salary Payment Register";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Salary Payment Register
+            </li>
+
+        </ul>
+    </div>
+}
+
+<section class="content" id="salarypaymentreg-container">
+    <div class="row">
+        <div class="col-12 col-lg-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    Search Cretiria
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "salarypaymentreg-container", ColCssClass = "col-6 col-md-6 has-feedback", CampusFieldName = "CampusID", ShowCampus = true })
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                          {
+                              Label = "Month:",
+                              PickerType = "month",
+                              Format = "MM yy",
+                              ParentContainerID = "mont-date",
+                              ColCssClass = "col-12 col-sm-6 col-md-6",
+                              ShowAltField = true,
+                              AltFieldId = "month",
+                              AltFieldName = "Month",
+                              AltFieldFormat = "dd/mm/yy",
+                              DateFieldId = "monthpick",
+                              DateFieldName = "monthpick",
+                              KeepDataFieldReadOnly = true,
+                              DefaultDate = DateTime.Now
+                          })
+                    </div>
+
+
+                </div>
+                <div class="card-footer text-right">
+                    <button type="button" value="Create" onclick="reloadGridData()" class="btn btn-primary">
+                        <i class="fa fa-search mr-2"></i>
+                        <span>
+                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                        </span> Search
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-8">
+            <div class="card">
+                <div class="card-header with-border">
+                    Payment Registered
+                </div>
+                <div class="card-body">
+                    <div id="advancepayment-gridContainer">
+   @*                     @Html.EJS().Grid("list_monthlysalary").Columns(col =>
+                   {
+                       col.Template("${sno(index)}").HeaderText("S.No").Width("70").TextAlign(TextAlign.Left).Add();
+                       col.Field("employeeCode").HeaderText("Code").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                       col.Field("employeeName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                       col.Field("EntryDate").HeaderText("Date").Format("dd/MM/yyyy hh:mm aa").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                       col.Template("#voucher").HeaderText("Type").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                       col.Field("Amount").HeaderText("Amount").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                       col.Template("#package").HeaderText("Action").Width(100).TextAlign(TextAlign.Center).Add();
+                   }).AllowPaging().PageSettings(p => p.PageSize(10).PageSizes(new string[] { "10", "30", "50", "All" })).Render()*@
+
+
+                        @{
+                            var modelgrid = new GridModel()
+            {
+                GridId = "list_att_message",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                        {
+                        new Column{Template="${sno(index)",HeaderText="S.No",Width="70",AutoFit=true,TextAlign=TextAlign.Left},
+                        new Column{FieldName="employeeCode",HeaderText="Code",AutoFit=true,TextAlign=TextAlign.Left},
+                        new Column{FieldName="employeeName",HeaderText="Name",TextAlign=TextAlign.Left},
+                        new Column{FieldName="EntryDate",HeaderText="Date",DateFormat="dd/MM/yyyy hh:mm aa",TextAlign=TextAlign.Left},
+                        new Column{Template="#voucher",HeaderText="voucher",AutoFit=true,TextAlign=TextAlign.Left},
+                        new Column{FieldName="Amount",HeaderText="Amount",DateFormat="dd/MM/yyyy hh:mm a",AutoFit=true,TextAlign=TextAlign.Left},
+                        new Column{Template="#package",HeaderText="Action",Width="100",AutoFit=true,TextAlign=TextAlign.Left},
+
+                        },
+                AllowFiltering = true,
+            };
+                        }
+                        @await Html.PartialAsync("_grid",modelgrid)
+                        <script id="package" type="text/x-jsrender">
+                            <a class="ajax-load" href="/Payroll/SalaryPaymentEdit/${Id}"><i class="fa fa-pencil mr-2"></i></a>
+                            <a class="ajax-delete" href="/Payroll/SalaryPaymentDelete/${Id}"><i class="fa fa-trash mr-2"></i></a>
+                        </script>
+                        <script id="voucher" type="text/x-jsrender">
+                            ${if(VoucherTypeId==@((int)PublicVariables.EnumVoucherTypeDefaults.Payment_Voucher))}
+                            Regular payment
+                            ${else}
+                            Advance Payment
+                            ${/if}
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+    var grid = document.getElementById("list_monthlysalary").ej2_instances[0];
+    function reloadGridData() {
+        var campusId = $('#Campus').val();
+        var month = $('#month').val();
+        var url = '/Payroll/SalaryPaymentList';
+
+        url += '?month=' + month + '&campusId=' + campusId;
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    reloadGridData();
+
+    $('#list_monthlysalary').on('click',
+        'a.ajax-load',
+        function (e) {
+            e.preventDefault();
+            var title = 'Payroll';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+    $('#list_monthlysalary').on('click',
+        'a.ajax-delete',
+        function (e) {
+            e.preventDefault();
+            var title = 'Are you sure to delete this record.';
+            var url = $(this).attr('href');
+
+            sweetalertWithUrl(title, url, true);
+            return false;
+        });
+
+   
+</script>

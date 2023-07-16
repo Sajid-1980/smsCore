@@ -1,0 +1,66 @@
+﻿@model  tbl_PayHead
+@{
+    ViewBag.Title = "Payhead Edit";
+    Layout = null;
+}
+
+
+@*@using (Ajax.BeginForm("PayheadEdit", "Payroll", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm"}))
+{*@
+<form asp-action="PayheadEdit" asp-controller="Payroll"  data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+  
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.payHeadId, new {@class = "form-control has-feedback-left", required = "required"})
+
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="row no-gutters ">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-12 col-sm-2 col-md-6">
+                    <label>Name</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(m => m.payHeadName, new { @class = "form-control has-feedback-left", required = "required" })
+                        <span class="fa fa-file form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("payHeadName")
+                    </div>
+                </div>
+                <div class="col-12 col-sm-2 col-md-6">
+                    <label>Type</label>
+                    <div class="controls">
+                        <select name="type" class="form-control">
+                            <option selected="@Model.type==1" value="1">Addition</option>
+                            <option selected="@Model.type==-1" value="-1">Deduction</option>
+                        </select>
+                        <span class="fa fa-file form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("type")
+                    </div>
+                </div>
+                <div class="col-6 col-sm-2 col-md-6">
+                    <label>Narration</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(m => m.narration, new { @class = "form-control has-feedback-left" })
+                        <span class="fa fa-file form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("narration")
+                    </div>
+                </div>
+                <div class="form-group col-12 pb-2 mt-3">
+                    
+
+                    <button type="submit" value="Create" class="btn btn-primary float-right">
+                        <i class="fa fa-save mr-2"></i>
+                        <span>
+                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                        </span> Save
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

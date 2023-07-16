@@ -1,0 +1,225 @@
+﻿@inject StaticResources resources
+
+@model IEnumerable<FeeType>
+@{
+    ViewBag.Title = "Index";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<section class="content"  id="feeTypeIndex-container">
+    <div class="row">
+        <!-- left column -->
+        <div class="col-12 col-sm-12">
+            <!-- general form elements -->
+           @* @using (Ajax.BeginForm("AddFeeType", "Fee", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "FeeTypeAddForm #server-progress", OnBegin = "begin" }, new { id = "FeeTypeAddForm", data_reset = "true" }))
+            {*@
+            <form asp-action="AddFeeType" asp-controller="Fee"
+      data-ajax="true" data-ajax-method="post"  data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeTypeAddForm" data_reset="true">
+       
+                <div class="card card-primary">
+                    <div class="card-header ptbnull px-2">
+                        <h3 class="card-title titlefix">Fee Type Creation <a href="https://www.youtube.com/watch?v=-L7sM_ZtyMo&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=225s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+
+                    </div><!-- /.box-header -->
+                    <div class="card-body">
+
+
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message"></div>
+                            </div>
+                            @*@Html.Partial("_PartialCampusSelector", new sms.Models.PartialCampusViewModels { ParentContainerID = "feeTypeIndex-container", ColCssClass = "col-md-6 col-sm-6 col-12", ShowCampus = true })*@
+                            <div class=" col-md-2 col-sm-6 col-12 form-group has-feedback">
+                                <label> Sorted order:</label>
+                                <div class="controls">
+                                    <input type="number" name="Sortorder" class="form-control" />
+                                    <span class="fa fa-sort form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class=" col-md-4 col-sm-6 col-12 form-group has-feedback">
+                                <label> Fee Type Name:</label>
+                                <div class="controls">
+                                    <input type="text" name="TypeName" class="form-control" />
+                                    <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <br />
+                            <div class=" col-md-6 col-sm-6 col-12 form-group has-feedback">
+                                <label>Notes</label>
+                                <div class="controls">
+                                    <input type="text" name="Notes" class="form-control" />
+                                    <span class="fa fa-sticky-note form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-6 col-12 form-group has-feedback">
+                                <label class="mt-4">
+
+                                    <input type="checkbox" name="AllowDiscount" class="mr-2" />
+                                    Allow Discount
+                                </label>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-12 form-group has-feedback">
+                                <label class="mt-4">
+
+                                    <input type="checkbox" name="IsOptional" class="mr-2" />
+                                    Is Optional
+                                </label>
+                            </div>
+                            <div class="col-12 mt-2">
+                            </div>
+                        </div>
+                    </div><!-- /.box-body -->
+                    <div class="card-footer px-2">
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" value="Create" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div><!--/.col (left) -->
+        <div class="col-12 col-sm-12">
+            <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Fee Type List</h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="col-12">
+                        @Html.EJS().Grid("feetypelist").DataSource(dataManger =>
+                   {
+                       dataManger.Url("/Fee/GetFeeTypes").Adaptor("UrlAdaptor");
+                   }).Columns(col =>
+                   {
+                       col.Field("SortOrder").HeaderText("Sort Order").Width("70").TextAlign(TextAlign.Left).Add();
+                       col.Field("TypeName").HeaderText("Description").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                       col.Field("Notes").HeaderText("Notes").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                       col.Field("AllowDiscount").Template("#discount").HeaderText("Discount").Width("100").TextAlign(TextAlign.Left).Add();
+                       col.Field("IsOptional").Template("#optional").HeaderText("Optional").AutoFit(true).TextAlign(TextAlign.Center).Add();
+                       col.Field("action").Template("#action").HeaderText("Action").AutoFit(true).TextAlign(TextAlign.Center).Add();
+                   }).Height("auto").Width("auto").PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "Search" }).Render()
+                    </div>
+                    <script type="text/x-jsrender" id="discount">
+                        ${if(AllowDiscount)}
+                        <i class="fa fa-check-circle" style="color:green"></i>
+                        ${else}
+                        <i class="fa fa-times-circle" style="color:red"></i>
+                        ${/if}
+                    </script>
+                    <script type="text/x-jsrender" id="optional">
+                        ${if(IsOptional)}
+                        <i class="fa fa-check-circle" style="color:green"></i>
+                        ${else}
+                        <i class="fa fa-times-circle" style="color:red"></i>
+                        ${/if}
+                    </script>
+                    <script type="text/x-jsrender" id="action">
+                        ${if(AllowEdit)}
+                        <a title="Edit" href="/Fee/FeeTypeEdit/${getid(Id)}" class="edit ml-1"><i class="fa fa-edit"></i></a>
+                        <a title="Delete" href="/Fee/FeeTypeDelete/${getid(Id)}" class="edit ml-1"><i class="fa fa-trash"></i></a>
+                        ${/if}
+                    </script>
+                </div><!-- /.box-body -->
+            </div>
+        </div><!--/.col (left) -->
+        <!-- right column -->
+    </div>
+</section>
+<div class="modal" id="myModal1" style="width: 700px">
+
+    <div class="modal-dialog center-block">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                @*<h4 class="modal-title">Add Fee Group</h4>*@
+                <button type="button" class="close" onclick="$('#myModal1').modal('toggle');">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="body">
+
+
+            </div>
+
+            <!-- Modal footer -->
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default fa fa-close" onclick="$('#myModal1').modal('toggle');">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script @resources.JavaScript>
+    $('#feetypelist').on('click',
+        'a',
+        function (e) {
+            e.preventDefault();
+            var title = 'Edit Fee Type';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+
+    $('#Campus').on('change',
+        function () {
+            reloadGridData();
+        });
+
+    function reloadGridData() {
+        var url = '/Fee/GetFeeTypes';
+        var grid = document.getElementById("feetypelist").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    //reloadGridData();
+    $("#FeeTypeAddForm").validate({
+        rules: {
+            Sortorder: {
+                required: true,
+                number: true
+            },
+            TypeName: {
+                required: true
+            }
+        },
+        messages: {
+            Sortorder: "Sort order may not empty.",
+            TypeName: "Please enter some text."
+
+        },
+        errorElement: "em",
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass("is-invalid").removeClass("is-valid");
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).addClass("is-valid").removeClass("is-invalid");
+        }
+    });
+
+</script>
+@Html.EJS().ScriptManager()

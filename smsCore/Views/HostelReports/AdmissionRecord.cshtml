@@ -1,0 +1,124 @@
+﻿@using Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Admission Record";
+}
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                <a href="@Url.Action("HostelReports", "Reports")">Hostel Report</a>
+            </li>
+            <li class="active">
+                Hostel Admission Record
+            </li>
+        </ul>
+    </div>
+ 
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-3 form-group has-feedback">
+                            <label>Hostel</label>
+                            <div class="controls">
+                                @Html.DropDownList("hostel", (SelectList)ViewBag.hstlename, new { @class = "form-control " })
+
+                                <span class="fa fa-building small form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-sm-4 col-md-3 form-group has-feedback">
+                            <label>Reg. No</label>
+                            <div class="controls">
+                            
+                                    <input type="text" id="regno" value="" class="form-control" />
+                                
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            @{
+
+                var grid = new GridModel()
+                {
+                    GridId="GridS",
+                    AllowPrint=true,
+                    AllowPdfExport=true,
+                    AllowExcelExport=true,
+                    ReportTitle="Admission Record",
+                    Columns=new List<Column>() {
+                    new Column{ FieldName="AdmissionID",HeaderText="Reg.No", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="StudentName",HeaderText="Name", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="FName",HeaderText="Father Name", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="ClassName",HeaderText="Class", Width="", TextAlign= TextAlign.Left },
+                    new Column{ FieldName="AdmissionDate",HeaderText="Adm.Date", Width="", TextAlign= TextAlign.Left },
+
+                    }
+
+                };
+            }
+            @Html.Partial("_grid", grid)
+            @*@Html.EJS().Grid("GridS").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnChooser().AllowResizing().Columns(col =>
+        {
+            col.Field("AdmissionID").HeaderText("Reg.No").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("StudentName").HeaderText("Name").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("FName").HeaderText("FName").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("ClassName").HeaderText("Class").Width("80").TextAlign(TextAlign.Left).Add();
+            col.Field("AdmissionDate").HeaderText("Adm.Date").Width("80").TextAlign(TextAlign.Left).Add();
+        }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "Search", "ColumnChooser" }).Render()*@
+
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+     $('#btnSearch').on('click',
+        function() {
+            var regno = $('#regno').val();
+
+            var url1 = '@Url.Action("GetAdmissionRecordList")';
+            url1 += '?regno=' + regno + '&hostel=' + $('#hostel').val();
+            $.get(url1,
+                null,
+                function(data) {
+                    var gridObj = document.getElementById("@grid.GridId").ej2_instances[0];
+                    // Refreshes the grid data source
+                    gridObj.dataSource = (data);
+                });
+        });
+
+    @*function toolbarClick(args) {
+        var gridObj = document.getElementById("@grid.GridId").ej2_instances[0];
+        if (args.item.id === 'GridS_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'GridS_excelexport') {
+            gridObj.excelExport();
+        }
+    }*@
+</script>
+@Html.EJS().ScriptManager()

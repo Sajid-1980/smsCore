@@ -1,0 +1,545 @@
+﻿@model tbl_Employee
+@inject SchoolEntities db
+@inject StaticResources resources;
+@{
+    ViewBag.Title = "Employee Details";
+    var Qualifications = db.Qualifications.Where(w => w.StaffID == Model.Id).ToList();
+    var Experience = db.EmployeeExpriences.Where(w => w.StfID == Model.Id).ToList();
+    var subjectExperience = db.EmployeeExperinceSubjects.Where(w => w.EmployeeId == Model.Id).ToList();
+    var timeTable = db.TimeTables.Where(w => w.StaffID == Model.Id).ToList();
+    var assignSubject = db.TeachingClasses.Where(w => w.StaffID == Model.Id && w.IsActive).FirstOrDefault();
+
+
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+
+        <li class="active">
+            Teachers Details
+        </li>
+
+    </ul>
+</div>
+<section class="content">
+<div class="row">
+<div class="col-md-3">
+    <div class="card">
+        <div class="card-body box-profile">
+            @{
+                if (Model.Photo != null)
+                {
+                    <img src="data:image/*;base64,@(Model.Photo != null ? Convert.ToBase64String(Model.Photo) : "")" id="profile-user-img" alt="User profile picture" class="profile-user-img img-responsive img-circle" style="width: 150px;"/>
+                }
+                else
+                {
+                    <img src="~/Uploads/images/user.png" id="profile-user-img" class="profile-user-img img-responsive img-circle" style="width: 150px;"/>
+                }
+            }
+
+            <h3 class="profile-username text-center">@Model.employeeName</h3>
+            <ul class="list-group list-group-unbordered">
+                <li class="list-group-item listnoback">
+                    <b>Employee Code</b> <a class="pull-right text-aqua">@Model.employeeCode</a>
+                </li>
+                <li class="list-group-item listnoback">
+                    <b>Title</b> <a class="pull-right text-aqua">@Model.Title</a>
+                </li>
+                <li class="list-group-item listnoback">
+                    <b>Designation</b> <a class="pull-right text-aqua">@Model.tbl_Designation.designationName</a>
+                </li>
+                <li class="list-group-item listnoback">
+                    <b>Qualification</b> <a class="pull-right text-aqua">@Model.qualification</a>
+                </li>
+                <li class="list-group-item listnoback">
+                    <b>Blood Group</b> <a class="pull-right text-aqua">@Model.bloodGroup</a>
+                </li>
+
+                <li class="list-group-item listnoback">
+                    <b>Gender</b> <a class="pull-right text-aqua">@Model.gender</a>
+                </li>
+
+                <li class="list-group-item listnoback">
+                    <b>Campus</b> <a class="pull-right text-aqua">@Model.Campus.CampusName</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+<div class="col-md-9">
+
+<div class="nav-tabs-custom">
+<ul class="nav nav-tabs">
+    <li class="active">
+        <a href="#activity" data-toggle="tab" aria-expanded="true">Profile</a>
+    </li>
+    <li class="">
+        <a href="#other" data-toggle="tab" aria-expanded="false">Other Information</a>
+    </li>
+    <li class="">
+        <a href="#timeTable" data-toggle="tab" aria-expanded="false">Timetable</a>
+    </li>
+    <li class="">
+        <a href="#attendance" data-toggle="tab" aria-expanded="false">Attendance</a>
+    </li>
+</ul>
+<div class="tab-content">
+<div class="tab-pane active" id="activity">
+    <div class="tshadow mb25 bozero card">
+        <div class="card-header">
+            <h2 class="text-primary text-center">BioData</h2>
+        </div>
+        <div class="table-responsive around10 pt0 card-body">
+            <table class="table  tmb0 ">
+                <tbody>
+                <tr>
+                    <td class="">Joining Date</td>
+                    <td class="" id="datepicker">
+                        @Model.joiningDate.Value.ToString("dd MMM yyyy")
+                    </td>
+                </tr>
+                <tr>
+                    <td class="">Termination Date</td>
+                    <td class="">
+                        @Model.terminationDate
+                    </td>
+                </tr>
+                <tr>
+                    <td>Date Of Birth</td>
+                    <td>@Model.dob.Value.ToString("dd MMM yyyy")</td>
+                </tr>
+                <tr>
+                    <td>Salary Type</td>
+                    <td>
+                        @Model.salaryType
+                    </td>
+                </tr>
+                <tr>
+                    <td>Salary Package</td>
+                    <td>@Model.designationId</td>
+                </tr>
+
+                <tr>
+                    <td>Narration</td>
+                    <td>@Model.narration</td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>@Model.email</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tshadow mb25 bozero card">
+        <h3 class="pagetitleh2 card-header">Contact Details </h3>
+        <div class="table-responsive card-body">
+            <table class="table  tmb0">
+                <tbody>
+                <tr>
+                    <td>Mobile Number</td>
+                    <td>@Model.mobileNumber</td>
+                </tr>
+                <tr>
+                    <td>Phone Number</td>
+                    <td>@Model.phoneNumber</td>
+                </tr>
+                <tr>
+                    <td>Current Address</td>
+                    <td>@Model.address</td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tshadow mb25 card bozero">
+        <h3 class="pagetitleh2 card-header">Qualification</h3>
+
+        <div class="table-responsive card-body around10 pt0">
+            <table class="table  tmb0">
+                <thead>
+                <tr>
+                    <td>University</td>
+                    <td>Qualification</td>
+                    <td>Year</td>
+                    <td>Grade</td>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var itm in Qualifications)
+                {
+                    <tr>
+                        <td>@itm.University</td>
+                        <td>@itm.QualificationType</td>
+                        <td>@itm.Year</td>
+                        <td>@itm.Grade</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tshadow mb25 card bozero">
+        <h3 class="pagetitleh2 card-header">Professional Experiences</h3>
+
+        <div class="table-responsive card-body around10 pt0">
+            <table class="table  tmb0">
+                <thead>
+                <tr>
+                    <td>Institution</td>
+                    <td>Designation</td>
+                    <td>From[Year]</td>
+                    <td>To[Year]</td>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var itm in Experience)
+                {
+                    <tr>
+                        <td>@itm.Institution</td>
+                        <td>@itm.Desgnition</td>
+                        <td>@itm.From</td>
+                        <td>@itm.To</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="tshadow mb25 card bozero">
+        <h3 class="pagetitleh2 card-header">Subject Experties</h3>
+        <div class="table-responsive card-body around10 pt0">
+            <table class="table  tmb0">
+                <thead>
+                <tr>
+                    <td>S.No</td>
+                    <td>Subject</td>
+                </tr>
+                </thead>
+                <tbody>
+                @{ var i = 0; }
+                @foreach (var itm in subjectExperience)
+                {
+                    i++;
+                    <tr>
+                        <td>@i</td>
+                        <td>@itm.Subject.SubjectName</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="tab-pane" id="other">
+    <div class="timeline-header no-border">
+
+    </div>
+    <div class="table-responsive around10 pt0">
+        <table class="table  tmb0 ">
+            <tbody>
+            <tr>
+                <td class="">Pan Number</td>
+                <td class="">
+                    @Model.panNumber
+                </td>
+            </tr>
+            <tr>
+                <td class="">Pf Number</td>
+                <td class="">
+                    @Model.pfNumber
+                </td>
+            </tr>
+            <tr>
+                <td>Esi Number</td>
+                <td>@Model.esiNumber</td>
+            </tr>
+            <tr>
+                <td>Bank Name</td>
+                <td>
+                    @Model.bankName
+                </td>
+            </tr>
+            <tr>
+                <td>A/c No</td>
+                <td>@Model.bankAccountNumber</td>
+            </tr>
+
+            <tr>
+                <td>Branch Name</td>
+                <td>@Model.branchName</td>
+            </tr>
+            <tr>
+                <td>Branch Code</td>
+                <td>@Model.branchCode</td>
+            </tr>
+            <tr>
+                <td>Passport Number</td>
+                <td>@Model.passportNo</td>
+            </tr>
+            <tr>
+                <td>Passpoet Expiry Date</td>
+                <td>@Model.passportExpiryDate</td>
+            </tr>
+            <tr>
+                <td>Visa Nimber </td>
+                <td>@Model.visaNumber</td>
+            </tr>
+            <tr>
+                <td>Visa Expiry Date</td>
+                <td>@Model.visaExpiryDate</td>
+            </tr>
+            <tr>
+                <td>Labour Card Number</td>
+                <td>@Model.labourCardNumber</td>
+            </tr>
+            <tr>
+                <td>Labour Card Expiry Date</td>
+                <td>@Model.labourCardExpiryDate</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="tab-pane" id="timeTable">
+    <div class="timeline-header no-border">
+        <h4 class="ml-3">Assign Class</h4>
+    </div>
+
+    <div class="table-responsive around10 pt0">
+        <table class="table  tmb0 ">
+            <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Class</th>
+                <th>Section</th>
+
+            </tr>
+            </thead>
+            <tbody>
+            @{
+                if (assignSubject != null)
+                {
+                    <tr>
+                        <td>1</td>
+                        <td>@assignSubject.ClassSection.Class.ClassName</td>
+                        <td>@assignSubject.ClassSection.Section.SectionName</td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="timeline-header no-border">
+        <h4 class="ml-3">Time Table</h4>
+    </div>
+    <div class="table-responsive around10 pt0">
+        <table class="table  tmb0 ">
+            <thead>
+            <tr>
+                <th>S.No</th>
+                <th>Period No</th>
+                <th>Subject</th>
+                <th>Class</th>
+                <th>Section</th>
+                <th>Time From</th>
+                <th>Time To</th>
+            </tr>
+            </thead>
+            <tbody>
+            @{ var g = 1; }
+            @foreach (var itm in timeTable)
+            {
+                <tr>
+                    <td>@g</td>
+                    <td>@itm.Pno</td>
+                    <td>@itm.SubjectName</td>
+                    <td>@itm.ClassName</td>
+                    <td>@itm.SectionName</td>
+                    <td>@itm.TimeFrom.ToString("h:mm tt")</td>
+                    <td>@itm.TimeTo.ToString("h:mm tt")</td>
+
+                </tr>
+                g++;
+            }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<div class="tab-pane" id="attendance">
+
+    <div id="attendance">
+        <h3 class="mb-2 text-primary">
+            <u>Teacher's Attendance List</u>
+        </h3>
+        <div id="classwisereport-gridContainer" class="col-12">
+            <table id="attendancef" class="table table-bordered" style="width: 100%">
+                <thead>
+                <tr>
+                    <th>For Month</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                    <th>Leave</th>
+                    <th>Late Coming</th>
+                    <th>Short Leave</th>
+                    <th>Total</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<div class="tab-pane" id="timelineh">
+    <div>
+        <input type="button" id="myTimelineButton" class="btn btn-sm btn-primary pull-right " value="Add">
+    </div>
+</div>
+
+<div class="tab-pane" id="exam">
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<script @resources.JavaScript>
+    $datepicker();
+
+    function reloadGridData() {
+        $('#jqgsearchstudent').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    $(document).ready(function() {
+        var studentid = $('#student_Id').val();
+        var url1 = '@Url.Action("GetfeediscountForJq")';
+        url1 += '?studentId=' + studentid;
+
+        $('#jqgsearchstudent').jqGrid({
+            //url from wich data should be requested
+            url: url1,
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'Post',
+            //columns names sr, dname, ccode, address1, phone, tname, aname,dcode,ntn,holiday
+
+            //            s.ID, s.Description, s.StartDate, s.CloseDate,s.RatingParticipants,s.RatingType,s.Year
+            //columns model
+            colModel: [
+                //  { label: 'SINo', name: 'SINo', index: 'SINo', align: 'left',  width: 30, search: true, stype: 'text', searchoptions: {  attr: { title: 'Select Date' } } },
+                { label: 'S.NO', name: 'sno', index: 'sno', align: 'left', width: 50 },
+                { label: 'Description', name: 'FeeTypeName', index: 'FeeTypeName', align: 'left' },
+                { label: 'Discount', name: 'DiscountAmount', index: 'DiscountAmount', align: 'left', width: 80 },
+                { label: 'In Amount', name: 'action', index: 'action', align: 'left', width: 70 },
+
+                //s.Id, s.EmployeeName,s.Cnic,s.Address,s.MobileNo,s.Email,
+            ],
+            caption: 'Discount Description',
+            //enable footer
+            footerrow: false,
+            userDataOnFooter: false,
+            //expect object instead of flat array
+            jsonReader: { repeatitems: false, id: 'ID' },
+            //pager for grid
+            pager: $('#jqgpsearchstudent'),
+            //number of rows per page
+            rowNum: 10,
+            //initial sorting column
+            sortname: 'Id',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            height: 180,
+
+
+            loadComplete: function() {
+                var table = this;
+                setTimeout(function() {
+                        updatePagerIcons(table);
+                    },
+                    0);
+            },
+            gridComplete: function() {
+                $('.ajax').on('click',
+                    function(e) {
+                        e.preventDefault();
+                        var title = $(this).attr('title');
+                        var url = $(this).attr('href');
+
+                        BootstrapDialog.show({
+                            title: title,
+                            message: $('<div />').load(url),
+                            onhide: function(dialogRef) {
+
+                                reloadGridData();
+                            }
+                        });
+                        return false;
+                    });
+            }
+        });
+
+        function updatePagerIcons(table) {
+            var replacement =
+            {
+                'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+                'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+                'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+                'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+            };
+            $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function() {
+                var icon = $(this);
+                var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+                if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+            });
+        }
+
+        var DataGrid = $('#jqgsearchstudent');
+
+        //sets the grid size initially
+        DataGrid.jqGrid('setGridWidth', parseInt($('#searchstudent-gridContainer').width()));
+
+        //handles the grid resize on window resize
+        $(window).resize(function() {
+            DataGrid.jqGrid('setGridWidth', parseInt($('#searchstudent-gridContainer').width()));
+        });
+    });
+
+    $(function() {
+        var url1 = '@Url.Action("getattendance")';
+        url1 += '?id=' + @Model.Id;
+        var title = 'Teacher Attendance';
+        var messageTop = 'Teacher Attendance Record';
+        var colmodel = [
+            { "data": "ForMonth", "orderable": false, "searchable": true },
+            { "data": "Present", "orderable": false, "searchable": true },
+            { "data": "Absent", "orderable": false, "searchable": true },
+            { "data": "Leave", "orderable": true, "searchable": true },
+            { "data": "Late coming", "orderable": true, "searchable": true },
+            { "data": "Short leave", "orderable": true, "searchable": true },
+            { "data": "Total", "orderable": true, "searchable": true },
+        ];
+        DrawTableLocal('#attendancef', colmodel, url1, messageTop, title);
+    });
+
+</script>

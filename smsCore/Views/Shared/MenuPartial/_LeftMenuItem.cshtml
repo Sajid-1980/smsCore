@@ -1,0 +1,77 @@
+﻿@using smsCore;
+@model MenuItemViewModel
+@{
+    bool isDev = Model.IsDev;
+}
+
+
+@if (isDev)
+{
+
+    <li class="dd-item" data-id="@Model.Id">
+        @if (Model.ChildItem.Count > 0)
+        {
+            <div class="dd-handle">@Model.DisplayText</div>
+            if (User.IsInRole("Developer") || User.IsInRole("Admin"))
+            {
+                <i class="fa fa-pen-square float-right" onclick="LoadMenuForEdit(@Model.Id, '@Model.DisplayText')"></i>
+                <i class="fa fa-trash float-right" onclick="DeleteMenuItem(@Model.Id)"></i>}
+            <ol class="dd-list">
+                @foreach (var item in Model.ChildItem)
+                {
+                    if (item.Action.Name == "CreateCampus" & !User.IsInRole("Developer"))
+                    {
+                        continue;
+                    }
+                   await Html.RenderPartialAsync("~/Views/Shared/MenuPartial/_LeftMenuItem.cshtml", item);
+                }
+            </ol> }
+        else
+        {
+            <div class="dd-handle">
+                @Model.DisplayText
+            </div>
+            if (User.IsInRole("Developer") || User.IsInRole("Admin"))
+            {<i class="fa fa-pen-square float-right" onclick="LoadMenuForEdit(@Model.Id, '@Model.DisplayText')"></i>
+                <i class="fa fa-trash float-right" onclick="DeleteMenuItem(@Model.Id)"></i>
+            }
+        }
+    </li>
+
+
+}
+else
+{
+    string isOpen = Url.MakeOpenClass(Model.Controllers.ToArray());
+
+    if (Model.ChildItem.Count > 0)
+    {
+        <li class="submenu @isOpen @Url.MakeActiveClass(Model.Controller.ToLower(), "")">
+            <a href="#"><i class="@Model.Icon"></i> <span> @Model.DisplayText</span> <span class="menu-arrow"></span></a>
+            <ul>
+                <li class="mini-only">@Model.DisplayText <hr /> </li>
+
+                @foreach (var item in Model.ChildItem)
+                {
+                    if (item.Action.Name == "CreateCampus" & !User.IsInRole("Developer"))
+                    {
+                        continue;
+                    }
+                   await Html.RenderPartialAsync("~/Views/Shared/MenuPartial/_LeftMenuItem.cshtml", item);
+                }
+            </ul>
+        </li>
+    }
+    else
+    {
+        <li class="@Url.MakeActiveClass(Model.Controller.ToLower(), "")">
+            <a data-hashurl="#@Model.Controller.ToLower().Trim()_@Model.Action.Name.ToLower().Trim()" class="ajax-load-menu" href="@Url.Action(Model.Action.Name,Model.Controller)">
+
+        @if (!string.IsNullOrEmpty(Model.Icon))
+        {
+            <i class="@Model.Icon"></i>
+        }
+        <span>@Model.DisplayText</span></a>
+        </li>
+    }
+}

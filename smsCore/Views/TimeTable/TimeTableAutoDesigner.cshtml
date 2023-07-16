@@ -1,0 +1,260 @@
+﻿@using sms.Models
+@model TimeTableConfig
+@inject StaticResources rec;
+@{
+    ViewBag.Title = "TimeTableAutoDesigner";
+}
+
+<div class="sico-container">
+    <div class="row no-gutters sico-form-col">
+        <div class="col-12">
+            <div class="row">
+                <div class="col-md-12 ">
+                    @* @using (Html.BeginForm("btnSaveConfigurationClick", "TimeTable", FormMethod.Post, new { id = "frmconfig_timetable", enctype = "multipart/form-data", @class = "form-horizontal form-label-left " }))*@
+                   @* @using (Ajax.BeginForm("TimeTableView", "TimeTable", null, new AjaxOptions {UpdateTargetId = "timeTableDisplay", HttpMethod = "post", LoadingElementId = "timeTableAutoForm #server-progress", OnBegin = "begin", OnComplete = "completed"}, new {enctype = "multipart/form-data", @class = "form-horizontal form-label-left input_mask", id = "timeTableAutoForm"}))
+                    {*@
+                    <form asp-action="TimeTableView" asp-controller="TimeTable" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="timeTableAutoForm" data_reset="true" enctype="multipart/form-data">
+
+
+
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="col-12">
+                            <h5 class="">Time Table Configuration</h5>
+                        </div>
+                        <div class="row">
+
+                            <div class="col-12 col-sm-4">
+                                <div class="row">
+
+                                    @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "timeTableAutoForm", ColCssClass = "col-12 col-sm-12 col-md-9", ShowCampus = true, CampusFieldName = "CampusID"})
+                                    <div class="col-6">
+                                        <label>First Period Start</label><font class="text-danger">*</font>
+                                                                         <div class="controls">
+                                                                             @Html.TextBoxFor(model => model.SchoolStartTime, new { required = "required", @class = "form-control" })
+                                                                             @*<input type="time" name="FirstPeriod" id="firstPeriod" class="form-control" required />*@
+                                                                         </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <label>Period Duration</label><font class="text-danger">*</font>
+                                                                      <div class="controls">
+                                                                          @Html.TextBoxFor(model => model.DurationofPeriod, new { required = "required", @class = "form-control" })
+                                                                                                              @*<input type="number" name="PeriodDuration" id="PeriodDuration" class="form-control" required />*@
+                                                                                                          </div>
+                                    </div>
+                                    <div class="col-6 NoOfPeriods">
+                                        <label>No Of Period/Day</label><font class="text-danger">*</font>
+                                                                       <div class="controls">
+                                                                           @Html.TextBoxFor(model => model.PerDayPeriod, new { required = "required", @class = "form-control" })
+                                                                           @*<input type="number" name="NoOfPeriod" id="NoOfPeriod" value="0" class="form-control" />*@
+                                                                       </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <label>
+                                            <input type="checkbox" name="Auto" id="Auto" class="mt-4 auto" checked/> Auto
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-8">
+                                <div class="row">
+                                    <div class="col-12 mt-4">
+                                        <h6>Other(Period Break, Assembly etc)</h6>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered table-hover " border="1">
+                                                <thead class="theadbody">
+                                                <tr>
+                                                    <th>Period</th>
+                                                    <th>Describtion</th>
+                                                    <th>Duration</th>
+                                                    <th>
+                                                        <a href="#" class="add">+</a>
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="otherperiod-tablebody">
+
+                                                @*<tr>
+                                                            <th>
+                                                                @Html.TextBoxFor(m => Model.otherPeriods[i].PeriodNo, new { required = "required", @class = "form-control" })
+                                                            </th>
+                                                            <th>
+                                                                @Html.TextBoxFor(m => Model.otherPeriods[i].Description, new { required = "required", @class = "form-control" })
+                                                            </th>
+                                                            <th>
+                                                                @Html.TextBoxFor(m => Model.otherPeriods[i].Duration, new { required = "required", @class = "form-control" })
+                                                            </th>
+                                                        </tr>*@
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                @* <a class="btn sico-btn form-control mt-2" id="apply">Apply</a>*@
+                                <button type="submit" value="Save" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                            <div class="col-12">
+                                <button type="button" class="btn sico-btn float-right form-control mt-2" id="btnApply">Save Configuration</button>
+
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-12 " style="background-color: #b5d0c7; padding: 0px">
+                    <div id="timeTableDisplay" class="table-responsive">
+                        <table id="timeTablegrid" class="table table-bordered"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <button class="btn sico-btn float-right mt-2 " id="btnSave"><i class="fa fa-save mr-2"></i>Save</button>
+            <button class="btn sico-btn float-right mt-2 mr-2">Print</button>
+
+        </div>
+    </div>
+</div>
+<script @rec.JavaScript>
+    //if ($('.auto').is(':checked')) {
+    //    $('#NoOfPeriod').attr(readonly);
+    //}
+
+    $(document).ready(function() {
+
+        $('#Campus').on('change',
+            function() {
+                $.get('/api/timetable/config/' + $(this).val(),
+                    function(data) {
+                        $(SchoolStartTime).val(data.Data.SchoolStratTimeStr);
+                        $(DurationofPeriod).val(data.Data.DurationofPeriod);
+                        $(PerDayPeriod).val(data.Data.PerDayPeriod);
+                        var html = '';
+                        var i = 0;
+                        if (data.Data.otherPeriods) {
+                            $.each(data.Data.otherPeriods,
+                                function(key, value) {
+                                    html += '<tr><th>' +
+                                        '<input type="number" name="otherPeriods[' +
+                                        i +
+                                        '].PeriodNo" required = "required" value="' +
+                                        value.PeriodNo +
+                                        '" class = "form-control" />' +
+                                        '</th><th>' +
+                                        '<input type="text" name="otherPeriods[' +
+                                        i +
+                                        '].Description" required = "required" value="' +
+                                        value.Description +
+                                        '" class = "form-control" />' +
+                                        '</th><th>' +
+                                        '<input type="number" name="otherPeriods[' +
+                                        i +
+                                        '].Duration" required = "required" value="' +
+                                        value.Duration +
+                                        '" class = "form-control" /></th></tr>';
+                                    i++;
+                                });
+                        }
+                        $('#otherperiod-tablebody').html(html);
+                    });
+            });
+
+        if ($('.auto:checked')) {
+            $('#PerDayPeriod').attr('readonly', true); // On Load, should it be read only?
+        }
+
+        $('.auto').change(function() {
+            if ($('.auto:checked').length) {
+                $('#PerDayPeriod').attr('readonly', true); //If checked - Read only
+            } else {
+                $('#PerDayPeriod').attr('readonly', false); //Not Checked - Normal
+            }
+        });
+
+        $('.add ').on('click',
+            function() {
+                var html = '<tr><td ><input type="number" class="form-control"  name="PeriodNo" id="PeriodNo" /></td><td><input type="text" class="form-control" name="Description" id="Description" /><td colspan="2"><input type="number" class="form-control " name="Duration"  id="Duration"/></tr>';
+                $('#otherperiod-tablebody').append(html);
+
+            });
+
+        $("#btnSave").click(function() {
+            $.ajax(
+                {
+                    type: "POST", //HTTP POST Method
+                    url: "TimeTableAutoDesigner", // Controller/View
+                    data: { //Passing data
+                    
+                    }
+                });
+        });
+
+        $("#btnApply").on('click',
+            function() {
+                var url = '@Url.Action("GetAutoTimeTableJSON", "Timetable")';
+                //$('#StudentForm').attr('action', url);
+                //if ($('#firstPeriod').val() == "") {
+                //    return $('#firstPeriod').focus();
+                //}
+                //if ($('#PeriodDuration').val() == "") {
+                //    return $('#PeriodDuration').focus();
+                //}
+                var periods = [];
+                var subjects = [];
+                var formdata = $('#StudentForm').serialize();
+
+                $.ajax({
+                    url: url,
+                    method: "POST",
+                    data: formdata,
+                    success: function(data) {
+                        var json = JSON.parse(data);
+                        $.each(json,
+                            function(key, value) {
+                                var period = {};
+                                period.Period = value.Period;
+                                period.PeriodNo = value.PeriodNo;
+                                if (periods.indexOf(period) != -1)
+                                    periods.push(period);
+
+                                var subject = {};
+                                subject.StaffID = value.StaffID;
+                                subject.Period = value.Period;
+                                subject.StaffName = value.StaffName;
+                                subject.StaffID = value.StaffID;
+                                subject.StaffID = value.StaffID;
+                                subject.StaffID = value.StaffID;
+                                subject.StaffID = value.StaffID;
+                                subject.StaffID = value.StaffID;
+                                subject.StaffID = value.StaffID;
+
+                                if (periods.indexOf(subject) != -1)
+                                    subjects.push(subject);
+
+
+                            });
+
+
+                    },
+                    error: function() {
+                        alert("Ajax call failed");
+                    }
+                });
+            });
+
+    });
+
+
+</script>

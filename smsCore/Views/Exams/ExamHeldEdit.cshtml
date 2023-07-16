@@ -1,0 +1,196 @@
+﻿ 
+@model ExamsRule
+@inject StaticResources resources
+
+
+@{
+    ViewBag.Title = "ExamHeld Edit";
+    
+        Layout = null;
+    
+}
+<style>
+    .hideme {
+        display: none;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row " id="examedits" style="padding: 2px">
+
+
+       @* @using (Ajax.BeginForm("ExamHeldEdit", "Exams", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "ExamHeldsmainForm #server-progress", OnBegin = "begin" }, new { id = "ExamHeldsmainForm" }))
+        {*@
+        <form asp-action="ExamHeldEdit" asp-controller="Exams"
+              data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="ExamHeldsmainForm" data_reset="true">
+                   
+
+
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.ID)
+            @Html.HiddenFor(model => model.ExamHeldID)
+            <div class="row">
+                <div class="col-12">
+                    <div id="message">
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+                @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "examedits", ColCssClass = " col-12 col-sm-6 form-group has-feedback", ShowCampus = true, CampusID = Model.ExamHeld.CampusID, ShowExams = true, ShowExamsList = true, AddNewExam = true, ExamID = Model.ExamHeld.ExamID, ExamsFieldName = "ExamHeld.ExamID" })
+
+                @Html.Partial("_PartialDate", new PartialDateViewModels
+                       {
+                           Label = "Month:",
+                           PickerType = "month",
+                           Format = "MM yy",
+                           ParentContainerID = "mont-date-edit",
+                           ColCssClass = "col-12 col-sm-6 col-md-5",
+                           ShowAltField = true,
+                           AltFieldId = "ExamHeld_EntryDate",
+                           AltFieldName = "ExamHeld.EntryDate",
+                           AltFieldFormat = "dd/mm/yy",
+                           DateFieldId = "monthpick",
+                           DateFieldName = "monthpick",
+                           KeepDataFieldReadOnly = true,
+                           DefaultDate = Model.ExamHeld.EntryDate
+                       })
+            </div>
+            <div class="row" id="newexamheld-container">
+
+
+                <div class=" col-12 form-group has-feedback mt-3">
+                    <h3>Student Promotion Rules</h3>
+                    <hr />
+                    <div class="row">
+                        <div class="col-12">
+
+                            <label class="float-left mr-1"> Any Student Who Fail In</label>
+                            <div class="controls">
+                                @Html.TextBoxFor(model => model.CoreFail, null, new { @class = "form-control numb text-center pl-1 float-left mr-1", style = "max-width:40px", min = 1, required = true, placeholder = "..." })
+                                                        <label class="float-left">Subjects will be considered as Fail.</label>
+                                                        @Html.ValidationMessage("CoreFail")
+                                                    </div>
+                        </div>
+                        @*<div class="col-12 py-2">
+                            <label class="float-left mr-1"> Any Student Who Fail In</label>
+                            @Html.TextBoxFor(model => model.CoreWithNoneCoreFail, null, new { @class = "form-control numb text-center limit pl-1 float-left mr-1", style = "max-width:40px", placeholder = "..." })
+                            @Html.ValidationMessage("CoreFail")
+                            <label class="float-left">core Subjects</label>
+                        </div>*@
+                        @*<div class="col-12 ">
+                            <label class="float-left mr-1"> And</label>
+                            @Html.TextBoxFor(model => model.NoneCoreFail, null, new { @class = "form-control numb text-center limit pl-1 float-left mr-1", style = "max-width:40px", placeholder = "..." })
+                            <label class="float-left mr-1">  non core Subjects   </label>
+                            @Html.ValidationMessage("CoreFail")
+                        </div>*@
+                        <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback limit">
+                            <label>Passing %age</label>
+                            <div class="controls">
+                                @Html.TextBoxFor(model => model.AtLeastPercentage, null, new { @class = "form-control numb has-feedback-left ", style = "max-width:80px", minlength = "1", maxlength = "3", required = true, placeholder = "0%", max = "100" })
+                                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                                        @Html.ValidationMessage("AtLeastPercentage")
+                                                    </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="col-12 col-xs-12 form-group has-feedback mt-3">
+                    <h3>Grading Rules</h3>
+                    <hr />
+                </div>
+
+
+                <div class="col-12"></div>
+                <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback limit">
+                    <label>A+</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.APlus, null, new { @class = "form-control  text-center pl-1", style = "max-width:40px", minlength = "1", maxlength = "3", placeholder = "0%" })
+                        @Html.ValidationMessage("APlus")
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback limit">
+                    <label>A</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.A, null, new { @class = "form-control  text-center pl-1", style = "max-width:40px", minlength = "1", maxlength = "3", placeholder = "0%" })
+                        @Html.ValidationMessage("A")
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback limit">
+                    <label>B+</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.BPlus, null, new { @class = "form-control  text-center pl-1", style = "max-width:40px", minlength = "1", maxlength = "3", placeholder = "0%" })
+                        @Html.ValidationMessage("BPlus")
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback limit">
+                    <label>B</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.B, null, new { @class = "form-control  text-center pl-1", style = "max-width:40px", minlength = "1", maxlength = "3", placeholder = "0%" })
+                                        @Html.ValidationMessage("B")
+                                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback limit">
+                    <label>C</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.C, null, new { @class = "form-control  text-center pl-1", style = "max-width:40px", minlength = "1", maxlength = "3", placeholder = "0%" })
+                        @Html.ValidationMessage("C")
+                    </div>
+                </div>
+
+                <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback limit">
+                    <label>D</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.D, null, new { @class = "form-control  text-center pl-1", style = "max-width:40px", minlength = "1", maxlength = "3", placeholder = "0%" })
+                        @Html.ValidationMessage("D")
+                    </div>
+                </div>
+
+
+                <div class="col-md-4 col-sm-4 col-xs-12 form-group has-feedback limit">
+                    <label>E</label>
+                    <div class="controls">
+                        @Html.TextBoxFor(model => model.E, null, new { @class = "form-control text-center pl-1", style = "max-width:40px", minlength = "1", maxlength = "3", placeholder = "0%" })
+                        @Html.ValidationMessage("E")
+                    </div>
+                </div>
+
+            </div>
+
+            <div class=" mt-2">
+                <a href="#" aria-label="Back to Exams" data-dismiss="modal" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back </a>
+
+                <button type="submit" value="Create" class="btn btn-primary pull-right">
+                    <i class="fa fa-save mr-2"></i>
+                    <span>
+                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                    </span> Save
+                </button>
+            </div>
+       </form>
+    </div>
+</div>
+              
+<script @resources.JavaScript>
+
+    
+
+    $('.numb').keypress
+    (
+        function(event) {
+            if (event.keyCode == 46 || event.keyCode == 8) {
+                //do nothing
+            } else {
+                if (event.keyCode < 48 || event.keyCode > 57) {
+                    event.preventDefault();
+                }
+            }
+        }
+    );
+
+    
+</script>

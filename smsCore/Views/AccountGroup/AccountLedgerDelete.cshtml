@@ -1,0 +1,162 @@
+﻿@model  AccountLedgerInfo
+@{
+    ViewBag.Title = "Account Ledger Delete";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@*@using (Ajax.BeginForm("AccountLedgerDelete", "AccountGroup", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "AccountLedgerDeleteForm #server-progress", OnBegin = "begin" }, new { id = "AccountLedgerDeleteForm" }))
+{*@
+
+<form asp-action="AccountLedgerDelete" asp-controller="AccountGroup"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="AccountLedgerDeleteForm" data_reset="true">
+      
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row no-gutters sico-form-col">
+        <div class="col-12">
+            <h4>Are You Sure You Want to Delete this !!!</h4><hr />
+
+            <div class="tab-content" id="myTabContent">
+
+                <div class="sico-form-col">
+                    <div class="row no-gutters">
+
+                        <div class="row">
+                            <div class="col-6 ">
+                                <label>Name</label>
+                                @Html.HiddenFor(m => m.LedgerId)
+                                @Html.HiddenFor(m => m.IsDefault)
+
+                                <label><b>@Model.LedgerName</b></label>
+                            </div>
+                            <div class="col-6 ">
+                                <label>Group</label>
+                                <label><b>@Model.AccountGroupId</b></label>
+                            </div>
+
+                            <div class="col-6 ">
+                                <label>Opening Balance</label>
+                                <label><b>@Model.OpeningBalance</b></label>
+                            </div>
+
+                            <div class="col-6 ">
+                                <label>Drcr</label>
+                                <label><b>@Model.CrOrDr</b></label>
+                            </div>
+                            <div class="col-6 ">
+                                <label>Narration</label>
+                                <label><b>@Model.Narration</b></label>
+                            </div>
+                            <div class="col-6 ">
+                                <label>Account Number</label>
+                                <label><b>@Model.BankAccountNumber</b></label>
+                            </div>
+                            <div class="col-6 ">
+                                <label>Branch Name</label>
+                                <label><b>@Model.BranchName</b></label>
+                            </div>
+                            <div class="col-6 ">
+                                <label>Branch Code</label>
+                                <label><b>@Model.BranchCode</b></label>
+                            </div>
+                            <div class="col-12 col-md-12 mt-2">
+                                <button type="submit" class="btn btn-danger float-right" name="save"><i class="fa fa-trash mr-2"></i> Delete</button>
+                            </div>
+                        </div>
+                        @*<div class="col order-1">
+                                <div class="row">
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Mailing Name</label>
+                                        <input type="text" name="MailingName" class="form-control" />
+                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Account Number</label>
+                                        <input type="text" name="AccountNo" class="form-control" />
+                                        <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Address</label>
+                                        <input type="text" name="Address" class="form-control" />
+                                        <span class="fa fa-address-book form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Phone</label>
+                                        <input type="text" name="Phone" class="form-control" />
+                                        <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Email</label>
+                                        <input type="text" name="Email" class="form-control" />
+                                        <span class="fa fa-mail-forward form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Mobile</label>
+                                        <input type="text" name="mobile" class="form-control" />
+                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Bill by Bill</label>
+                                        @Html.DropDownList("BillByBill", new SelectList(new string[] { "Yes", "No" }), new { @class = "form-control has-feedback-left" })
+                                        <span class="fa fa-file form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Credit period</label>
+                                        <input type="text" name="CreditPeriod" class="form-control" />
+                                        <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Pricing Level</label>
+                                        @Html.DropDownList("PricingLevel", (SelectList)ViewBag.PricingList, new { @class = "form-control" })
+
+                                        <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Credit Limit</label>
+                                        <input type="text" name="CreditLimit" class="form-control" />
+                                        <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>CST</label>
+                                        <input type="text" name="CST" class="form-control" />
+                                        <span class="fa fa-file form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>TIN</label>
+                                        <input type="text" name="TIN" class="form-control" />
+                                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Area</label>
+                                        @Html.DropDownList("Area", (SelectList)ViewBag.AreaLists, new { @class = "form-control" })
+                                        <span class="fa fa-area-chart form-control-feedback lef" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>PAN</label>
+                                        <input type="text" name="PAN" class="form-control" />
+                                        <span class="fa fa-file-archive-o form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                    <div class="col-md-4 col-sm-4 col-12 has-feedback">
+                                        <label>Route</label>
+                                        @Html.DropDownList("Route", (SelectList)ViewBag.RouteLists, new { @class = "form-control" })
+                                        <span class="fa fa-file-excel-o form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                            </div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

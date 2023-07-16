@@ -1,0 +1,113 @@
+﻿@model Visitor;
+ 
+ 
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Delete";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<h5>Are you sure you want to delete?</h5>
+
+<div>
+
+    <hr/>
+    <dl class="dl-horizontal">
+      @*  <dt>
+            @Html.DisplayNameFor(model => model.Hostel.HostelName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Hostel.HostelName)
+        </dd>*@
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+        @Html.DisplayNameFor(model => model.Relationship)
+
+        <dd>
+            @Html.DisplayFor(model => model.Relationship)
+
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Cnic)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Cnic)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+
+       @* <dt>
+            @Html.DisplayNameFor(model => model.TimeIn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TimeIn)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.TimeOut)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TimeOut)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.HostleAdmId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HostleAdmId)
+        </dd>*@
+
+
+    </dl>
+   @* @using (Ajax.BeginForm("VisitorDelete", "Hostel", new AjaxOptions {HttpMethod = "POST", OnSuccess = "disablebutton", OnComplete = "completed", LoadingElementId = "DeletemainForm #server-progress", OnBegin = "begin"}, new {id = "DeletemainForm"}))
+    {*@
+    <form asp-action="VisitorDelete" asp-controller="Hostel"
+          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="DeletemainForm" data_reset="true">
+                   
+
+
+
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        @Html.HiddenFor(m=>m.Id)
+        <button asp="Index" data-dismiss="modal" aria-label="Close" class="btn btn-danger float-right btn-sm"> <i class="fa fa-chevron-circle-left mr-2"></i> Cancel and Close</button>
+        <button type="submit" value="Create" id="submitbuttom" class="btn btn-primary float-right btn-sm">
+            <i class="fa fa-save mr-2"></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+
+            </span> Delete
+        </button>
+    @*}*@
+    </form>
+</div>
+
+<script @resources.JavaScript>
+    function disablebutton() {
+        $('#submitbuttom').hide();
+    }
+</script>

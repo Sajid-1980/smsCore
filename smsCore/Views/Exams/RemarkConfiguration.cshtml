@@ -1,0 +1,145 @@
+﻿@model ExamRemarksDetail
+@inject StaticResources resources
+
+
+@{
+    ViewBag.Title = "Remark Configuration";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            New Exams
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Horizontal Form -->
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Remark Configuration</h3>
+                </div><!-- /.box-header -->
+                @*@using (Ajax.BeginForm("RemarkConfiguration", "Exams", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin"}, new {id = "classFeeIndexmainForm",data_rest="true"}))
+                {*@
+
+                <form asp-action="RemarkConfiguration" asp-controller="Exams" data-ajax="true" data-ajax-method="post" OnSuccess="reloadGridData" , data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label> Remarks</label><font class="text-danger">*</font>
+                            <div class="controls">
+                                @Html.TextBoxFor(m => m.Remarks, new { @class = "form-control has-feedback-left", required = "required" })
+                                <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label> Code</label><font class="text-danger">*</font>
+                            <div class="controls">
+                                @Html.TextBoxFor(m => m.Code, new { @class = "form-control has-feedback-left", required = "required" })
+                                <span class="fa fa-code form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.box-body -->
+
+                    <div class="card-footer mt-2">
+
+
+                        <button type="submit" value="Create" class="btn btn-primary float-right">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        </div><!--/.col (right) -->
+        <!-- left column -->
+        <div class="col-md-8">
+            <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Remarks List <a href="https://www.youtube.com/watch?v=vTMiWr-yHTM#t=230s" title="Watch our Youtube Video to understand" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+
+                    <div class="col-12">
+                        @{
+                            var gridmodel = new GridModel()
+            {
+                GridId = "list",
+                DataUrl = "/Exams/RemarksList",
+                Columns = new List<Column>
+                {
+                        new Column{FieldName="code",HeaderText="Code",Width="100",AllowEditing=false,TextAlign=TextAlign.Left},
+                        new Column{FieldName="remarks",HeaderText="Remarks",AllowEditing=false,TextAlign=TextAlign.Left},
+                  //      new Column{Template="#actions",HeaderText="Action",AllowEditing=true,Width="100",TextAlign=TextAlign.Left},
+                },
+            };
+                        }
+                        @await Html.PartialAsync("_grid",gridmodel)
+                        <script type="text/x-jsrender" id="actions">
+                            <a title="Delete" onclick="deleteDate(${ID})" href="javascript:void(0)" class="edit ml-1"><i class="fa fa-trash"></i></a>
+                        </script>
+                    </div>
+@*                    <div class="col-12">
+
+                        @Html.EJS().Grid("list").DataSource(s=>s.Url("/Exams/RemarksList")).AllowSelection().Columns(col =>
+                        {
+                        col.Field("Code").HeaderText("Code").Width("100").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                        col.Field("Remarks").HeaderText("Name").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                        col.Template("#actions").HeaderText("Action").AllowEditing(true).Width("100").Add();
+                        }).Render()
+                    </div>*@
+                    
+                </div><!-- /.box-body -->
+            </div>
+        </div><!--/.col (left) -->
+        <!-- right column -->
+    </div>
+</section>
+<script @resources.JavaScript>
+
+    function deletedate(id) {
+        $.post('/Exams/RemarksDelete/' + id, null, function (response) {
+            if (response == "Success") {
+                sweetalert('Date deleted successfully.', '', 'info');
+                reloadGridData();
+            }
+            else {
+                sweetalert('An unknown error error occured.', '', 'error');
+            }
+        }).error(function () {
+            sweetalert('An unknown error occured.', '', 'error');
+        });
+    }
+    function deleteDate(id) {
+        //Confirm(title, showDenyButton, showCancelButton, confirmButtonText, denyButtonText, confirmCallBack, denyCallBack)
+        Confirm("Are you Sure to delete?", true, true, 'Yes', null, function () { deletedate(id); }, null);
+    }
+    function reloadGridData() {
+        let grid = document.getElementById('list').ej2_instances[0];
+        grid.refresh();
+    }
+
+
+
+</script>

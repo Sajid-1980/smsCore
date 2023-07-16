@@ -1,0 +1,81 @@
+﻿@*@model IEnumerable<EmployeeDepartmentList>*@
+
+ 
+@{
+    ViewBag.Title = "Department";
+}
+
+<div class="sico-container">
+    @*@using (Html.BeginForm("Department", "Payroll", FormMethod.Post, new { @class = "form-horizontal form-label-left " }))
+    {*@
+
+    <form asp-action="Department" asp-controller="Payroll" data-ajax="true" data-ajax-method="post"  class="form-horizontal form-label-left input_mask">
+  
+                   
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="row no-gutters sico-form-col">
+            <div class="col-12">
+                <h5>Departments</h5><hr />
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <label>Name</label>
+                        <input type="text" name="DepartmentName" class="form-control has-feedback-left" />
+                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("DepartmentName")
+                    </div>
+                    <div class="col-6 col-md-6">
+                        <label>Narration</label>
+                        <input type="text" name="Narration" class="form-control has-feedback-left" />
+                        <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                        @Html.ValidationMessage("Narration")
+                    </div>
+                    <div class="col-12 col-md-12">
+                        <button type="submit" class=" btn btn-primary float-right mr-2" name="save"><i class="fa fa-save"></i> save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+        <div class="row no-gutters sico-form-col mt-2">
+            <div class="col-12">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover " border="1">
+                        <tr>
+                            <th>
+                                S. No
+                            </th>
+                            <th>
+                                Department
+                            </th>
+
+                            <th>Action</th>
+                        </tr>
+                        <tbody id="tablebody">
+                            @{int i = 1;}
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @i
+                                    </td>
+                                    <td>
+@*                                        @Html.DisplayFor(modelItem => item.DepartmentName)
+*@                                    </td>
+
+
+                                    <td>
+                                        <a class="edits  btn" data-edit="@item.Id" style="background:none;border:none"><i class="fa fa-edit mr-2"></i>Edit</a>
+                                        <a class="delete  btn" data-delete="@item.Id" style="background:none;border:none"><i class="fa fa-trash mr-2"></i>Delete</a>
+
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        </div>

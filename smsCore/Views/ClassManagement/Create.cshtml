@@ -1,0 +1,135 @@
+﻿ @inject StaticResources resources
+
+@{
+    var existings = (Dictionary<int, string>) ViewBag.Existings;
+    var type = (EnumManager.newgroupEntry) ViewBag.type;
+}
+<style>
+    .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox], .radio input[type=radio], .radio-inline input[type=radio] { margin-left: -15px; }
+    div.dataTables_wrapper div.dataTables_filter input { max-width: 50%; }
+</style>
+@*@using (Html.BeginForm("Create", "ClassManagement", new { type = type }, FormMethod.Post, new { id = "newCreateForm" }))*@
+@*@using (Ajax.BeginForm("Create", "ClassManagement", new { type }, new AjaxOptions { HttpMethod = "post", LoadingElementId = "classmanagementcreate #server-progress", OnSuccess = "success", OnBegin = "begin", OnComplete = "completed" }, new { id = "classmanagementcreate", data_reset = "true" }))
+{*@
+
+<form asp-action="Create" asp-controller="ClassManagement" data-ajax="true" asp-route-type="@type" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classmanagementcreate" data_reset="true">
+  
+    
+ 
+
+    @Html.AntiForgeryToken()
+
+<div class="clearfix"></div>
+    <div class="row" id="classmanagement">
+        <div class="col-12">
+            <div id="message">
+            </div>
+        </div>
+        <div class="col-md-6 col-sm-9 col-xs-12 form-group has-feedback">
+            <label>Name</label>
+            <div class="controls">
+                <input type="hidden" name="ID" id="createid" value="" />
+                @Html.TextBox("CreateName", null, new { @class = "form-control has-feedback-left", placeholder = "Enter name here." })
+                <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                @Html.ValidationMessage("CreateName")
+            </div>
+        </div>
+
+        @if (type == EnumManager.newgroupEntry.Driver)
+        {
+            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { CampusLoadCallBack = "reloadGridData", ParentContainerID = "classmanagement", ColCssClass = "col-md-6 col-sm-9 col-xs-12 form-group has-feedback", ShowCampus = true })
+        }
+        @if (type == EnumManager.newgroupEntry.Subject)
+        {
+            <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback mt-3">
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" checked name="IsCoreSubject" class="flat ml-1" /> Is Core Subject
+                    </label>
+                </div>
+            </div>
+        }
+        <div class="col-md-12 col-sm-12 col-xs-12 text-right my-2">
+            <button type="button" class="btn  btn-sm btn-danger float-left" onclick="success('success',false)">Reset(New)</button>
+            @*<button type="submit" class="btn btnSearchExam pull-right"><i class="fa fa-save"></i> Save</button>*@
+            <button type="submit" value="Create" id="btnCreate" class="btn btn-success float-right btn-sm">
+                <i class="fa fa-save mr-2"></i>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                <span>
+                    Save
+                </span>
+            </button>
+        </div>
+    </div>
+
+    <div id="Existing">
+        @Html.EJS().Grid("list_create").DataSource(dataManger =>
+   {
+       dataManger.Url("/ClassManagement/CreateNewList?type=" + type).Adaptor("UrlAdaptor");
+   }).Columns(col =>
+   {
+       col.Template("${sno(index)}").HeaderText("S.No").Width("70").TextAlign(TextAlign.Left).Add();
+       col.Field("Name").HeaderText("Description").TextAlign(TextAlign.Left).Add();
+       col.Template("#ecaction").HeaderText("Action").AutoFit(true).TextAlign(TextAlign.Center).Add();
+   }).AllowPaging().PageSettings(page => page.PageSize(5)).Render()
+   <script id="ecaction" type="text/x-jsrender">
+        <a href="#" class="editable" id="edit" onclick="show(${Id}, ${index})" data-title="Edit">
+            <i class="fa fa-edit"></i>
+        </a>
+   </script>
+</div>
+</form>
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+    let grid_create = document.getElementById('list_create').ej2_instances[0];
+    function show(id, index) {
+        $('#createid').val(id);
+        @if(type== EnumManager.newgroupEntry.Subject)
+            {
+            <text>
+        $('#CreateName').val(grid_create.getCurrentViewRecords()[index].OrigName);
+
+        </text>
+            }
+        else {
+            <text>
+        $('#CreateName').val(grid_create.getCurrentViewRecords()[index].Name);
+
+        </text>
+            }
+        $('#btnCreate span').html('Update');
+    }
+    function success(d,reload=true) {
+        if (d == "success") {
+            if (reload)
+                grid_create.refresh();
+            $('#createid').val('');
+            $('#CreateName').val('');
+            $('#btnCreate span').html('Save');
+            $('ul#classes li.active').trigger('click');
+            $('#Campus').trigger('change');
+
+            if ('@type' == '@EnumManager.newgroupEntry.Classes.ToString()') { LoadClasses(); }
+            if ('@type' == '@EnumManager.newgroupEntry.Driver.ToString()') { LoadDriver(); }
+        }
+    }
+
+    function reloadGridData() {
+
+        var grid = document.getElementById("list_create").ej2_instances[0];
+        grid.dataSource = [];
+       var url = '/ClassManagement/CreateNewList?type=@type';
+        var campusId = $('#Campus').val();
+        if (campusId)
+            url += '&campusId=' + campusId;
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    $('#Campus').on('change', function () {
+        reloadGridData();
+    });
+</script>

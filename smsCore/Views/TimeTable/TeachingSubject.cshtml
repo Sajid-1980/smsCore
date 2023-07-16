@@ -1,0 +1,167 @@
+﻿@using sms.Models
+@inject StaticResources rec;
+@{
+    ViewBag.Title = "Teaching Subject";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Teaching Subjects Teacher
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="teachingSubjectContainer">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Select Class</h3>
+                </div><!-- /.box-header -->
+                @*@using (Ajax.BeginForm("TeachingSubject", "TimeTable", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "classFeeIndexmainForm" }))
+                    {*@
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row no-gutters ">
+                        <div class="col-12">
+
+                            <div class="row">
+                                @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "teachingSubjectContainer", ColCssClass = "col-12 col-sm-6", ShowCampus = true, ShowClasses = true, ShowSections = true })
+                                <div class="col-12">
+                                    <button type="button" class="btn sico-btn btn-primary float-right mt-2" onclick="reloadGridData();">
+                                        <i class="fa fa-search"></i> Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*  }*@
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Subject List <a href="https://www.youtube.com/watch?v=tryCYOvnPQE#t=65s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="row mt-3">
+                        <div class="col-12">
+@*
+                            @Html.EJS().Grid("list_tsubj").Columns(col =>
+                       {
+                           col.Field("SubjectName").HeaderText("Subject").TextAlign(TextAlign.Left).Add();
+                           col.Field("StartDate").HeaderText("Date").TextAlign(TextAlign.Left).Add();
+                           col.Field("teacher").DisableHtmlEncode(false).HeaderText("Teacher").TextAlign(TextAlign.Left).Add();
+                           col.Field("action").Template("#action").HeaderText("Action").Width("170").TextAlign(TextAlign.Center).Add();
+                       }).Height("auto").Width("auto").Render()*@
+
+
+                            @{
+                                var modelgrid = new GridModel()
+                                {
+                                    GridId = "list_tsubj",
+                                    ShowHeader = false,
+ 
+                                    Columns = new List<Column>
+                                                {
+                                                new Column{FieldName="subjectName",HeaderText="Subject Name",TextAlign=TextAlign.Left},
+                                                new Column{FieldName="startDate",HeaderText="Date",Width="120",TextAlign=TextAlign.Left},
+                                                new Column{FieldName="teacher",HeaderText="Teacher" ,TextAlign=TextAlign.Left},
+                                                new Column{FieldName="action",Template="#action",HeaderText="Teacher", Width="170" ,TextAlign=TextAlign.Center},
+                                                  },
+                                };
+
+                            }
+                            @await Html.PartialAsync("_grid",modelgrid)
+
+
+
+
+
+                        </div>
+                        <script type="text/x-jsrender" id="action">
+                            <a href="#" class="edit ajax ml-1"><i class="fa fa-save"></i></a>
+                            <input type="hidden" value="${StaffID}" name="CurrentStaffID" id="CurrentStaffID" />
+
+                            <input type="hidden" value="${SubjectId}" name="SubjectId" id="SubjectId" />
+                        </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+ 
+<script @rec.JavaScript>
+    function reloadGridData() {
+        var url = '@Url.Action("TeachingSubjectsList")';
+        var classess = $('#Classes').val();
+        var campus = $('#Campus').val();
+        var Sections = $('#Sections').val();
+        if (campus == null) {
+            sweetalert("Error", "Please select a Campus.", 'error');
+            return false;
+        }
+        if (classess == null) {
+            sweetalert("Error", "Please select a Class.", 'error');
+            return false;
+        }
+        if (Sections == null) {
+            sweetalert("Error", "Please select a Section.", 'error');
+            return false;
+        }
+        url += '?classId=' + classess + '&sectionId=' + Sections + '&campusid=' + campus;
+
+        var grid = document.getElementById("list_tsubj").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    $('#list_tsubj').on('click',
+        'a',
+                    function(e) {
+                        e.preventDefault();
+                        var title = "Are you sure to change the current teacher for selected subject?";
+                        var clickedA = $(this);
+                        var CurrentRow = clickedA.closest('tr');
+                        var SubjectId = CurrentRow.find("#SubjectId").val();
+                        var StaffId = CurrentRow.find("#staffId").val();
+                        var oldStaffId = CurrentRow.find('#CurrentStaffID').val();
+                        if (StaffId == oldStaffId) {
+                            return false;
+                        }
+                        if (StaffId == 0) {
+                            alert("Select teacher");
+                            return CurrentRow.find("#staffId").focus();
+                        }
+                        var teacherid = $(this).val();
+                        var id = CurrentRow.find('#pk').val();
+                        var url = '@Url.Action("TeachingSubjectEdit")';
+                        //campusId, int SectionId, int StaffId, int SubjectId, int ClassId
+                        url += '?campusId=' + $("#Campus").val() + "&SectionId=" + $("#Sections").val() + "&StaffId=" + StaffId + "&SubjectId=" + SubjectId + "&ClassId=" + $('#Classes').val();
+
+                        sweetalertWithUrl(title, url);
+
+                        return false;
+                    });
+
+   
+    
+</script>

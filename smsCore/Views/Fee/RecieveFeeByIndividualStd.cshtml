@@ -1,0 +1,401 @@
+﻿@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Recieve Fee By Individual Student";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action(" Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Recieve Fee
+        </li>
+        <li class="active">
+            By Individual Student
+        </li>
+
+    </ul>
+</div>
+<style>
+    #searchcontact span {
+        color: green;
+    }
+
+    form {
+        width: 100%;
+    }
+</style>
+<section class="content">
+    @*  @using (Ajax.BeginForm("RecieveFeeByIndividualStd", "Fee", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "byIndividualStdForm #server-progress", OnBegin = "begin" }, new { id = "byIndividualStdForm" }))
+    {*@
+    <form asp-action="RecieveFeeByIndividualStd" asp-controller="Fee" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" OnSuccess="reloadGridData" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="byIndividualStdForm" data_reset="true">
+
+        <div class="row">
+
+            <div class="col-12 col-md-4">
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h4 class="card-title">Recieve Fee By Individual Student </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row no-gutters" id="searchcontact">
+                            <div class="col-12">
+                                <div class="row align-items-center">
+                                    @*@Html.Partial("_PartialDate", new PartialDateViewModels { Label = "Received on", ParentContainerID = "fee-received-date", ColCssClass = "col-12 col-sm-6", ShowAltField = false, DateFieldId = "recievedDateid", DateFieldName = "RecievedDate", KeepDataFieldReadOnly = true })*@
+                                    @await Html.PartialAsync("_PartialDate", new PartialDateViewModels {DefaultDate=DateTime.Today, Label = "Received on", ParentContainerID = "fee-received-date", ColCssClass = "col-12 col-sm-6", ShowAltField = true, AltFieldFormat = "dd-mm-yy", AltFieldId = "recievedDateid", AltFieldName = "RecievedDate", DateFieldId = "receivedata1", DateFieldName = "receivedata1", KeepDataFieldReadOnly = true })
+
+                                    <input type="hidden" name="CampusID" id="CampusID" />
+                                    <div class="col-12 col-md-6">
+                                        <label>
+                                            Registration No<font class="text-danger">*</font>
+                                            <div class="controls">
+                                                <input type="text" name="regNo" id="regNoid" class="form-control has-feedback-left small" placeholder="Registration No" required />
+                                                <span class="fa fa-neuter form-control-feedback left" aria-hidden="true"></span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-12 col-md-12">
+                            <div class="row no-gutters">
+                                <div class="col-4">
+
+                                    <img class="profile-user-img img-responsive img-circle" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                                    <h3 class="profile-username text-center">
+                                        <span class="name" id="stuName">......</span>
+                                    </h3>
+                                </div>
+                                <div class="col-8">
+                                    <ul class="list-group list-group-unbordered">
+                                        @*<li class="list-group-item listnoback">
+                                        <b>Address</b> <a class="pull-right text-aqua"> <span class="name address" id="lbladdress">House # 235, St 63, I-10/1 Islamabad</span></a>
+                                        </li>*@
+
+                                        <li class="list-group-item listnoback">
+                                            <span>Campus</span>
+                                            <a class="float-right text-aqua">
+                                                <span class="campusname" id="lblcampus">...</span>
+                                            </a>
+                                        </li>
+                                        <li class="list-group-item listnoback">
+                                            <span>Class</span>
+                                            <a class="float-right text-aqua">
+                                                <span class="classname" id="lblclass">...</span>
+                                            </a>
+                                        </li>
+                                        <li class="list-group-item listnoback">
+                                            <span>Section</span>
+                                            <a class="float-right text-aqua">
+                                                <span class="sectionname" id="lblsection">..</span>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-header with-border">
+                        <h3 class="card-title">Student Fee details <a href="https://www.youtube.com/watch?v=6cDA5A8EMMg&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=235s" title="Watch our Youtube Video to understand" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="row">
+                            <div class="col-12">
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true)
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 " id="receiveableGrid-main-contanier">
+                                <div class="row mt-2">
+                                    @*<div id="individualStd-gridContainer" class="col-12">
+                                    <table id="jqgindividualStd" cellpadding="0" cellspacing="0"></table>
+                                    <div id="jqgpindividualStd" style="text-align: center;"></div>
+                                    </div>*@
+                                    <div class="col-12">
+                                        @*
+                                        @Html.EJS().Grid("list").Columns(col =>
+                                        {
+                                        col.Field("Select").HeaderText("Select").Template("#select").TextAlign(TextAlign.Center).Width(70).Add();
+                                        col.Field("ForMonth").HeaderText("Month").Format("MMMM, yyyy").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                                        col.Field("Balance").HeaderText("Receiveable").Width(120).TextAlign(TextAlign.Left).Add();
+                                        col.Template("#latefee").HeaderText("Late Fee").Width(150).TextAlign(TextAlign.Left).Add();
+                                        col.Template("#recevied").HeaderText("Received").Width(150).TextAlign(TextAlign.Left).Add();
+                                        col.Template("#balance").HeaderText("Balance").Width(150).TextAlign(TextAlign.Center).Add();
+                                        }).DataBound("bounded").Render()*@
+
+                                        @{
+                                            var gridmodel = new GridModel()
+
+            {
+                GridId = "list",
+                Columns = new List<Column>
+                                        {
+                                        new Column{FieldName="select",HeaderText="Select",Template="#select",TextAlign=TextAlign.Center,Width="70"},
+                                        new Column{FieldName="forMonth",HeaderText="Month",TextAlign=TextAlign.Left},
+                                        new Column{FieldName="balance",HeaderText="Receiveable",Width="120",TextAlign=TextAlign.Left},
+                                        new Column{Template="#latefee",HeaderText="Late Fee",Width="150",TextAlign=TextAlign.Left},
+                                        new Column{Template="#recevied",HeaderText="Recevied",Width="150",TextAlign=TextAlign.Left},
+                                        new Column{Template="#balance",HeaderText="Balance",Width="150",TextAlign=TextAlign.Center},
+                                        },
+            };
+                                        }
+                                        @await Html.PartialAsync("_grid",gridmodel)
+                                    </div>
+                                    <script type="text/x-jsrender" id="balance">
+                                        <input type="text" value="${add(data.Balance,data.lateFee)}" class="form-control small" name="balance" id="txtbalance" readonly />
+                                        <input type="hidden" name="pk" id="pk" value="${id}" />
+                                    </script>
+                                    <script type="text/x-jsrender" id="latefee">
+                                        <input type="text" class="form-control small" name="LateFee" id="lateFee" onchange="lateFees(this)" value="${lateFee}" />
+                                    </script>
+                                    <script type="text/x-jsrender" id="select">
+                                        <input type="checkbox" id="selectss" name="selectrow" value="1"  onchange="receivebalance(this)"  />
+                                    </script>
+                                    <script type="text/x-jsrender" id="recevied">
+                                        <input type="text" class="form-control small" name="Received" id="received" value="${received}" readonly>
+                                    </script>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-12 col-sm-5 col-md-6">
+                                <label class="checkbox"><input class="mr-2 mt-1" type="checkbox" id="cbxSend" name="sendmessage" />Sent mobile Message to parent after save</label>
+                            </div>
+
+                            <div class="col-12 col-sm-7 col-md-6">
+                                <div style="float: right; max-width: 320px;">
+
+                                    <label>
+                                        Total Recieveable Amount
+                                        <div class="controls">
+                                            <input type="text" name="lblrecieveableAmount" id="lblrecieveableAmount" class="form-control" readonly />
+                                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                        </div>
+                                    </label>
+
+                                    <br />
+                                    <label>
+                                        Recieved Amount
+                                        <div class="controls">
+                                            <input type="text" min="1" name="RecievedAmount" id="RecievedAmountid" onchange="receiveamunt(this)" class="form-control" value="0" />
+                                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                        </div>
+                                    </label>
+                                    <br />
+                                    <label>
+                                        Balance
+                                        <div class="controls">
+                                            <input type="text" name="Balance" id="balanceAmount" class="form-control" readonly />
+                                            <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12 mt-2">
+                                <button type="submit" id="btnSubmit" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+
+                                @*<button type="submit">save</button>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+<script @resources.JavaScript>
+    //$.validator.setDefaults({
+    //    submitHandler: function () {
+
+    //    }
+    //});
+    //jQuery.validator.addMethod('customdate',
+    //    function (v, e) {
+    //        var text = $(e).val();
+    //        var dt = moment(v, "DD/MM/YYYY").toDate();
+    //        console.log(v, dt);
+    //        return dt != 'Invalid Date';
+    //        //return Date.parseExact(v, "d/M/yyyy");
+    //    });
+
+    $("#byIndividualStdForm").validate({
+        rules: {
+            RecievedDate: {
+                required: true
+            },
+            regNo: {
+                required: true,
+                number: true
+            }
+
+        },
+        messages: {
+            RecievedDate: "Invalid received date.",
+            regNo: "Enter Student Id"
+        },
+        errorElement: "em",
+        highlight: function (element, errorClass, validClass) {
+            $(element).addClass("is-invalid").removeClass("is-valid");
+        },
+        unhighlight: function (element, errorClass, validClass) {
+            $(element).addClass("is-valid").removeClass("is-invalid");
+        }
+    });
+
+    function receivebalance(element) {
+        Calculate();
+    }
+
+    function receiveamunt() {
+
+        var TotalReceived = parseFloat($('#RecievedAmountid').val());
+        var i = 0;
+        var grid = document.getElementById("list").ej2_instances[0];
+        var data = grid.getCurrentViewRecords();
+        $.each(data, function (p, v) {
+            var currentRow = $(grid.getRowByIndex(p));
+            var Receiveable = v.Balance;
+            var lateFee = parseFloat($(grid.getRowByIndex(p)).find('#lateFee').val());
+            var TotalReceiveAble = Receiveable + lateFee;
+            currentRow.find('#selectss').prop("checked", false);
+            currentRow.find('#selectss').val('0');
+            currentRow.find(('#received')).val('0');
+            currentRow.find(('#balance')).val('0');
+
+            if (TotalReceived >= TotalReceiveAble) {
+                currentRow.find('#selectss').prop("checked", true);
+                currentRow.find('#selectss').val('1');
+                currentRow.find(('#received')).val(TotalReceiveAble);
+                TotalReceived = TotalReceived - TotalReceiveAble;
+                currentRow.find(('#txtbalance')).val('0');
+
+            } else {
+                if ((TotalReceived) > 0) {
+                    currentRow.find('#selectss').prop("checked", true);
+                    currentRow.find('#selectss').val('1');
+                    currentRow.find(('#received')).val(TotalReceived);
+                    currentRow.find(('#txtbalance')).val(TotalReceiveAble - TotalReceived);
+                    TotalReceived = 0;
+                }
+            }
+        });
+
+        Calculate();
+    }
+    function add(a, b) {
+        return a + b;
+    }
+    function bounded(e) {
+        Calculate();
+    }
+    function Calculate() {
+        var TotalLateFee = 0;
+        var TotalReceiveAbleAmount = 0;
+
+        var grid = document.getElementById("list").ej2_instances[0];
+        var data = grid.getCurrentViewRecords();
+        $.each(data, function (p, v) {
+            var Receiveable = v.Balance;
+            var lateFee = parseFloat($(grid.getRowByIndex(p)).find('#lateFee').val());
+            var received = parseFloat($(grid.getRowByIndex(p)).find('#received').val());
+            var balance = Receiveable + lateFee - received;
+            $(grid.getRowByIndex(p)).find('#txtbalance').val(balance);
+
+            TotalReceiveAbleAmount += Receiveable;
+            TotalLateFee += lateFee;
+        })
+        $(lblrecieveableAmount).val(TotalReceiveAbleAmount + TotalLateFee);
+        var TotalReceived = parseFloat($('#RecievedAmountid').val());
+
+        $('#balanceAmount').val(TotalReceiveAbleAmount + TotalLateFee - (TotalReceived > 0 ? TotalReceived : 0));
+        $('#RecievedAmountid').attr('max', $(lblrecieveableAmount).val());
+    }
+
+    $(document).ready(function () {
+
+
+        $('#regNoid').on('change',
+            function () {
+                if (!$(this).val())
+                    return false;
+                let grid = document.getElementById("list").ej2_instances[0];
+                block('#byIndividualStdForm');
+                $('#RecievedAmountid').val('0')
+                $('#stuName').html('.......');
+                $(lblcampus).html('...');
+                $(lblclass).html('...');
+                $(lblsection).html('...');
+                $(pbxPhoto).attr('src', "/Uploads/images/user.png");
+                $('#CampusID').val('');
+                grid.dataSource = [];
+                $('#lblrecieveableAmount').val('');
+                $('#balanceAmount').val('');
+
+                $.get('/api/students/get-student-info/' + $(this).val(),
+                    function (dataa) {
+                        if (data != false) {
+                            var data = JSON.parse(dataa);
+                            $('#stuName').html(data.studentName);
+                            $(lblcampus).html(data.campusName);
+                            $(lblclass).html(data.className);
+                            $(lblsection).html(data.sectionName);
+                            $(pbxPhoto).attr('src', data.photo);
+                            $('#CampusID').val(data.campuseID);
+                            reloadGridData();
+                        }
+                        $('#byIndividualStdForm').unblock();
+                    }).always(function () {
+                        $('#byIndividualStdForm').unblock();
+                    });
+            }
+        );
+    });
+
+    function reloadGridData() {
+        let grid = document.getElementById("list").ej2_instances[0];
+        var url = '/api/fee/get-student-receiveables';
+
+        url += '?regno=' + $('#regNoid').val() + '&ReceivedDate=' + $('#recievedDateid').val();
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+
+
+    function lateFees(element) {
+        Calculate();
+    }
+</script>

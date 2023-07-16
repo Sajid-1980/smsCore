@@ -1,0 +1,288 @@
+﻿@model Models.Student
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<fieldset>
+<legend>student</legend>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.StudentName)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.StudentName)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.FName)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.FName)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.GuardianName)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.GuardianName)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.StdRelation)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.StdRelation)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.Email)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.Email)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.Religion)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.Religion)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.Nationality)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.Nationality)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.MotherTongue)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.MotherTongue)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.LastIntitution)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.LastIntitution)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.Games)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.Games)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.DOB)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.DOB)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.PostalAddress)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.PostalAddress)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.OfficeTelephone)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.OfficeTelephone)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.PermenantAddress)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.PermenantAddress)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.FatherQualification)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.FatherQualification)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.FatherProfession)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.FatherProfession)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.FatherNatureOfJob)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.FatherNatureOfJob)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.FatherDepartment)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.FatherDepartment)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.MotherName)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.MotherName)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.MotherQualification)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.MotherQualification)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.MotherProfession)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.MotherProfession)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.MissingDocuments)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.MissingDocuments)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.CNIC)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.CNIC)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.RegistrationNo)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.RegistrationNo)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.Sex)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.Sex)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.ResidanceTelephone)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.ResidanceTelephone)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.Remarks)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.Remarks)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.GeneralRemarks)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.GeneralRemarks)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.DateForSubmission)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.DateForSubmission)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.FatherAlive)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.FatherAlive)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.LiveWith)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.LiveWith)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.Domicile)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.Domicile)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.AdmissionDate)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.AdmissionDate)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.AdmittedClass)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.AdmittedClass)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.FeeDiscount)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.FeeDiscount)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.LastEditedBy)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.LastEditedBy)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.LastEditedOn)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.LastEditedOn)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.ApplyLateFee)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.ApplyLateFee)
+</div>
+
+<div class="display-label">
+    @Html.DisplayNameFor(model => model.StudentCNIC)
+</div>
+<div class="display-field">
+    @Html.DisplayFor(model => model.StudentCNIC)
+</div>
+</fieldset>
+<p>
+    @Html.ActionLink("Edit", "Edit", new {id = Model.ID}) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

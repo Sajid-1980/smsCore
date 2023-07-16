@@ -1,0 +1,73 @@
+﻿@model  FeeSlipReceipt
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Fee Slip Receipt Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@*@using (Ajax.BeginForm("FeeSlipReceiptEdit", "Fee", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "FeeSlipReceiptEditmainForm #server-progress", OnBegin = "begin"}, new {id = "FeeSlipReceiptEditmainForm"}))
+{*@
+
+<form asp-action="FeeSlipReceiptEdit" asp-controller="Fee"  data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeSlipReceiptEditmainForm" data_reset="true">
+        
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        @Html.HiddenFor(Model => Model.Id)
+        <div class="col-md-8 col-sm-8 col-xs-12 form-group has-feedback">
+            <label> Amount</label><font class="text-danger">*</font>
+                                  <div class="controls">
+                                      @Html.TextBoxFor(Model => Model.Amount, new { @class = "form-control", required = "required" })
+                                      @Html.ValidationMessage(" Amount")
+                                  </div>
+        </div>
+        <div class="col-md-8 col-sm-8 col-xs-12 form-group has-feedback pb-2">
+
+            <label> Entry Date:</label><font class="text-danger">*</font>
+                                       <div class="controls">
+                                           @Html.TextBoxFor(Model => Model.EntryDate, new { @class = "form-control", required = "required", Type = "date" })
+                                           @Html.ValidationMessage(" EntryDate")
+                                       </div>
+        </div>
+
+        <div class="col-md-8 col-sm-8 col-xs-12 form-group has-feedback pb-3">
+            <label> Payment Method:</label>
+            <div class="controls">
+                @Html.DropDownListFor(m => m.PaymentMethodId, (SelectList)ViewBag.PaymentId, new { @class = "form-control" })
+                @Html.ValidationMessage("PaymentId")
+            </div>
+        </div>
+        @Html.HiddenFor(Model => Model.UserId)
+        @Html.HiddenFor(Model => Model.EditBy)
+        @Html.HiddenFor(Model => Model.EditeOn)
+
+
+        <div class="form-group col-12 pb-2">
+            <a href="#" onclick="$(this).closest('div[role=\'dialog\']').modal('hide');" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Fee Slip</a>
+            <button type="submit" value="Create" class="btn btn-primary pull-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Save
+            </button>
+        </div>
+    </div>
+</form>
+<script @resources.JavaScript>
+    function close() {
+        var g = $(this).closest('div[role="dialog"]').clos();
+        alert(g.attr('id'));
+        g.clos();
+    }
+</script>

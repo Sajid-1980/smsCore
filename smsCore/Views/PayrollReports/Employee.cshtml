@@ -1,0 +1,100 @@
+﻿@using Models
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Employee Report";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("PayrollReports", "Reports")">Payroll Report</a>
+        </li>
+        <li class="active">
+            Employee Report
+        </li>
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label>Designation</label>
+                            <div class="controls">  @Html.DropDownList("disignationId", (SelectList)ViewBag.designationList, new { @class = "form-control" })</div>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Employee Code</label>
+                            <div class="controls">  @Html.DropDownList("employeeId", (SelectList)ViewBag.employeelist, new { @class = "form-control" })</div>
+                        </div>
+                        <div class="col-sm-3">
+                            <label>Status</label>
+                            <select id="status" class="form-control controls">
+                                <option value="All">All</option>
+                                <option value="Active">Active</option>
+                                <option value="InActive">InActive</option>
+
+                            </select>
+                        </div>
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div id="report-printable" class="card">
+                <div class="card-body">
+                    <div id="classwisereport-gridContainer" class="col-12">
+                        <table id="example" class="table table-bordered" style="width: 100%">
+                            <thead>
+                            <tr>
+                                <th>Employee Code</th>
+                                <th>Employee Name</th>
+                                <th>Designation</th>
+                                <th>Salary Package</th>
+                                <th>Phone No</th>
+                                <th>Mobile No</th>
+                            </tr>
+                            </thead>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    $('#btnSearch').on('click',
+        function() {
+            var disignationId = $('#disignationId').val();
+            var employeeId = $('#employeeId').val();
+            var url1 = '@Url.Action("GetEmployeeDatatable")';
+            url1 += '?employeeId=' + employeeId + '&disignationId=' + disignationId + '&status=' + $('#status').val();
+
+            var messageTop = 'Employee Report';
+            var colmodel = [
+                { "data": "employeeCode", "orderable": true, "searchable": true },
+                { "data": "employeeName", "orderable": true, "searchable": true },
+                { "data": "designationName", "orderable": true, "searchable": true },
+                { "data": "salaryPackageName", "orderable": false, "searchable": true },
+                { "data": "phoneNumber", "orderable": false, "searchable": true },
+                { "data": "mobileNumber", "orderable": false, "searchable": true },
+            ];
+            DrawTableLocal('#example', colmodel, url1, messageTop, '');
+        });
+</script>

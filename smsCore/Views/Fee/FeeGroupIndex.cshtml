@@ -1,0 +1,110 @@
+﻿@model IEnumerable<FeeGroup>
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Fee Groups";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+<section class="content" id="feeGroupIndex-container">
+    <div class="row">
+        <div class="col-md-4">
+            <!-- Horizontal Form -->
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Add Fees Group <a href="https://www.youtube.com/watch?v=-L7sM_ZtyMo&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div><!-- /.box-header -->
+               @* @using (Ajax.BeginForm("AddFeeGroup", "Fee", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "FeeGroupIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "FeeGroupIndexmainForm", data_reset = "true" }))
+                {*@
+
+                <form asp-action="AddFeeGroup" asp-controller="Fee"
+                      data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeGroupIndexmainForm" data_reset="true">
+         
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-8 col-md-6">
+                                <label for="exampleInputEmail1">Fee Group Name</label> <small class="req">*</small>
+                                                                                       <div class="controls">
+                                                                                           <input autofocus="" id="FeeGroupName" name="FeeGroupName" placeholder="" required type="text" class="form-control" value="" autocomplete="off">
+                                                                                           <span class="fa fa-object-group text-danger form-control-feedback left" aria-hidden="true"></span>
+                                                                                       </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- /.box-body -->
+
+                    <div class="card-footer mt-2">
+                        @*<a href="@Url.Action("ClassFeeIndex", "Fee")" aria-label="Back to Class Fee Group List" class="btn btn-danger"> <i class="fa fa-chevron-circle-left"></i> Back to List</a>*@
+                        <div class="col-12 text-right">
+
+                            <button type="submit" value="Create" class="btn btn-primary">
+                                <i class="fa fa-save"></i>
+                                <span>
+                                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                </span> Save
+                            </button>
+                        </div>
+                        @*<button type="submit" class="btn btn-primary pull-right">Save</button>*@
+                    </div>
+                </form>
+            </div>
+
+        </div><!--/.col (right) -->
+        <!-- left column -->
+        <div class="col-md-8">
+            <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Fees Group List</h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="col-12">
+
+                        @Html.EJS().Grid("list").DataSource(dataManger =>
+                   {
+                       dataManger.Url("/Fee/FeeGroupList").Adaptor("UrlAdaptor");
+                   }).Columns(col =>
+                   {
+                       col.Field("FeeGroupName").HeaderText("Description").Width("60").TextAlign(TextAlign.Left).Add();
+                       col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(TextAlign.Left).Add();
+                   }).AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+                    </div>
+
+                    <script type="text/x-jsrender" id="action">
+                        <a title="Edit" href="/Fee/EditFeeGroup/${getid(ID)}" class="edit ml-1"><i class="fa fa-edit"></i></a>
+                        <a title="Delete" href="/Fee/FeeGroupDelete/${getid(ID)}" class="edit ml-1"><i class="fa fa-trash"></i></a>
+                    </script>
+                </div><!-- /.box-body -->
+            </div>
+        </div><!--/.col (left) -->
+        <!-- right column -->
+    </div>
+
+</section>
+<script @resources.JavaScript>
+    function reloadGridData() {
+        var url = '/Fee/FeeGroupList';
+        var grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    $('#Campus').on('change', function () { reloadGridData(); });
+
+
+</script>
+
+@Html.EJS().ScriptManager()

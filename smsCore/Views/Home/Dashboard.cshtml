@@ -1,0 +1,504 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+@inject CurrentUser user
+<style SASS>
+    .card-columns {
+        -webkit-column-count: 2;
+        -moz-column-count: 2;
+        column-count: 2;
+    }
+
+    @@media(max-width: 991px) {
+        .card-columns {
+            -webkit-column-count: 1;
+            -moz-column-count: 1;
+            column-count: 1;
+        }
+    }
+</style>
+<link href="~/lib/charts/Chart.min.css" rel="stylesheet" />
+<div class="sico-container pt-0">
+    <div class="row">
+        <div class="col-md-8">
+            <label class="pb-3">Dashbaord</label>
+            <div class="card" style="border-radius:20px;">
+                <div class="card-body bg-four" style="border-radius: 20px;">
+                    <div class="banner-container " style="">
+                        <img src="~/Uploads/images/laptop.PNG" class="rightimg" />
+                    </div>
+                    <div class="leftp">
+                        <h5>Wellcome! </h5>
+                        <p>
+                            Please check for updates frequently to keep<br /> your application uptodate.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label class="pb-3">BirthDay(s)</label>
+            <div class="card bg-three">
+                <div class="card-body pb-0">
+                    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner" id="carousel-inner-brithdays">
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                            <span class="carousel-control-prev-icon fa fa-angle-right" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                            <span class="carousel-control-next-icon fa fa-angle-left" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div class="col-xl-4 col-sm-6 border-right">
+
+            <div class="row">
+                <div class="col-12">
+                    <h3>Employees</h3>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-one w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fas fa-user-tie"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="emp-total"></h3>
+                                    <h6>Employee</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-two w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="emp-present"></h3>
+                                    <h6>Present</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-three w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fa fa-user-times"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="emp-absent"></h3>
+                                    <h6>Absent</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-four w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fa fa-step-backward"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="emp-leave"></h3>
+                                    <h6>Leave</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-xl-4  col-sm-6  border-right">
+
+            <div class="row">
+                <div class="col-12">
+                    <h3>Students</h3>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-one w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fa fa-users"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="std-total"></h3>
+                                    <h6>Students</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-two w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="std-present"></h3>
+                                    <h6>Present</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-three w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fa fa-user-times"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="std-absent"></h3>
+                                    <h6>Absent</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-four w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fa fa-step-backward"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="std-leave"></h3>
+                                    <h6>Leave</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4  col-sm-6">
+
+            <div class="row">
+                <div class="col-12">
+                    <h3>Other Info</h3>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-one w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fas fa-columns"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="class-total"></h3>
+                                    <h6>Classes</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-two w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="free-total"></h3>
+                                    <h6>Scholarships</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-three w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fa fa-calendar"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id=""></h3>
+                                    <h6>Session</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-6 col-sm-6 col-12 d-flex">
+                    <div class="card bg-four w-100">
+                        <div class="card-body">
+                            <div class="db-widgets d-flex justify-content-between align-items-center">
+                                <div class="db-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="db-info">
+                                    <h3 id="prn-total"></h3>
+                                    <h6>Parents</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <dov class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+
+                    <canvas id="sessionChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+
+                    <canvas id="studentChart" height="150"></canvas>
+                </div>
+            </div>
+        </div>
+    </dov>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                 @{
+                            var model11 = new GridModel()
+                {
+                GridId = "list_attendance",
+                ShowHeader=false,
+                DataUrl = "/Home/AttendanceBySelectedClassList",
+                    AddSerialNo = true,
+                    AllowExcelExport = false,
+                    AllowFiltering = false,
+                    AllowGrouping = false,
+                    GroupSettings = new GridGroupSettings { },
+                    Height = "auto",
+                    Width = "auto",
+                    AllowPaging = false,
+                    AllowPdfExport = false,
+                    AllowPrint = false,
+                    AllowResizing = false,
+                    AllowSearch = false,
+                    AllowSorting = false,
+                    Columns = new List<Column> {
+                new Column { FieldName = "ClassName", HeaderText = "ClassName", TextAlign = TextAlign.Left},
+                new Column { FieldName = "SectionName", HeaderText = "SectionName", TextAlign = TextAlign.Left } ,
+                new Column { FieldName = "Total", HeaderText = "Total", TextAlign = TextAlign.Left } ,
+                new Column { FieldName = "Absent", HeaderText = "Absent", TextAlign = TextAlign.Left },
+                new Column { FieldName = "Present", HeaderText = "Present", TextAlign = TextAlign.Left },
+                new Column { FieldName = "Leave", HeaderText = "Leave", TextAlign = TextAlign.Left },
+                new Column { FieldName = "LateComing", HeaderText = "Late Coming", TextAlign = TextAlign.Left },
+                new Column { FieldName = "NoAttendance", HeaderText = "No Attendance", TextAlign = TextAlign.Left }
+
+                    }
+                };
+                        }
+
+                        @await Html.PartialAsync("_grid",model11)
+
+                 @*  @Html.EJS().Grid("list_attendance").DataSource(s => { s.Url("/Home/AttendanceBySelectedClassList").Adaptor("UrlAdaptor"); }).Columns(col =>
+                {
+                col.Field("ClassName").HeaderText("Class").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("SectionName").HeaderText("Section").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Total").HeaderText("Total").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Absent").HeaderText("Absent").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Present").HeaderText("Present").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("Leave").HeaderText("Leave").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("LateComing").HeaderText("Late Coming").Width("100").TextAlign(TextAlign.Left).Add();
+                col.Field("NoAttendance").HeaderText("NoAttendance").Width("100").TextAlign(TextAlign.Center).Add();
+                }).Height("auto").Width("auto").Render()*@
+              
+            </div>
+        </div>
+        <div class="col-md-12">
+
+            <div class="card-columns w-100" id="sortableDivs">
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Developer"))
+                {
+                    <div class="card">
+                        @{
+                            var model1 = new GridModel()
+                {
+                    GridId = "list_classfee",
+                    ShowHeader = false,
+                    DataUrl = "/Home/FeeList",
+                    AddSerialNo = true,
+                    AllowExcelExport = false,
+                    AllowFiltering = false,
+                    AllowGrouping = false,
+                    GroupSettings = new GridGroupSettings { },
+                    Height = "auto",
+                    Width = "auto",
+                    AllowPaging = false,
+                    AllowPdfExport = false,
+                    AllowPrint = false,
+                    AllowResizing = false,
+                    AllowSearch = false,
+                    AllowSorting = false,
+                    Columns = new List<Column> {
+                    new Column { FieldName = "Month", HeaderText = "Month", TextAlign = TextAlign.Left, DateFormat="MMM, yyyy" },
+                    new Column { FieldName = "Total", HeaderText = "Total", TextAlign = TextAlign.Left } ,
+                    new Column { FieldName = "Received", HeaderText = "Received", TextAlign = TextAlign.Left } ,
+                    new Column { FieldName = "Balance", HeaderText = "Balance", TextAlign = TextAlign.Left }
+
+                    }
+                };
+                        }
+
+                        @await Html.PartialAsync("_grid",model1)
+                   @*     @Html.EJS().Grid("list_classfee").DataSource(s => { s.Url("/Home/FeeList").Adaptor("UrlAdaptor"); }).Columns(col =>
+                    {
+                    col.Field("Month").HeaderText("Month").Format("MMM, yyyy").TextAlign(TextAlign.Left).Add();
+                    col.Field("Total").HeaderText("Total").TextAlign(TextAlign.Left).Add();
+                    col.Field("Received").HeaderText("Received").TextAlign(TextAlign.Left).Add();
+                    col.Field("Balance").HeaderText("Balance").TextAlign(TextAlign.Left).Add();
+                    }).AllowPaging().PageSettings(p => { p.PageSize(10).PageSizes(new string[] { "10", "30", "50", "All" }); }).Render()
+                    *@
+                </div>
+                }
+
+                <div class="card">
+                    @{
+                        var model = new GridModel()
+            {
+                GridId = "list_titmetable",
+                ShowHeader = false,
+                DataUrl = "/TimeTable/SavedTimeTableList",
+                AddSerialNo = true,
+                AllowExcelExport = false,
+                AllowFiltering = false,
+                AllowGrouping = false,
+                GroupSettings=new GridGroupSettings {  },
+                Height ="auto",
+                Width="auto",
+                AllowPaging = false,
+                AllowPdfExport = false,
+                AllowPrint = false,
+                AllowResizing = false,
+                AllowSearch = false,
+                AllowSorting = false,
+                Columns = new List<Column> {
+                    new Column { FieldName = "Pno", HeaderText = "Pno", TextAlign = TextAlign.Left }, 
+                    new Column { FieldName = "ReminderTime", HeaderText = "Start", TextAlign = TextAlign.Left } ,
+                    new Column { FieldName = "Pno", HeaderText = "End", TextAlign = TextAlign.Left } ,
+                    new Column { FieldName = "Pno", HeaderText = "Description", TextAlign = TextAlign.Left }
+
+                    }
+            };
+                    }
+                    @await Html.PartialAsync("_grid",model)
+@*
+                    @Html.EJS().Grid("list_titmetable").DataSource(s => { s.Url("/TimeTable/SavedTimeTableList").Adaptor("UrlAdaptor"); }).Columns(col =>
+                    {
+                    col.Field("Pno").HeaderText("Pno").TextAlign(TextAlign.Left).Add();
+                    col.Field("ReminderTime").HeaderText("Start").TextAlign(TextAlign.Left).Add();
+                    col.Field("EndTime").HeaderText("End").TextAlign(TextAlign.Left).Add();
+                    col.Field("ReminderValue").HeaderText("Description").TextAlign(TextAlign.Left).Add();
+                    }).AllowGrouping().GroupSettings(g => { }).Height("auto").Width("auto").Render()*@
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div id="carouselTemplate" style="display:none">
+    <div class="carousel-item">
+        <div class="row">
+            <div class="col-12 col-md-12">
+                <div class="row no-gutters">
+                    <div class="col-4">
+
+                        <img class="profile-user-img img-responsive rounded-circle" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                        <div class="text-center bday-action">
+                            <button class="btn btn-outline btn-sm" title="SMS Birthday Wish">
+                                <i class="fa fa-sms"></i>
+                            </button>
+
+                            <button class="btn btn-outline btn-sm" title="Email Birthday Wish">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                    <div class="col-8">
+                        <ul class="list-group list-group-unbordered">
+                            <li class="list-group-item listnoback text-center">
+                                <a class="text-aqua">
+                                    <span class="name" id="stuName">......</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item listnoback">
+                                <span>Campus</span>
+                                <a class="pull-right text-aqua">
+                                    <span class="campusname float-right" id="lblcampus">...</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item listnoback">
+                                <span>Class</span>
+                                <a class="pull-right text-aqua">
+                                    <span class="classname float-right" id="lblclass">...</span>
+                                </a>
+                            </li>
+                            <li class="list-group-item listnoback">
+                                <span>Date of birth</span>
+                                <a class="pull-right text-aqua">
+                                    <span class="dobtext float-right" id="lbldob">12/12/1986</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="emptyTemplate">
+    <div class="carousel-item no-birthday">
+        <h3>No Birthdays</h3>
+    </div>
+</div>
+<script>
+    let campIdsServer = '@Newtonsoft.Json.JsonConvert.SerializeObject(user.GetCampusIds())'
+</script>
+<script>
+    function loaded() {
+        let grid = document.getElementById("list_attendance").ej2_instances[0];
+        grid.dataSource = [];
+    }
+</script>
+<script defer src="~/lib/charts/Chart.min.js"></script>
+<script defer src="~/lib/pages/dashboard.js"></script>
+
+

@@ -1,0 +1,292 @@
+﻿@model Visitor
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Index";
+
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Visitors
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+    @*@using (Ajax.BeginForm("VisitorCreate", "Hostel", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "editvisitormainForm #server-progress", OnBegin = "begin"}, new {id = "editvisitormainForm", enctype = "multipart/form-data"}))
+    {*@
+    <form asp-action="VisitorCreate" asp-controller="Hostel" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editvisitormainForm" data_reset="true">
+
+        <div class="row">
+            <div class="col-12 ">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">Visitors Record <a href="https://www.youtube.com/watch?v=yqoeHNNcBCw&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help >> </a></h3>
+                    </div>
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="Container">
+
+                            <div class="row ">
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Hostel</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.DropDownListFor(model => model.Id, (SelectList)ViewBag.hstlename, new { @class = " form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-building small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Id)
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>VisitorName</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.Name, new { @class = " form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-home small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Name)
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Relationship</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.Relationship, new { @class = " form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-user-o small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Relationship)
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Cnic</label>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.Cnic, new { @class = " form-control has-feedback-left" })
+                                        <span class="fa fa-id-card small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Cnic)
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Date</label>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.Date, new { @class = " form-control has-feedback-left", type = "date" })
+                                        <span class="fa fa-calendar-times-o small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Date)
+                                    </div>
+                                </div>
+
+                                @*                      <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                <label>Time In</label><font class="text-danger">*</font>
+                                <div  class="controls">
+                                @Html.TextBoxFor(model => model.TimeIn, new { @class = " form-control has-feedback-left", required = "true", type = "time" })
+                                <span class="fa fa-times small form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessageFor(model => model.TimeIn)
+                                </div>
+                                </div>
+
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                <label>Time Out</label><font class="text-danger">*</font>
+                                <div  class="controls">
+                                @Html.TextBoxFor(model => model.TimeOut, new { @class = " form-control has-feedback-left", required = "true", type = "time" })
+                                <span class="fa fa-calendar-times-o small form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessageFor(model => model.TimeOut)
+                                </div>
+                                </div>*@
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Student Reg No</label>
+                                    <div class="controls">
+                                        <input type="text" name="regNo" class=" form-control" />
+
+                                        <span class="fa fa-info small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.StudentRegNo)
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                @* <a href="@Url.Action("Index", "visitors")" aria-label="Close" class="btn btn-danger float-left mt-2"> <i class="fa fa-times mr-2"></i>Back to Dashboard</a>*@
+                                <button type="reset" name="Reset" id="resetbtn" class="btn btn-primary float-right mt-2"><i class="fa fa-refresh mr-2"></i>Reset</button>
+                                <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">visitors List</h3>
+                    </div>
+                    <div class="card-body">
+                        @* <div id="visitor-gridContainer">
+                        <table id="jqgvisitor" cellpadding="0" cellspacing="0"></table>
+                        <div id="jqgpvisitor" style="text-align: center;"></div>
+                                                </div>*@
+                            @{
+                                var gridmodel = new GridModel()
+            {
+                GridId = "jqgvisitor",
+                Columns = new List<Column>
+                            {
+                        new Column{FieldName="regNo",HeaderText="RegNo",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="studentName",HeaderText="Student",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="name",HeaderText="Visitor",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="relationship",HeaderText="Relationship",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="cnic",HeaderText="Cnic",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="data",HeaderText="Date",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+                            new Column{Template="action",HeaderText="Action",AllowSorting=true,Width="auto",HeaderTextAlign=TextAlign.Left},
+
+                            },
+            };
+                            }
+                            @await Html.PartialAsync("_grid",gridmodel)
+
+                     
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+@*<script @resources.JavaScript>
+    function reloadGridData() {
+        $('#jqgvisitor').trigger('reloadGrid', { current: true, fromserver: true });
+    }
+
+    $(function () {
+        $('#jqgvisitor').jqGrid({
+            //url from wich data should be requested
+            url: '@Url.Action("GetvisiorListForJq")',
+            //type of data
+            datatype: 'json',
+            //url access method type
+            mtype: 'Post',
+            //columns names sr, dname, ccode, address1, phone, tname, aname,dcode,ntn,holiday
+            // ID, s.CampusName,s.web,s.mailingName,s.mobile,s.phone
+            //columns model
+            colModel: [
+                //width: 20, search: true, stype: 'text', searchoptions: { attr: { title: 'Select Date' } } },
+                { label: 'RegNo', name: 'RegNo', index: 'RegNo', align: 'left' },
+                { label: 'Student', name: 'StudentName', index: 'StudentName', align: 'left' },
+                { label: 'Visitor', name: 'Name', index: 'Name', align: 'left' },
+                { label: 'Relationship', name: 'Relationship', index: 'Relationship', align: 'left' },
+                { label: 'Cnic', name: 'Cnic', index: 'Cnic', align: 'left' },
+                { label: 'Date', name: 'Date', index: 'Date', align: 'left' },
+                { label: 'Time_In', name: 'Timein', index: 'Timein', align: 'left' },
+                { label: 'Time_Out', name: 'Timeout', index: 'Timeout', align: 'left' },
+                { label: 'Action', name: 'action', index: 'action', align: 'center' }
+
+                //s.Id, s.EmployeeName,s.Date,s.Address,s.MobileNo,s.Email,
+            ],
+            //enable footer
+            footerrow: false,
+            userDataOnFooter: false,
+            //expect object instead of flat array
+            jsonReader: { repeatitems: false, id: 'Id' },
+            //pager for grid
+            pager: $('#jqgpvisitor'),
+            //number of rows per page
+            rowNum: 10,
+            //initial sorting column
+            sortname: 'Id',
+            //initial sorting direction
+            sortorder: 'asc',
+            //we want to display total records count
+            viewrecords: true,
+            height: 'auto',
+
+
+            loadComplete: function () {
+                var table = this;
+                setTimeout(function () {
+                    updatePagerIcons(table);
+                },
+                    0);
+            },
+            gridComplete: function () {
+                $('.ajax').on('click',
+                    function (e) {
+                        e.preventDefault();
+                        var title = $(this).attr('title');
+                        var url = $(this).attr('href');
+
+                        BootstrapDialog.show({
+                            title: title,
+                            message: $('<div />').load(url),
+                            onhide: function (dialogRef) {
+
+                                reloadGridData();
+                            }
+                        });
+                        return false;
+                    });
+            }
+        });
+
+        function updatePagerIcons(table) {
+            var replacement =
+            {
+                'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+                'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+                'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+                'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+            };
+            $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function () {
+                var icon = $(this);
+                var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+                if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+            });
+        }
+
+        var DataGrid = $('#jqgvisitor');
+
+        //sets the grid size initially
+        DataGrid.jqGrid('setGridWidth', parseInt($('#visitor-gridContainer').width()));
+
+        //handles the grid resize on window resize
+        $(window).resize(function () {
+            DataGrid.jqGrid('setGridWidth', parseInt($('#visitor-gridContainer').width()));
+        });
+
+    });
+
+                        //   });
+</script>*@
+<script @resources.JavaScript>
+    $(document).ready(function () {
+        var url2 = '@Url.Action("GetvisiorListForJq")';
+        var grid = document.getElementById("jqgvisitor").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url2,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    });
+
+    function reloadGridData() {
+        var gird = document.getElementById('jqgvisitor').ej2_instances[0];
+        gird.refresh();
+    }
+    </script>

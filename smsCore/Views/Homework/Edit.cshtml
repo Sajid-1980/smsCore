@@ -1,0 +1,108 @@
+﻿ @model Homework
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@*@using (Ajax.BeginForm("Edit", "Homework", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "EditHomeworkForm #server-progress", OnBegin = "begin"}, new {id = "EditHomeworkForm", enctype = "multipart/form-data"}))
+{*@
+<form asp-action="Edit" asp-controller="Homework"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="EditHomeworkForm" data_reset="true">
+                
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row" id="editHomework">
+
+        @Html.HiddenFor(model => model.Id, new { @class = "form-control has-feedback-left" })
+        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "editHomework", ColCssClass = "col-12 col-sm-4 col-md-4", ShowSubjects = true, ShowCampus = true, ShowClasses = true, ShowSections = true })
+
+        @Html.Partial("_PartialDate", new PartialDateViewModels
+                    {
+                        Label = "Homework Date",
+                        ParentContainerID = "adm-date",
+                        ColCssClass = "col-12 col-sm-4 date",
+                        ShowAltField = false,
+                        DateFieldId = "HomeworkDate",
+                        DateFieldName = "HomeworkDate",
+                        KeepDataFieldReadOnly = true,
+                        DefaultDate = DateTime.Now
+                    })
+
+        @Html.Partial("_PartialDate", new PartialDateViewModels
+       {
+           Label = "Submission Date",
+           ParentContainerID = "adm-date",
+           ColCssClass = "col-12 col-sm-4 date",
+           ShowAltField = false,
+           DateFieldId = "subDate",
+           DateFieldName = "SubmissionDate",
+           KeepDataFieldReadOnly = true,
+           DefaultDate = DateTime.Now
+       })
+        <div class="col-12 col-sm-4  has-feedback">
+            <label>Attach Document</label>
+            <input type="file" data-preview="stdTaskView" name="attachHw" id="attachHomework" class="form-control p-1" style="height: 35px;" />
+        </div>
+
+        <div class="col-12 col-sm-4  has-feedback">
+            <label>Description</label>
+            <div class="controls">
+                @Html.TextAreaFor(model => model.description, new { @class = "form-control has-feedback-left input-lg textarea-editor", type = "text" })
+                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                @Html.ValidationMessageFor(model => model.description)
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-12">
+            <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Save
+            </button>
+        </div>
+    </div>
+</form>
+<script @resources.JavaScript>
+    $('#updatebtn').prop('disabled', true);
+    $("#attachHomework").change(function () {
+        // Get uploaded file extension  
+        var extension = $(this).val().split('.').pop().toLowerCase();
+        // Create array with the files extensions that we wish to upload  
+        var validFileExtensions = ['doc', 'docx', 'pdf'];
+        //Check file extension in the array.if -1 that means the file extension is not in the list.  
+        if ($.inArray(extension, validFileExtensions) == -1) {
+            alert("Sorry!! Upload only 'doc', 'docx', 'pdf' file")
+            // Clear fileuload control selected file  
+            $(this).replaceWith($(this).val('').clone(true));
+            //Disable Submit Button  
+            $('#updatebtn').prop('disabled', true);
+        } else {
+            // Check and restrict the file size to 128 KB.  
+            if ($(this).get(0).files[0].size > (131072)) {
+                alert("Sorry!! Max allowed file size is 128 kb");
+                // Clear fileuload control selected file  
+                $(this).replaceWith($(this).val('').clone(true));
+                //Disable Submit Button  
+                $('#updatebtn').prop('disabled', true);
+            } else {
+                //Enable Submit Button  
+                $('#updatebtn').prop('disabled', false);
+            }
+        }
+    });
+</script>

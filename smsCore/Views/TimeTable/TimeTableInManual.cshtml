@@ -1,0 +1,192 @@
+﻿@using sms.Models
+@model IEnumerable<Models.TeachingSubject>
+@inject StaticResources rec;
+@{
+    /**/
+
+    ViewBag.Title = "Time Table In Manual";
+}
+<style>
+    .ui-jqgrid .ui-jqgrid-view button {
+        padding: 0;
+    }
+</style>
+
+<head>
+    <script>
+                  function toolOnbarClick(args) {
+        var gridObj = document.getElementById("list_tsubj").ej2_instances[0];
+        if (args.item.id === 'list_tsubj_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'list_tsubj_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+    </script>
+</head>
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Time Table Manual
+        </li>
+
+    </ul>
+</div>
+
+
+<section class="content" id="timetable-manualcontainer">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Select Class</h3>
+                </div><!-- /.box-header -->
+                @*@using (Ajax.BeginForm("TimeTableInManual", "TimeTable", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "classFeeIndexmainForm" }))*@
+                <form asp-action="TimeTableInManual" asp-controller="TimeTable" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "timetable-manualcontainer", ColCssClass = "col-12 col-sm-6", ShowCampus = true, ShowClasses = true, ShowSections = true })
+                        <div class="col-12">
+                            <button type="button" class="btn sico-btn btn-primary float-right mt-2" onclick="reloadGridData();">
+                                <i class="fa fa-search"></i> Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Time Table Manual <a href="https://www.youtube.com/watch?v=tryCYOvnPQE#t=105s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="row mt-3">
+                        <div class="col-12">
+
+                           @* @Html.EJS().Grid("list_tsubj").ToolbarClick("toolOnbarClick").AllowResizing().AllowPdfExport().AllowExcelExport().Columns(col =>
+                            {
+                            col.Field("Pno").HeaderText("P.No").TextAlign(TextAlign.Left).Width("60").Add();
+                            col.Field("SubjectName").HeaderText("Subject").TextAlign(TextAlign.Left).Add();
+                            col.Field("TimeFrom").HeaderText("From").TextAlign(TextAlign.Left).Width("120").Add();
+                            col.Field("TimeTo").HeaderText("To").TextAlign(TextAlign.Left).Width("120").Add();
+                            col.Field("action").Template("#action").HeaderText("Action").Width("100").TextAlign(TextAlign.Center).Add();
+                            }).Toolbar(new List<string> {"ExcelExport", "PdfExport", "ColumnChooser", "Print", "Search"}).Render()*@
+
+
+
+                            @{
+                                var modelgrid = new GridModel()
+                                {
+                                    GridId = "list_tsubj",
+                                    ShowHeader = false,
+                                    AddSerialNo=true,
+                                    Columns = new List<Column>
+                                    {
+                                     new Column{FieldName="subjectName",HeaderText="SubjectName",TextAlign=TextAlign.Left , Width="60"},
+                                    new Column{FieldName="timeFrom",HeaderText="From",TextAlign=TextAlign.Left , Width="120"},
+                                    new Column{FieldName="timeTo",HeaderText="To",TextAlign=TextAlign.Left , Width="120"},
+                                    new Column{FieldName="action",Template="action",HeaderText="Action",TextAlign=TextAlign.Center , Width="100" },
+                                                
+                                    },
+                                };
+
+                            }
+                            @await Html.PartialAsync("_grid",modelgrid)
+                            
+                            
+                            
+                        </div>
+                        <script type="text/x-jsrender" id="action">
+                            <a href='javascript:void(0)' onclick='edit(${index})'><i class='fa fa-edit mx-1'></i></a> </script>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+@Html.EJS().ScriptManager()
+
+
+<script @rec.JavaScript>
+    function reloadGridData() {
+        var url = '@Url.Action("TimeTableManualList")';
+        var classess = $('#Classes').val();
+        var campus = $('#Campus').val();
+        var Sections = $('#Sections').val();
+        if (campus == null) {
+            sweetalert("Error", "Please select a Campus.", 'error');
+            return false;
+        }
+        if (classess == null) {
+            sweetalert("Error", "Please select a Class.", 'error');
+            return false;
+        }
+        if (Sections == null) {
+            sweetalert("Error", "Please select a Section.", 'error');
+            return false;
+        }
+        url += '?classId=' + classess + '&SectionId=' + Sections + '&campusid=' + campus;
+
+        var grid = document.getElementById("list_tsubj").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+
+    
+    
+  
+    function edit(index) {
+        var grid = document.getElementById("list_tsubj").ej2_instances[0];
+        grid.selectRow(index);
+        var data = grid.getSelectedRecords()[0];
+        if (!data)
+            return false;
+
+        //var CurrentRow = clickedA.closest('tr');
+        var classess = data.ClassID;// $(CurrentRow).children('td[aria-describedby="jqgTimetable_ClassID"]').attr('title');
+        var campus = data.CampusID;// $(CurrentRow).children('td[aria-describedby="jqgTimetable_CampusID"]').attr('title');
+        var Sections = data.SectionID;// $(CurrentRow).children('td[aria-describedby="jqgTimetable_SectionID"]').attr('title');
+        var subjectId = data.SubjectID;// $(CurrentRow).children('td[aria-describedby="jqgTimetable_SubjectID"]').attr('title');
+        var staffid = data.StaffID;// $(CurrentRow).children('td[aria-describedby="jqgTimetable_StaffID"]').attr('title');
+        var subjectName = data.SubjectName;// $(CurrentRow).children('td[aria-describedby="jqgTimetable_SubjectName"]').attr('title');
+      
+        var url = '/TimeTable/TimeTableInManualEdit?SubjectId=' + subjectId + "&CampusId=" + campus + "&ClassId=" + classess + "&SectionId=" + Sections + "&StaffId=" + staffid + '' + (subjectId == 0 ? "&subjectName=" + subjectName : "");
+        var title = "Time Table - " + subjectName.replace("[", " - ").replace("]", "") + "";
+        BootstrapDialog.show({
+            title: '' + title + '',
+            message: $('<div id="editTimeTablePopup" />').load(url),
+            onhide: function(dialogRef) {
+                reloadGridData();
+            }
+        });
+
+
+    }
+
+  
+
+</script>

@@ -1,0 +1,193 @@
+﻿@model StudentComplaign
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Complaints";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@{
+    var datedd = DateTime.Now.ToString("dd MMM yyyy");
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Add Complaints
+        </li>
+
+    </ul>
+</div>
+
+
+<section class="content">
+    @*@using (Ajax.BeginForm("Complaints", "Homework", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "complaintForm #server-progress", OnBegin = "begin"}, new {id = "complaintForm", enctype = "multipart/form-data"}))
+    {*@
+
+    <form asp-action="Complaints" asp-controller="Homework"
+          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="complaintForm" data_reset="true">
+                   
+
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Student Complaints</h2>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="col-12 col-sm-6 col-md-6  has-feedback">
+                            <label>Student Registration No <font class="text-danger">*</font></label>
+                            <div class="controls">
+                                <input type="text" name="RegistrationNo" id="regNoid" class="form-control small" />
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="box-profile">
+                            <img class="profile-user-img img-responsive img-circle" id="profile-user-img" src="/Uploads/images/user.png" alt="User profile picture">
+                            <h3 class="profile-username text-center">
+                                <span id="name">.........</span>
+                            </h3>
+                            <ul class="list-group list-group-unbordered">
+                                <li class="list-group-item listnoback">
+                                    <b>Father's Name </b>
+                                    <a class="pull-right text-aqua">
+                                        <span id="fName">.........</span>
+                                    </a>
+                                </li>
+                                <li class="list-group-item listnoback">
+                                    <b>Address </b>
+                                    <a class="pull-right text-aqua">
+                                        <span id="Address">.........</span>
+                                    </a>
+                                </li>
+                                <li class="list-group-item listnoback">
+                                    <b>Class </b>
+                                    <a class="pull-right text-aqua">
+                                        <span id="classes">.........</span>
+                                    </a>
+                                </li>
+                                <li class="list-group-item listnoback">
+                                    <b>Section </b>
+                                    <a class="pull-right text-aqua">
+                                        <span id="Section">.........</span>
+                                    </a>
+                                </li>
+                                <li class="list-group-item listnoback">
+                                    <b>Mobile</b>
+                                    <a class="pull-right text-aqua">
+                                        <span id="mobile">.........</span>
+                                    </a>
+                                </li>
+                            </ul>
+
+
+                            <input type="hidden" value="@datedd" id="datess" />
+                        </div>
+                      
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="col-12 has-feedback">
+                            <label>Description <font class="text-danger">*</font></label>
+                            <div class="controls">
+                                @Html.TextAreaFor(model => model.Particular, new { @class = "form-control has-feedback-left ", required = "true", type = "text" })
+                                <span class="fa fa-book form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mb-2 mt-3">
+                            <i class="fa fa-save mr-2"></i>
+                            <span><i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i></span> Send
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                
+            </div>
+        </div>
+    </form>
+</section>
+
+<script @resources.JavaScript>
+    $('#updatebtn').disable();
+    $('#regNoid').on('change',
+        function() {
+           $('#updatebtn').disable();
+            if ($(this).hasClass('is-invalid')) {
+                return false;
+            }
+            var regNoid = $('#regNoid').val();
+            var url = '/api/fee/get-student-info-complaint';
+            url += '?regno=' + regNoid;
+            $('#receiveableGrid-main-contanier').hide();
+            $('#name').html('......');
+            $('#fName').html('...');
+            $('#Address').html('...');
+            $('#classes').html('...');
+            $('#Section').html('...');
+            $('#mobile').html('...');
+            $('#lblrecieveableAmount').html('0');
+            $('#lbllatefee').val('0');
+            $('#balanceAmount').val('0');
+            $('img#profile-user-img').attr("src", "/Uploads/images/user.png");
+
+            $.get(url,
+                function(data) {
+                    data = JSON.parse(data);
+                    console.log(data)
+                    $('#name').html(data.StudentName);
+                    $('#fName').html(data.FName);
+                    $('#Address').html(data.PostalAddress);
+                    $('#classes').html(data.ClassName);
+                    $('#Campus').html(data.CampusName);
+                    $('#Section').html(data.SectionName);
+                    $('#mobile').html(data.Mobiles);
+                    $('#lblrecieveableAmount').html(data.ReceiveableAmount);
+                    $('#lbllatefee').val(data.LateFee);
+                    if (data.StudentPhotos != null && data.StudentPhotos != "") {
+                        $('img#profile-user-img').attr("src", data.StudentPhotos);
+
+                    } else {
+                        $('img#profile-user-img').attr("src", "/Uploads/images/user.png");
+
+                    }
+
+                    if (data.StudentName != "" || data.StudentName != null || data.StudentName != "...") {
+                        $('#updatebtn').enable();
+                    }
+
+                });
+        });
+
+</script>

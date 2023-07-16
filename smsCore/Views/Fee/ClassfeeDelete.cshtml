@@ -1,0 +1,72 @@
+﻿@model ClassFeeGroup
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Delete";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<h5>Are you sure you want to delete?</h5>
+
+<div>
+
+    <hr/>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.FeeGroup.ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ID)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.FeeGroup.FeeGroupName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FeeGroup.FeeGroupName)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Class.ClassName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Class.ClassName)
+        </dd>
+
+
+    </dl>
+   @* @using (Ajax.BeginForm("ClassfeeDelete", "Fee", new AjaxOptions {HttpMethod = "POST", OnSuccess = "disablebutton", OnComplete = "completed", LoadingElementId = "classfeeDeletemainForm #server-progress", OnBegin = "begin"}, new {id = "classfeeDeletemainForm"}))
+    {*@
+    <form asp-action="ClassfeeDelete" asp-controller="Fee"
+          data-ajax="true" data-ajax-method="post"   data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classfeeDeletemainForm" data_reset="true">
+                   
+
+
+        @Html.AntiForgeryToken()
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+        </div>
+        <input type="hidden" asp-for="ID" />
+        <button asp="Index" data-dismiss="modal" aria-label="Close" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Cancel and Close</button>
+        <button type="submit" value="Create" id="submitbuttom" class="btn btn-primary pull-right">
+            <i class="fa fa-save mr-2"></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+
+            </span> Delete
+        </button>
+    </form>
+</div>
+<script @resources.JavaScript>
+    function disablebutton() {
+        $('#submitbuttom').hide();
+    }
+</script>

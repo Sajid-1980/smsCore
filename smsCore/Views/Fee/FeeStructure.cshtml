@@ -1,0 +1,200 @@
+﻿@inject StaticResources resources
+
+@model FeeStructureViewModel
+@{
+    ViewBag.Title = "Fee Structure";
+}
+@*@using (Ajax.BeginForm("FeeStructure", "Fee", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "FeeStructureForm #server-progress", OnBegin = "begin" }, new { id = "FeeStructureForm" }))
+{*@
+
+
+<form asp-action="FeeStructure" asp-controller="Fee" data-ajax="true" data-ajax-method="post" OnSuccess="reloadGridData" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeStructureForm" data_reset="true">
+
+
+    @*@Html.HiddenFor(model => model.ClassFeeGroupId)
+    @Html.HiddenFor(model => model.FeeGroupId)*@
+    <input type="hidden" asp-for="FeeGroupId" />
+    <input type="hidden" asp-for="ClassFeeGroupId" />
+    <section class="content" id="feeStructure">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels
+                            {
+                            CampusLoadCallBack = "reloadGridData();",
+                            ParentContainerID = "feeStructure",
+                            ColCssClass = "col-12 col-sm-12 col-md-6",
+                            ShowClasses = true,
+                            ShowCampus = true,
+                            CampusFieldName = "CampusId",
+                            ClassesFieldName = "ClassId",
+                            CampusID = Model == null ? 0 : Model.CampusId,
+                            ClassID = Model == null ? 0 : Model.ClassId
+                            })
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="StructName">Enter Structure Name</label>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.FeeGroupName, new { @class = "form-control", placeholder = "Enter Structure Name" })
+                                        <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card-header px-0">
+                                    <h3 class="card-title">Fee Stucture</h3>
+                                </div>
+                            </div>
+                            <div class="col-12 text-right mb-2 mt-2">
+                                <a href="@Url.Action("FeeTypeIndex", "Fee")" class="btn btn-light float-right">
+                                    <i class="fa fa-plus mr-2"></i>  Add/Edit Fee Type
+                                </a>
+                                @*<button type="button" value="New" id="" class="btn btn-light float-right">
+
+                                <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                </span> New
+                                </button>*@
+                            </div>
+                            @*<div class="col-md-12">
+                            @Html.EJS().Grid("list").Columns(col =>
+                            {
+
+                            col.Field("SNO").HeaderText("S.No").Width(20).TextAlign(TextAlign.Left).Add();
+                            col.Field("TypeName").HeaderText("Description").Width(50).TextAlign(TextAlign.Left).Add();
+                            col.Template("#amounttemplate").HeaderText("Amount").Width(30).TextAlign(TextAlign.Left).Add();
+                            //col.Template("#actioncol").HeaderText("Action").Width(30).ClipMode(ClipMode.Ellipsis).TextAlign(TextAlign.Center).Add();
+
+
+                            }).Render()
+
+                            </div>*@
+                            <div class="col-md-12">
+
+                                <script type="text/x-jsrender" id="amounttemplate">
+                                    <input type="hidden" value="${feeTypeId}" name="FeeStructureTypes[${index}].FeeTypeId" />
+                                    <input type="text" class="form-control form-control-sm p-0 text-center" value="${amount}" name="FeeStructureTypes[${index}].Amount" />
+
+                                </script>
+                                @{
+                                    var gridmodel = new GridModel()
+            {
+                GridId = "list",
+                AddSerialNo = true,
+                Columns = new List<Column>
+                                {
+                                new Column{FieldName="typeName",HeaderText="Description",Width="50",TextAlign=TextAlign.Left},
+                                new Column{Template="#amounttemplate",HeaderText="Amount",Width="30",TextAlign=TextAlign.Left},
+                                },
+            };
+                                }
+                                @await Html.PartialAsync("_grid",gridmodel)
+                            </div>
+
+                            <script type="text/x-jsrender" id="actioncol">
+                                @*  <a rel="nofollow" title="Edit" href="/Fee/FeestructEdit/" class="edit ml-1"><i class="fa fa-edit"></i></a>*@
+                            </script>
+
+                        </div>
+                        <div class="col-12 text-right mt-2">
+                            <div id="message text-left"></div>
+                            <button type="submit" value="Create" id="submit" class="btn btn-primary float-right">
+                                <i class="fa fa-save mr-2"></i>
+                                <span>
+                                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                </span> Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</form>
+<script @resources.JavaScript>
+    function getparam(Id, feeGroupId, campusId) {
+        return `${Id}?feeGroupId=${feeGroupId}&campusId=${campusId}`;
+    }
+    var grid = document.getElementById("list").ej2_instances[0];
+    $('#feeStructure').on('click',
+        'a',
+        function (e) {
+            e.preventDefault();
+            var title = 'Fee System';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                size: BootstrapDialog.SIZE_LARGE,
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            }).setSize(BootstrapDialog.SIZE_WIDE);
+            return false;
+        });
+
+    function reloadGridData() {
+        
+        var ClassID = $('#Classes').val() ?? 0;
+        var campusId = $('#Campus').val() ?? 0;
+        var groupId = $('#FeeGroupId').val() ?? -1;
+        if (ClassID == 0 || campusId == 0)
+            return false;
+        groupId = groupId == '' ? 0 : groupId;
+        var url = '@Url.Action("FeeStructureList", "Fee")';
+        url += '?classId=' + ClassID + '&campusId=' + campusId + '&feeGroupId=' + groupId;
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+
+
+    $('#Classes').on('change',
+        function () {
+            grid.dataSource = [];
+            var ClassID = $('#Classes').val() ?? 0;
+            var campusId = $('#Campus').val() ?? 0;
+            if (ClassID == 0 || campusId == 0)
+                return false;
+            block('#feeStructure');
+            let url = '@Url.Action("GetFeeGroupByClass", "Fee")';
+            url += '?classId=' + ClassID + '&campusId=' + campusId;
+            $.get(url, function (response) {
+                if (response.status) {
+                    $('#FeeGroupName').val(response.message.feeGroupName);
+                    $('#FeeGroupId').val(response.message.id);
+                } else {
+                    $('#FeeGroupName').val('');
+                    $('#FeeGroupId').val('');
+                }
+                reloadGridData();
+
+                $('#feeStructure').unblock();
+            });
+        }); //end of fee group change
+
+    $('#Campus').on('change',
+        function () {
+            reloadGridData();
+        });
+
+    $(function () {
+    }); //end of body load
+
+</script>

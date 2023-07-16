@@ -1,0 +1,112 @@
+﻿@using Utilities;
+@inject StaticResources Rec;
+@{
+    ViewBag.Title = "Create";
+
+}
+@*@using (Ajax.BeginForm("SchoolLogoSignature", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "SchoolLogoSignaturemainForm #server-progress", OnBegin = "begin" }, new { id = "SchoolLogoSignaturemainForm", enctype = "multipart/form-data" }))
+{*@
+
+<form asp-action="SchoolLogoSignature" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SchoolLogoSignaturemainForm" data_reset="true" enctype="multipart/form-data">
+  
+  
+
+
+    <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row " id="imagediv">
+        <div class="col-12 col-md-4">
+            <h5>Signature</h5>
+            <hr />
+        </div>
+        <div class="col-8"></div>
+        <div class="col-12 col-md-4">
+            @*data:image/*;base64,@(Convert.ToBase64String(Model.Logo))*@
+            <img src="data:image/*;base64,@(ViewBag.signaturephoto != null ? Convert.ToBase64String(ViewBag.signaturephoto) : "")" name="pbxSignature" id="SignaturePreview" class="d-block mx-auto" style="border-style: inset; height: 100%; width: 100%;" />
+            <input type="file" data-preview="SignaturePreview" name="SignatureFile" id="SignatureFile" onchange="imageChange(this)" style="height: 0px; position: absolute; width: 0px;" />
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="row" style="align-content: flex-end; height: 100%;">
+                <div class="col-12">
+                    <button type="button" name="btnClearSignature" id="signatureclearbtn" class="clearbtn_class btn btn-default mt-2"><i class="fa fa-eraser mr-2"></i>Clear</button>
+                </div>
+                <div class="col-12 mb-1">
+                    <button type="button" name="btnBrowseSignature" id="signaturebrowsebtn" class="browsebtn_class btn btn-default mr-2 mt-2" data-targetfileinputid="SignatureFile" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-folder mr-2"></i>Browse</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4" id="imagediv">
+
+        <div class="col-12 col-md-8">
+            @*data:image/*;base64,@(Convert.ToBase64String(Model.Logo))*@
+            <h5>Background Image</h5>
+            <hr />
+        </div>
+        <div class="col-12 col-md-6">
+            <img src="data:image/*;base64,@(ViewBag.Backgroundphoto != null ? Convert.ToBase64String(ViewBag.Backgroundphoto) : "")" name="pbxBackground" id="BackgroundmagePreview" class="d-block m-auto" style="border-style: inset; height: 100%; width: 100%;" />
+            <input type="file" data-preview="BackgroundmagePreview" name="BackgroundmageFile" id="BackgroundmageFile" onchange="imageChange(this)" style="height: 0px; position: absolute; width: 0px;" />
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="row" style="align-content: flex-end; height: 100%;">
+                <div class="col-12 ">
+                    <button type="button" name="btnCearBackgroundImage" id="bkgroundclearbtn" class="clearbtn_class btn btn-default mt-2"><i class="fa fa-eraser mr-2"></i>Clear</button>
+                </div>
+                <div class="col-12 mb-1">
+                    <button type="button" name="btnBrowseBackgroundImage" id="bkgroundbrowsebtn" class="browsebtn_class btn btn-default mr-2 mt-2" data-targetfileinputid="BackgroundmageFile" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-folder mr-2"></i>Browse</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 float-right mt-2">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+    </div>
+</form>
+
+<script @Rec.JavaScript>
+
+    $(document).ready(function() {
+
+
+        //browse button click event for load photos
+        $('.browsebtn_class').on('click',
+            function() {
+                var preview = $(this).data('preview');
+                var value = $(this).data('txtvalue');
+                var targetFileInputID = $(this).data('targetfileinputid');
+                $('#' + targetFileInputID + '').trigger('click');
+            });
+
+        /*$('input[type=file]').on('change', function (data)*/
+
+        //clear button click event
+        $(".clearbtn_class").click(function() {
+            var x = $(this).parents('#imagediv').find('img');
+            x.attr("src", "/Uploads/images/site/logo.png");
+        });
+    });
+
+    //image change function to show loaded image in image tag
+    function imageChange(input) {
+        var preview = $(input).data('preview');
+        if (input.files) {
+            for (i = 0; i < input.files.length; i++) {
+                var reader = new FileReader();
+                var cFile = input.files[i];
+                reader.onload = (function(e) {
+                    $('#' + preview + '').attr('src', e.target.result);
+                });
+                reader.readAsDataURL(input.files[i]);
+            }
+        }
+
+    }
+
+</script>

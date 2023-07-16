@@ -1,0 +1,160 @@
+﻿@using sms.Models
+@model IEnumerable<FeeStructure>
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Index";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+    int? feegroup = ViewBag.FeeGroupId;
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Fee Structure
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" style="background-color: #ececec; padding: 15px;" id="feestructIndex-container">
+    <div class="row">
+        <!-- left column -->
+        <div class="col-12 col-sm-4">
+            <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Select Fee Group <a href="https://www.youtube.com/watch?v=-L7sM_ZtyMo&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=120s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="row">
+
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "feestructIndex-container", ColCssClass = "col-12 col-sm-8 col-md-6 form-group", FeeGroupFieldName = "FeeGroupId", ShowCampus = true, CampusID = ViewBag.CampusId })
+
+                        <div class="col-12 col-sm-7 col-md-6 form-group">
+                            <label> Fee Group:</label>
+                            
+                                <a class="new float-right" href="@Url.Action("FeeGroupIndex", "Fee")" data-type="fee" title="Add New Fee Group" style="position: inherit !important;">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                                <div class="controls">
+                                    @Html.DropDownList("FeeGroupId", (SelectList)ViewBag.feegrouplist, new { @class = "form-control" })
+                                    <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                        </div>
+                        <div class="col-12 col-sm-8 col-md-6 form-group">
+                           
+                                <input type="hidden" id="hiddenfeegroup" />
+                            
+                           
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+
+
+                </div><!-- /.box-body -->
+            </div>
+        </div><!--/.col (left) -->
+
+        <div class="col-12 col-sm-8">
+            <!-- general form elements -->
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">
+                        Fee Structure List
+                        <a href="@Url.Action("FeeTypeIndex", "Fee")" class="float-right">
+                            <small>Add/Edit Fee Type</small>
+                        </a>
+                    </h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="col-12">
+
+                        @Html.EJS().Grid("feestructlist").Columns(col =>
+                   {
+                   col.Field("TypeName").HeaderText("Description").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                   col.Field("Amount").HeaderText("Amount").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                   col.Template("<a rel=\"nofollow\" title=\"Edit\" href=\"/Fee/FeestructEdit/${FeeTypeId}?feeGroupId=${ feeGroupId}&campusId=${ campusId}\" class=\"edit ml-1\"><i class=\"fa fa-edit\"></i></a>").
+                       HeaderText("Action").ClipMode(ClipMode.Ellipsis).TextAlign(TextAlign.Center).Add();
+                        }).Render()
+                    </div>
+
+                    @Html.EJS().ScriptManager()
+                   
+                </div><!-- /.box-body -->
+            </div>
+        </div><!--/.col (left) -->
+        <!-- right column -->
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    function getparam(Id, feeGroupId, campusId) {
+        return `${Id}?feeGroupId=${feeGroupId}&campusId=${campusId}`;
+    }
+    $('#feestructlist').on('click',
+        'a',
+        function (e) {
+            e.preventDefault();
+            var title = 'Fee System';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+
+    function reloadGridData() {
+        var feegroupId = $('#FeeGroupId').val();
+        var campusId = $('#Campus').val();
+        if (!feegroupId || !campusId)
+            return false;
+
+        var url = '@Url.Action("FeeStructureList", "Fee")';
+        url += '?feeGroupId=' + feegroupId + '&campusId=' + campusId;
+
+        var grid = document.getElementById("feestructlist").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    $(function() {
+
+        $('#FeeGroupId').on('change',
+            function() {
+                reloadGridData();
+            }); //end of fee group change
+
+        $('#Campus').on('change',
+            function () {
+                reloadGridData();
+            });
+
+
+    }); //end of body load
+
+    var interval_feelist = setInterval(function () {
+        var cmp = $('#Campus').val();
+        if (cmp) {
+            clearInterval(interval_feelist);
+            reloadGridData();
+        }
+    }, 100);
+    //   });
+</script>

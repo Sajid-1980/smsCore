@@ -1,0 +1,139 @@
+﻿@inject StaticResources resources
+
+
+@{
+    ViewBag.Title = "Result Missing Student";
+}
+
+@using sms.Models
+@model IEnumerable<Models.Subject>
+@{
+    
+        Layout = null;
+    
+    int? examId = ViewBag.examId;
+    int? campusId = ViewBag.campusId;
+    int? classId = ViewBag.classId;
+    int? sectionId = ViewBag.sectionId;
+
+}
+
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Result Missing Student
+        </li>
+
+    </ul>
+</div>
+<section class="content" id="resultmissingstudent">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">
+                        Search criteria <a href="https://www.youtube.com/watch?v=vTMiWr-yHTM#t=270s" title="Watch our Youtube Video to understand" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a>
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "resultmissingstudent", ColCssClass = "col-12 col-md-6 col-lg-6 col-xs-6 col-sm-6", ShowCampus = true, ShowClasses = true, ShowExams = true, ShowSubjects = true})
+
+                    </div>
+                </div>
+                <div class="card-footer">
+                    @*<a href="@Url.Action("Index","Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>*@
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" value="Create" id="loaddata" class="btn btn-primary float-right">
+                                <i class="fa fa-search mr-2"></i>
+                                <span>
+                                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                </span> Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Student List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="col-12">
+                        @{
+                            var gridmodel = new GridModel()
+            {
+                GridId = "list",
+                Columns = new List<Column>
+                {
+                        new Column{FieldName="registrationNo",HeaderText="Reg. No",TextAlign=TextAlign.Left,Width="100",AllowEditing=false},
+                        new Column{FieldName="studentName",HeaderText="Name",TextAlign=TextAlign.Left,AllowEditing=false},
+                        new Column{FieldName="campusName",HeaderText="Campus",TextAlign=TextAlign.Left,AllowEditing=false},
+                        new Column{FieldName="className",HeaderText="Class",TextAlign=TextAlign.Left,Width="100",AllowEditing=false},
+                        new Column{FieldName="marks",HeaderText="Marks",TextAlign=TextAlign.Left,Width="100",AllowEditing=true},
+                },
+            };
+                        }
+                        @await Html.PartialAsync("_grid",gridmodel);
+                    </div>
+                   @* <div class="col-12">
+
+                        @Html.EJS().Grid("list").AllowSelection().Columns(col =>
+                   {
+                       col.Field("RegistrationNo").HeaderText("Reg. No").Width("100").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                       col.Field("StudentName").HeaderText("Name").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                       col.Field("CampusName").HeaderText("Campus").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                       col.Field("ClassName").HeaderText("Class").Width("100").AllowEditing(false).TextAlign(TextAlign.Left).Add();
+                       col.Field("Marks").Visible(false).HeaderText("Marks").AllowEditing(true).Width("100").Add();
+                   }).AllowPaging().EditSettings(edit => { edit.AllowEditing(true).Mode(Syncfusion.EJ2.Grids.EditMode.Batch); }).FilterSettings(filter => filter.Type(FilterType.Menu)).Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().PageSettings(page => page.PageSize(15)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+
+    function reloadGridData() {
+
+        var classid = $('#Classes').val();
+        var campus = $('#Campus').val();
+        let subject = $('#Subjects').val();
+        let exam = $('#Exams').val();
+
+        var grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = [];
+       var url = '@Url.Action("ResultMissingStudentList")';
+        url += '?classId=' + classid + '&subjectid=' + subject + '&examid=' + exam + '&campusId=' + campus;
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+
+
+    $('#loaddata').on('click', function () {
+        reloadGridData();
+    });
+</script>

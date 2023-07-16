@@ -1,0 +1,392 @@
+﻿@model FeeSlipViewModel
+@*@model IEnumerable<Models.FeeSlip>*@
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Advance Fee";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Individual Fee Entry
+        </li>
+    </ul>
+</div>
+
+<style>
+</style>
+
+<section class="content" id="feeSlipIndex-container">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Individual Fee Entry <a href="https://www.youtube.com/watch?v=m98vDV70wso&list=UUQFf95Tyl3o9y-DE0vvlTQg" title="Watch our Youtube Video to understand" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help</a></h3>
+                </div>
+                <div class="card-body">
+                    @*  @using (Ajax.BeginForm("AdvanceFee", "Fee", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "FeeSlipIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "FeeSlipIndexmainForm" })){*@
+                    <form asp-action="AdvanceFee" asp-controller="Fee" data-ajax="true" data-ajax-method="post" OnSuccess="reloadGridData" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeSlipIndexmainForm" data_reset="true">
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-12 text-danger">@Html.ValidationSummary(true)</div>
+
+                            <div class="w-100 my-1"></div>
+                            <div class="col-12 col-sm-6 col-md-4 form-group has-feedback">
+                                <label> Reg No</label>
+
+                                <div class="controls">
+                                    <input type="text" name="regNo" id="regNo" class="form-control" />
+                                    <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("regNo")
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-2">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="row no-gutters">
+                                            <div class="col-4">
+
+                                                <img class="profile-user-img img-responsive img-circle" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                                                <h3 class="profile-username text-center">
+                                                    <span class="name" id="stuName">......</span>
+                                                </h3>
+                                            </div>
+                                            <div class="col-8">
+                                                <ul class="list-group list-group-unbordered">
+                                                    @*<li class="list-group-item listnoback">
+                                                    <b>Address</b> <a class="pull-right text-aqua"> <span class="name address" id="lbladdress">House # 235, St 63, I-10/1 Islamabad</span></a>
+                                                    </li>*@
+
+                                                    <li class="list-group-item listnoback">
+                                                        <b>Campus</b>
+                                                        <a class="pull-right text-aqua">
+                                                            <span class="campusname" id="lblcampus">...</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="list-group-item listnoback">
+                                                        <b>Class</b>
+                                                        <a class="pull-right text-aqua">
+                                                            <span class="classname" id="lblclass">...</span>
+                                                        </a>
+                                                    </li>
+                                                    <li class="list-group-item listnoback">
+                                                        <b>Section</b>
+                                                        <a class="pull-right text-aqua">
+                                                            <span class="sectionname" id="lblsection">..</span>
+                                                        </a>
+                                                    </li>
+
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-6 form-group has-feedback">
+                                <label> Select year</label><font class="text-danger">*</font>
+
+                                <div class="controls">
+                                    <select name="year" id="yearId" required class="form-control">
+                                        @for (var i = 0; i < 6; i++)
+                                        {
+                                            var value = DateTime.Now.Year + i;
+                                            <option value="@value">@value</option>
+                                        }
+                                    </select>
+                                    <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-6 form-group has-feedback">
+                                <label> Select Month</label><font class="text-danger">*</font>
+
+                                <div class="controls">
+                                    <select name="month" id="monthId" multiple required class="form-control"></select>
+                                    <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+
+                            </div>
+
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                            {
+                            Label = "Due Date:",
+                            ParentContainerID = "due-date",
+                            ColCssClass = "col-12 col-sm-6 col-md-6",
+                            ShowAltField = false,
+                            DateFieldId = "duedate",
+                            DateFieldName = "DueDate",
+                            KeepDataFieldReadOnly = true
+                            })
+
+                            <div class="col-12 col-sm-6 col-md-6 form-group has-feedback">
+                                <label> Total Amount</label>
+                                <div class="controls">
+                                    <input type="text" name="totalAount" id="totalAount" class="form-control" />
+                                    <span class="fa fa-dollar-sign form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("totalAount")
+                                </div>
+                            </div>
+                            <div class="w-100 my-1"></div>
+                            <div class="w-100"></div>
+
+
+                            <div class="w-100 my-1"></div>
+                            <div class="col-12 form-group has-feedback">
+                                <div class="row">
+                                    <div class="col-12">
+
+
+                                        @*  @Html.EJS().Grid("optinallist").DataSource(source => { source.Url("/Fee/OptionalFeeList"); source.Adaptor("UrlAdaptor"); }).AllowSelection().Columns(col =>
+                                        {
+                                        col.Template("#optional").Width("50").Add();
+                                        col.Field("TypeName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                                        col.Template("#amount").HeaderText("Amount").Width("140").Add();
+                                        }).Render()*@
+                                        @{
+                                            var gridmodel = new GridModel()
+            {
+                GridId = "optinallist",
+                DataUrl="/Fee/OptionalFeeList",
+
+                Columns = new List<Column>{
+                                        new Column{Template="#optional",Width="50"},
+                                        new Column{FieldName="typeName",HeaderText="Name",TextAlign=TextAlign.Left},
+                                        new Column{Template="#amount",HeaderText="Amount",Width="140"},
+                                        },
+            };
+                                        }
+                                        @await Html.PartialAsync("_grid",gridmodel)
+
+                                        <script id="optional" type="text/x-jsrender">
+                                            <input type="checkbox" name="Fee[${index}].Select" value="true" />
+                                        </script>
+
+                                        <script id="amount" type="text/x-jsrender">
+                                            <input type="hidden" name="Fee[${index}].Id" value="${Id}" />
+                                            <input type="text" class="form-control" name="Fee[${index}].Amount" value="0" />
+                                        </script>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="checkbox">
+                                            <input name="SendMessage" type="checkbox" value="true" class="mr-1" /><span> Send message &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        </label>
+                                        <div class="w-100 my-1"></div>
+                                        <label class="checkbox">
+                                            <input name="AddSmsCharges" type="checkbox" value="true" class="mr-1" /><span>Add SMS Charge&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        </label>
+
+                                        <div class="w-100 my-1"></div>
+                                        <label class="checkbox">
+                                            <input name="AddTransport" type="checkbox" value="true" class="mr-1" /><span>Add TransPort Charge &nbsp; &nbsp; &nbsp; &nbsp;</span>
+                                        </label>
+
+                                        @*<div class="w-100 my-1"></div>
+                                        <label class="checkbox">
+                                        <input name="AddLateFee" type="checkbox" value="true" class="mr-1" /><span>Add Late Fee </span>
+                                        </label>*@
+                                    </div>
+                                    <div class="col-12 col-md-6">
+
+                                        <p class="text-black-50 mb-1 mt-3">
+                                            If Record Found?
+                                        </p>
+                                        <label class="checkbox">
+                                            <input name="OverWrite" type="radio" value="true" checked class="mr-1" /><span>Over Write Existing Record</span>
+                                        </label>
+
+                                        <div class="w-100 my-1"></div>
+                                        <label class="checkbox">
+                                            <input name="OverWrite" type="radio" value="false" class="mr-1" /> <span>Don't Change</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="w-100 my-2"></div>
+
+                            <div class="form-group col-12 pb-2">
+
+
+                                <button type="submit" value="Create" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Monthly Fee Entry List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+@*
+
+                            @Html.EJS().Grid("feelist").AllowSelection().Columns(col =>
+                            {
+                            col.Field("StudentName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                            col.Field("ForMonth").HeaderText("Month").TextAlign(TextAlign.Left).Format("MMM, yyyy").Add();
+                            col.Field("Amount").HeaderText("Amount").TextAlign(TextAlign.Left).Add();
+                            col.Template("#action").HeaderText("Actions").Width("140").Add();
+                            }).AllowPaging().PageSettings(page => { page.PageSize(15); }).Render()*@
+
+                            @{
+                                var gridmodels = new GridModel()
+                                {
+                GridId = "feelist",
+                Columns=new List<Column>
+                {
+                  new Column{FieldName="studentName",HeaderText="Name",TextAlign=TextAlign.Left},  
+                  new Column{FieldName="forMonth",HeaderText="Month",TextAlign=TextAlign.Left},  
+                  new Column{FieldName="amount",HeaderText="Amount",TextAlign=TextAlign.Left},  
+                  new Column{Template="#action",HeaderText="Actions",Width="140"},  
+                },
+                                };
+                            }
+                            @await Html.PartialAsync("_grid",gridmodels)
+                            <script id="action" type="text/x-jsrender">
+                                <a title="Edit" href="/Fee/FeeSlipDetailEdit/${getid(Id)}" class="edit ajax ml-1"><i class="fa fa-edit"></i></a>
+                                <a title="Delete" href="/Fee/FeeSlipDetailDelete/${getid(Id)}" class="edit ajax ml-1"><i class="fa fa-trash"></i></a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    $('#monthId').html('').select2({
+        data: "",
+        width: '100%'
+    });
+
+
+    $('#regNo').on('change',
+        function () {
+            
+            $('#totalAount').val('');
+            $('#monthId').html('');
+            $('#monthId').val('');
+            var id = $('#regNo').val();
+            $('#receiveablefee').html('0');
+            $('#lateFee').html('0');
+            $('#stuName').html('.......');
+            $(lblcampus).html('...');
+            $(lblclass).html('...');
+            $(lblsection).html('...');
+            $(pbxPhoto).attr('src', "/Uploads/images/user.png");
+            var url = '/api/fee/get-student-Info';
+            url += '?regno=' + id;
+            $.get(url,
+                function (data) {
+
+                    reloadGridData();
+                    data = JSON.parse(data);
+                    if (data != false) {
+                        $('#stuName').html(data.StudentName);
+                        $(lblcampus).html(data.CampusName);
+                        $(lblclass).html(data.ClassName);
+                        $(lblsection).html(data.SectionName);
+                        $(pbxPhoto).attr('src', data.Photo);
+
+                    }
+
+                }).always(function () {
+
+                });
+        });
+
+    function reloadGridData() {
+        var regno = $('#regNo').val();
+        //  var campusId = $('#Campus').val();
+        var url = '@Url.Action("MonthlyFeeSlipOfStudent")';
+        url += '?regno=' + regno;
+        var grid = document.getElementById("feelist").ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    $('#Campus').on('change',
+        function () {
+            if ($('#monthlyfee').val() == "") {
+                $('#monthlyfee').focus();
+                return false;
+            } else {
+                $('#monthlyfee').trigger('change');
+            }
+        });
+
+    $('#regNo').on('change',
+        function () {
+            $('#monthId').html('');
+            $('#monthId').val('');
+            var url = '/api/fee/GetAdvanceMonth';
+            url += '?regno=' + $(this).val() + '&year=' + $('#yearId').val();
+            $.get(url,
+                function (data) {
+                    var newdata = JSON.parse(data);
+                    $('#monthId').html('').select2({
+                        data: newdata,
+                        width: '100%'
+                    });
+                });
+        });
+    $('#yearId').on('change',
+        function () {
+            $('#monthId').html('');
+            $('#monthId').val('');
+            var url = '/api/fee/GetAdvanceMonth';
+            url += '?regno=' + $('#regNo').val() + '&year=' + $('#yearId').val();
+            $.get(url,
+                function (data) {
+                    var newdata = JSON.parse(data);
+                    $('#monthId').html('').select2({
+                        data: newdata,
+                        width: '100%'
+                    });
+                });
+        });
+
+    $('#monthId').on('change',
+        function () {
+            var url = '/api/fee/GetamountofFee';
+            $('#totalAount').val('');
+            $('#totalAount').html('');
+            url += '?regno=' + $('#regNo').val() + '&months=' + $(this).val();
+            $.get(url,
+                function (data) {
+                    $('#totalAount').val(data);
+                });
+        });
+
+
+</script>

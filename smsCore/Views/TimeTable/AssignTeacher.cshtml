@@ -1,0 +1,161 @@
+﻿@using sms.Models
+@inject StaticResources rec;
+@{
+    ViewBag.Title = "Assign Teacher";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Assign Teacher
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="teachingSubjectContainer">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Select Campus</h3>
+                </div><!-- /.box-header -->
+                @*@using (Ajax.BeginForm("TeachingSubject", "TimeTable", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "classFeeIndexmainForm" }))
+                    {*@
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row no-gutters ">
+                        <div class="col-12">
+
+                            <div class="row">
+                                @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "teachingSubjectContainer", ColCssClass = "col-12 col-sm-6", ShowCampus = true, ShowClasses = true})
+                                <div class="col-12 mt-3">
+                                    <button type="button" class="btn btn-primary float-right" onclick="reloadGridData();">
+                                        <i class="fa fa-search"></i> Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @*  }*@
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card card-primary">
+                <div class="card-header ptbnull">
+                    <h3 class="card-title titlefix">Section List <a href="https://www.youtube.com/watch?v=tryCYOvnPQE" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div><!-- /.box-header -->
+                <div class="card-body">
+                    <div class="row mt-3">
+                        <div class="col-12">
+@*
+                            @Html.EJS().Grid("list_timetable").Columns(col =>
+                       {
+                           col.Field("SectionName").HeaderText("Section").TextAlign(TextAlign.Left).Add();
+                           col.Field("teacher").DisableHtmlEncode(false).HeaderText("Teacher").TextAlign(TextAlign.Left).Add();
+                          col.Field("action").Template("#action").HeaderText("Action").Width("170").TextAlign(TextAlign.Center).Add();
+                       }).Height("auto").Width("auto").Render()*@
+
+
+                       
+                            @{
+                                var modelgrid = new GridModel()
+                                {
+                GridId = "list_timetable",
+                                    ShowHeader = false,
+ 
+                                    Columns = new List<Column>
+                                                {
+                                                 new Column{FieldName="sectionName",HeaderText="Section",TextAlign=TextAlign.Left},
+                                                 new Column{FieldName="teacher",HeaderText="Teacher" ,TextAlign=TextAlign.Left},
+                                                 new Column{FieldName="action",Template="#action",HeaderText="Action", Width="170" ,TextAlign=TextAlign.Center},
+                                                  },
+                                };
+
+                            }
+                            @await Html.PartialAsync("_grid",modelgrid)
+
+
+
+                        </div>
+                        <script type="text/x-jsrender" id="action">
+                            <a href="#" class="edit ajax ml-1"><i class="fa fa-save"></i></a>
+                            <input type="hidden" value="${ID}" name="Id" id="pk" />
+                            <input type="hidden" value="${ClassSectionId}" name="ClassSectionId" id="ClassSectionId" />
+                        </script>
+                    </div>
+                </div>
+            </div>
+                </div>
+               
+            </div>
+</section>
+
+
+<script @rec.JavaScript>
+    function reloadGridData() {
+        var url = '/TimeTable/TeachingClassList';
+        var classess = $('#Classes').val();
+        var campus = $('#Campus').val();
+        if (campus == null) {
+            sweetalert("Error", "Please select a Campus.", 'error');
+            return false;
+        }
+        if (classess == null) {
+            sweetalert("Error", "Please select a Class.", 'error');
+            return false;
+        }
+        url += '?classId=' + classess + '&campusid=' + campus;
+
+        var grid = document.getElementById("list_timetable").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+
+
+    $('#list_timetable').on('click',
+        'a',
+                    function(e) {
+                        e.preventDefault();
+                        var title = "Are you sure to change the current teacher for selected subject?";
+                        var clickedA = $(this);
+                        var CurrentRow = clickedA.closest('tr');
+                        var ClassSectionId = CurrentRow.find("#ClassSectionId").val();
+                        var StaffId = CurrentRow.find("#staffId").val();
+                        var oldStaffId = CurrentRow.find('td[aria-describedby="jqgTeachingSubject_StaffID"]').attr('title');
+                        if (StaffId == oldStaffId) {
+                            return false;
+                        }
+                        if (StaffId == 0) {
+                            alert("Select teacher");
+                            return CurrentRow.find("#staffId").focus();
+                        }
+                        //var teacherid = $(this).val();
+                        //var id = CurrentRow.find('#pk').val();
+
+                        var url = '@Url.Action("AssignTeacherEdit")';
+                        //campusId, int SectionId, int StaffId, int SubjectId, int ClassId
+                        url += '?campusId=' + $("#Campus").val() + "&StaffId=" + StaffId + "&ClassSectionId=" + ClassSectionId;
+
+                        sweetalertWithUrl(title, url);
+
+                        return false;
+                    });
+
+</script>

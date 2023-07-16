@@ -1,0 +1,111 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Exam Reports";
+}
+
+<section id="ReportSection" class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Exam Reports <a href="https://www.youtube.com/watch?v=n2v4WZuwX2Y" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a href="@Url.Action("DateSheet", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/datesheet.png" alt="" />
+                                <label> Date Sheet</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="@Url.Action("MarkSheet", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/marksheet.png" alt="" />
+                                <label>Mark Sheet</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ResultGazzete", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/result gazzete.png" alt="" />
+                                <label> Result Gazzete</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("AwardList", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/award list.png" alt="" />
+                                <label> Award List</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("AwardListBlank", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/award list blank.png" alt="" />
+                                <label>Award List (Blank)</label>
+                            </a>
+                        </li>
+                        @*<li>
+                            <a href="@Url.Action("WeeklyAwardListBlank", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/weekly award list.png" alt="" />
+                                <label> Weekly Award List(Blank)</label>
+                            </a>
+                        </li>*@
+                        <li>
+                            <a href="@Url.Action("RemarksEntrySheet", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/remarks entry sheet.png" alt="" />
+                                <label> Remarks Entry Sheet</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("RemarksSheet", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/remarks sheet.png" alt="" />
+                                <label>Remarks Sheet</label>
+                            </a>
+                        </li>
+                        @*<li>
+                            <a href="@Url.Action("subjectlistwithnoresult", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/subject list.png" alt="" />
+                                <label>Subject List With No Result</label>
+                            </a>
+                        </li>*@
+                        <li>
+                            <a href="@Url.Action("ResultSummary", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/result summary.png" alt="" />
+                                <label>Result Summary</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ResultSubjectSummary", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/result subject summary.png" alt="" />
+                                <label>Result Subject Summary</label>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="@Url.Action("ProgressReport", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Exam/progress report.png" alt="" />
+                                <label>Progress Report</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("ExaminationPrint", "ExamsReport")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/student/certificates/practical certificate.png" alt="" />
+                                <label>Examination Print Report</label>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+
+    $('#ReportSection a').on('click', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+
+    });
+
+</script>

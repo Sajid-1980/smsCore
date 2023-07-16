@@ -1,0 +1,940 @@
+﻿@using Models;
+@model Models.Student
+@inject SchoolEntities db
+@{
+    ViewBag.Title = "Create";
+    var admission = Model.Admissions.Where(w => !w.IsExpell).FirstOrDefault();
+    var campusId = 0;
+    var classId = 0;
+    var clsSectionId = 0;
+    var sessionId = 0;
+    var feeGroupId = 0;
+    string freeReason = string.Empty;
+    if (admission != null)
+    {
+        campusId = admission.CampuseID;
+        classId = admission.ClassSection.ClassID;
+        clsSectionId = admission.ClassSection.SectionID;
+        sessionId = int.Parse(admission.Session.ToString());
+        feeGroupId = admission.ClassSection.Class.ClassFeeGroups.Select(s => s.FeeGroupID).FirstOrDefault();
+        if (Model.FreeAdmissions.Count > 0)
+        {
+            feeGroupId = -2;
+            freeReason = Model.FreeAdmissions.Select(s => s.Reason).FirstOrDefault();
+        }
+    }
+
+
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Edit Student
+        </li>
+
+    </ul>
+</div>
+
+@{
+    var studentphotos = db.StudentPhotos.Where(w => w.StudentID == Model.ID).Select(s => s.StudentImage).ToList().LastOrDefault();
+    var studentPath = "data:image/*;base64," + (studentphotos != null ? Convert.ToBase64String(studentphotos) : "");
+
+    if (studentphotos == null)
+    {
+        studentPath = "/Uploads/images/user.png";
+    }
+
+    var fatherPath = "data:image/*;base64," + (Model.FatherPhoto != null ? Convert.ToBase64String(Model.FatherPhoto) : "");
+    if (Model.FatherPhoto == null)
+    {
+        fatherPath = "/Uploads/images/user.png";
+    }
+
+    var GuardianSignPathphoto = db.SignatureSpecimen.Where(w => w.StudentID == Model.ID).Select(s => s.GaurdianSign).FirstOrDefault();
+    var GuardianSignPath = "data:image/*;base64," + (GuardianSignPathphoto != null ? Convert.ToBase64String(GuardianSignPathphoto) : "");
+    if (GuardianSignPathphoto == null)
+    {
+        GuardianSignPath = "/Uploads/images/site/signature.png";
+    }
+    var FatherSignPathphoto = db.SignatureSpecimen.Where(w => w.StudentID == Model.ID).Select(s => s.FatherSign).FirstOrDefault();
+    var FatherSignPath = "data:image/*;base64," + (FatherSignPathphoto != null ? Convert.ToBase64String(FatherSignPathphoto) : "");
+    if (FatherSignPathphoto == null)
+    {
+        FatherSignPath = "/Uploads/images/site/signature.png";
+    }
+
+}
+<section class="content" id="studentedit">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                   @* @using (Ajax.BeginForm("Update", "Students", null, new AjaxOptions { HttpMethod = "post", LoadingElementId = "StudentFormedit #server-progress", OnBegin = "begin", OnComplete = "completed" }, new { enctype = "multipart/form-data", @class = "form-horizontal form-label-left input_mask", id = "StudentFormedit" }))
+                    {*@
+
+                    <form asp-action="Update" asp-controller="Students"
+          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="StudentFormedit" data_reset="true">
+
+
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        @Html.HiddenFor(w => w.ID, new { id = "student_Id" })
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col-12">
+
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="home-tab" href="#student" role="tab" aria-controls="home" aria-selected="true">Student Information</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="profile-tab" href="#academic" role="tab" aria-controls="profile" aria-selected="false">Academic Information</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="contact-tab" href="#parent" role="tab" aria-controls="contact" aria-selected="false">Parent Informations</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="contact-tab" href="#contacts" role="tab" aria-controls="contact" aria-selected="false">Contacts</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="student" role="tabpanel" aria-labelledby="home-tab">
+
+                                        <div class="">
+                                            <div class="row no-gutters">
+                                                <div class="col order-0 student-form-controls">
+                                                    <div class="row border pt-2 pb-4" id="student">
+                                                        <div class="col-12">
+                                                            <h2>Student Information</h2>
+                                                        </div>
+                                                        <div class="col-6 col-md-6">
+                                                            <label>Registration No.</label><font class="text-danger">*</font>
+
+                                                                                           <div class="controls">
+                                                                                               @Html.TextBoxFor(model => model.RegistrationNo, new { @class = "form-control number-only has-feedback-left small", placeholder = "Registration No", required = "" })
+                                                                                               <span class="fa fa-neuter form-control-feedback left" aria-hidden="true"></span>
+                                                                                               @Html.ValidationMessageFor(model => model.RegistrationNo)
+                                                                                           </div>
+                                                        </div>
+                                                        @Html.Partial("_PartialDate", new PartialDateViewModels { DefaultDate = Model.AdmissionDate, Label = "Admission Date", ParentContainerID = "adm-date", ColCssClass = "col-6 col-md-6", ShowAltField = false, DateFieldId = "AdmissionDate", DateFieldName = "AdmissionDate", KeepDataFieldReadOnly = true })
+
+                                                        <div class="col-12 col-md-6">
+                                                            <label>Student name</label><font class="text-danger">*</font>
+                                                                                       <div class="controls">
+                                                                                           @Html.TextBoxFor(model => model.StudentName, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "70", placeholder = "Student Name", required = "" })
+                                                                                           <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                                                                           @Html.ValidationMessageFor(model => model.StudentName)
+                                                                                       </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Gender</label>
+                                                            <div class="controls">
+                                                                @Html.DropDownList("Sex", new SelectList(new[] { "Male", "Female" }, Model == null ? null : Model.Sex), new { @class = "form-control small has-feedback-left", minlength = "3", maxlength = "10", placeholder = "Sex" })
+                                                                <span class="form-control-feedback left mr-2" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.Sex)
+                                                            </div>                                                       
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Domicile</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.Domicile, new { @class = "form-control has-feedback-left small", minlength = "3", maxlength = "20", placeholder = "Domicile" })
+                                                                <span class="fa fa-map form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.Domicile)
+                                                            </div>
+
+                                                        </div>
+                                                        @Html.Partial("_PartialDate", new PartialDateViewModels { DefaultDate = Model.DOB, Label = "Date of birth", ParentContainerID = "dob-date", ColCssClass = "col-6 col-md-6", ShowAltField = false, DateFieldId = "DOB", DateFieldName = "DOB", KeepDataFieldReadOnly = true })
+
+
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Missing Documents</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.MissingDocuments, new { @class = "form-control has-feedback-left", placeholder = "MissingDocuments" })
+                                                                <span class="fa fa-paragraph form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.MissingDocuments)
+                                                            </div>
+                                                        </div>
+
+                                                        @Html.Partial("_PartialDate", new PartialDateViewModels { DefaultDateString = (Model.DateForSubmission), Label = "Submission date", ParentContainerID = "subm-date", ColCssClass = "col-6 col-md-6", ShowAltField = false, IsRequired = false, DateFieldId = "DateForSubmission", DateFieldName = "DateForSubmission", KeepDataFieldReadOnly = true })
+
+
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Student's CNIC</label>
+                                                            <div class="controls">
+                                                             @Html.TextBoxFor(model => model.StudentCNIC, new { @class = "form-control has-feedback-left small", minlength = "7", maxlength = "17", placeholder = "Student CNIC" })
+                                                            <span class="fa fa-paper-plane form-control-feedback left" aria-hidden="true"></span>
+                                                            @Html.ValidationMessageFor(model => model.StudentCNIC)
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Nationality</label>
+                                                            <div class="controls">
+                                                            @Html.TextBoxFor(model => model.Nationality, new { @class = "form-control has-feedback-left small", minlength = "3", maxlength = "15", placeholder = "Nationality" })
+                                                            <span class="fa fa-navicon form-control-feedback left" aria-hidden="true"></span>
+                                                            @Html.ValidationMessageFor(model => model.Nationality)
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Mother Tongue</label>
+                                                            <div class="controls">
+                                                            @Html.TextBoxFor(model => model.MotherTongue, new { @class = "form-control has-feedback-left small", minlength = "3", maxlength = "30", placeholder = "Mother Tongue" })
+                                                            <span class="fa fa-language form-control-feedback left" aria-hidden="true"></span>
+                                                            @Html.ValidationMessageFor(model => model.MotherTongue)
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Live with</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.LiveWith, new { @class = "form-control has-feedback-left small", minlength = "3", maxlength = "30", placeholder = "Live With" })
+                                                                <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.LiveWith)
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Religion</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.Religion, new { @class = "form-control has-feedback-left small", minlength = "3", maxlength = "30", placeholder = "Religion" })
+                                                                                                                        <span class="fa fa-renren form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.Religion)
+                                                                                                                    </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Games</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.Games, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "150", placeholder = "Games" })
+                                                                <span class="fa fa-gamepad form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.Games)
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Last Institution Attended</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.LastIntitution, new { @class = "form-control has-feedback-left", maxlength = "80", placeholder = "Last Intitution Attended" })
+                                                                                                                        <span class="fa fa-institution form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.LastIntitution)
+                                                                                                                    </div>
+                                                        </div>
+
+                                                        <div class="col-md-6 col-12 has-feedback">
+                                                            <label>Notes</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.Remarks, new { @class = "form-control has-feedback-left", maxlength = "300", placeholder = "Remarks" })
+                                                                                                                        <span class="fa fa-maxcdn form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.Remarks)
+                                                                                                                    </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row border pt-2 pb-4 my-4" id="academic">
+                                                        <div class="col-12">
+                                                            <h2>Academic Information</h2>
+                                                        </div>
+                                                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "studentedit", ColCssClass = "col-6 col-sm-4 col-md-3", CampusID = campusId, ClassID = classId, SectionID = clsSectionId, SessionID = sessionId, FeeGroupID = feeGroupId, ShowSession = true, ShowCampus = true, ShowFeeGroup = true, ShowFreeFeeGroup = true, ShowClasses = true, ShowSections = true })
+
+                                                        <input type="hidden" name="AdmissionId" value="@admission.ID" />
+                                                        <div class="col-12 has-feedback mt-4" id="freeReason">
+                                                            <div class="controls">
+                                                                <input type="text" class="form-control has-feedback-left" value="@freeReason" name="Reason" id="Reason" placeholder="Free reason" />
+                                                                <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.FeeDiscount)
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-sm-4 checkbox">
+                                                            <div class="controls">
+                                                                <input type="checkbox" class="flat mt-4" name="ApplyLateFee" /> Exempt from late fee
+                                                                @Html.ValidationMessageFor(model => model.ApplyLateFee)
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-sm-4 checkbox">
+                                                            <div class="controls">
+                                                                <input type="checkbox" class="flat mt-4" name="discountcheck" id="discountcheck" /> Discount Fee
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 mt-4" id="discountdive" style="display:none">
+                                                            @Html.EJS().Grid("discounList").Height("auto").Width("auto").Columns(col =>
+                                                       {
+                                                           col.Field("TypeName").HeaderText("Fee Types").Width("120").TextAlign(TextAlign.Left).Add();
+                                                           col.Field("Discount").Template("#disInAmount").Width("120").HeaderText("Discount").TextAlign(TextAlign.Left).Add();
+                                                           col.HeaderText("In Amount").Template("#cbx").Width("120").Add();
+                                                       }).Render()
+                                                        </div>
+                                                        <script type="text/x-jsrender" id="disInAmount">
+                                                            <input type="text" id="Discount" name="Discount" value="${Discount}"  />
+                                                        </script>
+                                                        <script type="text/x-jsrender" id="cbx">
+                                                            <input type="hidden" id="feetypeId" name="feetypeId" value="${FeeTypeId}" />
+                                                            ${if(DiscountInAmount)}
+                                                            <input type="checkbox" name="DiscountInAmount" checked onchange="checkdiscount(this)" />
+                                                            ${else}
+                                                            <input type="checkbox" name="DiscountInAmount" onchange="checkdiscount(this)" />
+                                                            ${/if}
+                                                            <input type="hidden" id="discount" name="discountInAmounts" value="0" />
+                                                        </script>
+
+                                                        <div class="col-12 col-sm-4 mt-4">
+
+                                                            <div class="controls">
+                                                                <label><input type="checkbox" id="AllowTransport" name="AllowTransport" /> Allow Transport</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12">
+                                                            <div class="form-group row " id="tranportationContainer" style="display: none">
+                                                                <div class="col-12">
+                                                                    <h4>Transportation Records</h4>
+                                                                    <hr />
+                                                                </div>
+                                                                @{
+                                                                    var tranport = Model.StudentsTransports.FirstOrDefault(); // db.StudentsTransports.Where(w => w.StudentID == Model.ID).FirstOrDefault();
+                                                                    if (tranport == null)
+                                                                    {
+                                                                        tranport = new StudentsTransport();
+                                                                    }
+                                                                }
+
+                                                                <div class="col-md-6 col-12 has-feedback">
+                                                                    <label>Driver</label>
+                                                                    @Html.HiddenFor(m => tranport.ID)
+                                                                    <a class="new ajax_open" href="@Url.Action("Create", "ClassManagement", new {type = EnumManager.newgroupEntry.Driver})" data-type="drv" title="Add New driver">
+                                                                        <i class="fa fa-plus"></i>
+                                                                    </a>
+                                                                    <div class="controls">
+                                                                        <select id="tranport_DriverID" name="tranport.DriverID" class="form-control"></select>
+                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                        @Html.ValidationMessageFor(model => tranport.Driver.DriverName)
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 col-12 has-feedback">
+                                                                    <label>Trip</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => tranport.TripNumber, new { @class = "form-control has-feedback-left small", maxlength = "10", placeholder = "Trip Number" })
+                                                                                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                                        @Html.ValidationMessageFor(model => tranport.TripNumber)
+                                                                                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 col-12 has-feedback">
+                                                                    <label>Pick time</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => tranport.PickTime, new { @class = "time form-control has-feedback-left  small", placeholder = "Pick time" })
+                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                        @Html.ValidationMessageFor(model => tranport.PickTime)
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-6 col-12 has-feedback">
+                                                                    <label>Fare</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => tranport.Fare, new { @class = "form-control has-feedback-left small", placeholder = "Fare" })
+                                                                                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                                        @Html.ValidationMessageFor(model => tranport.Fare)
+                                                                                                                                    </div>
+
+                                                                </div>
+                                                                @Html.Partial("_PartialDate", new PartialDateViewModels
+                                                                    {
+                                                                Label = "Start Date",
+                                                                ParentContainerID = "transport-start",
+                                                                ColCssClass = "col-6 col-md-6",
+                                                                ShowAltField = false,
+                                                                IsRequired = false,
+                                                                DateFieldId = "tranport_Started",
+                                                                DateFieldName = "tranport.Started",
+                                                                KeepDataFieldReadOnly = true,
+                                                                DefaultDateString = tranport.Started
+                                                            })
+                                                                @Html.Partial("_PartialDate", new PartialDateViewModels
+                                                                {
+                                                                    Label = "End Date",
+                                                                    ParentContainerID = "transport-end",
+                                                                    ColCssClass = "col-6 col-md-6",
+                                                                    ShowAltField = false,
+                                                               IsRequired = false,
+                                                                    DateFieldId = "tranport_Closed",
+                                                                    DateFieldName = "tranport.Closed",
+                                                                    KeepDataFieldReadOnly = true,
+                                                                    DefaultDateString = tranport.Closed
+                                                                })
+                                                                <div class="col-md-6 col-sm-4 col-12 has-feedback">
+                                                                    <label>Pick point</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => tranport.PickPoint, new { @class = "form-control has-feedback-left small", placeholder = "Pick from" })
+                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                        @Html.ValidationMessageFor(model => tranport.PickPoint)
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 mt-4">
+                                                            <div id="previousEducation" class="form-group row">
+                                                                <div class="col-12">
+                                                                    <h4>Previous Board Examination Records</h4>
+                                                                    <hr />
+                                                                </div>
+                                                                @{
+                                                                    var prevEdu = db.StudentPreviousEducations.Where(w => w.AdmissionID == admission.ID).FirstOrDefault();
+                                                                    if (prevEdu == null)
+                                                                    {
+                                                                        prevEdu = new StudentPreviousEducation();
+                                                                    }
+                                                                }
+                                                                @Html.HiddenFor(model => prevEdu.ID)
+                                                                <div class="col-12 col-md-6  has-feedback">
+                                                                    <label>Board Name</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => prevEdu.PreviousBoard, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "50", placeholder = "Education Board name" })
+                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                        @Html.ValidationMessageFor(model => prevEdu.PreviousBoard)
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-md-6  has-feedback">
+                                                                    <label>Passing year</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => prevEdu.YearOfPassing, new { @class = "form-control number-only has-feedback-left small", placeholder = "Year of passing" })
+                                                                                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                                        @Html.ValidationMessageFor(model => prevEdu.YearOfPassing)
+                                                                                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-md-6  has-feedback">
+                                                                    <label>Obtained marks</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => prevEdu.ObtainedMarks, new { @class = "form-control number-only has-feedback-left small", placeholder = "Obtained marks" })
+                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                        @Html.ValidationMessageFor(model => prevEdu.ObtainedMarks)
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-md-6  has-feedback">
+                                                                    <label>Group</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => prevEdu.PreviousGroup, new { @class = "form-control has-feedback-left small", minlength = "2", maxlength = "30", placeholder = "Group" })
+                                                                                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                                        @Html.ValidationMessageFor(model => prevEdu.PreviousGroup)
+                                                                                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-md-6  has-feedback">
+                                                                    <label>Board Reg. No.</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => prevEdu.RegNo, new { @class = "form-control has-feedback-left small", minlength = "3", maxlength = "17", placeholder = "Board Registration no" })
+                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                        @Html.ValidationMessageFor(model => prevEdu.RegNo)
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-md-6  has-feedback">
+                                                                    <label>Grade</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => prevEdu.Grade, new { @class = "form-control has-feedback-left small", maxlength = "3", placeholder = "Grade" })
+                                                                                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                                        @Html.ValidationMessageFor(model => prevEdu.Grade)
+                                                                                                                                    </div>
+                                                                </div>
+                                                                @Html.Partial("_PartialDate", new PartialDateViewModels
+                                                                {
+                                                                Label = "Admission date",
+                                                                ParentContainerID = "prev_adm_date",
+                                                                ColCssClass = "col-6 col-md-6",
+                                                                ShowAltField = false,
+                                                                IsRequired = false,
+                                                                DateFieldId = "prevEdu_AdmissionDate",
+                                                                DateFieldName = "prevEdu.AdmissionDate",
+                                                                KeepDataFieldReadOnly = true,
+                                                                DefaultDate = prevEdu.AdmissionDate
+                                                            })
+                                                                <div class="col-12 col-md-6 has-feedback">
+                                                                    <label>Roll No</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => prevEdu.RollNo, new { @class = "form-control has-feedback-left small", maxlength = "10", placeholder = "Board Roll no" })
+                                                                                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                                        @Html.ValidationMessageFor(model => prevEdu.RollNo)
+                                                                                                                                    </div>
+                                                                </div>
+                                                                <div class="col-12 col-md-6 has-feedback">
+                                                                    <label>Session</label>
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => prevEdu.Session, new { @class = "form-control has-feedback-left small", minlength = "3", maxlength = "10", placeholder = "Session" })
+                                                                        <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                                                        @Html.ValidationMessageFor(model => prevEdu.Session)
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row border pt-2 pb-4 mb-4" id="parent">
+                                                        <div class="col-12">
+                                                            <h2>Parent Information</h2>
+                                                        </div>
+                                                        <div class="col-8 col-md-6">
+                                                            <label>Father's Name </label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.FName, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "170", placeholder = "Father Name", required = "" })
+                                                                <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+
+                                                                @Html.ValidationMessageFor(model => model.FName)
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-4 col-md-2 has-feedback">
+                                                            <label>Alive</label>
+                                                            <select name="FatherAlive" id="FatherAlive" class="form-control">
+                                                                <option value="true">Yes</option>
+                                                                <option value="false">No</option>
+                                                            </select>
+                                                            @Html.ValidationMessageFor(model => model.FatherAlive)
+                                                        </div>
+                                                        @*<div class="col-4 col-md-2 has-feedback pt-4 text-right">
+                                                                <label>Alive</label>
+                                                                @Html.CheckBox("FatherAlive", Model == null ? true : Model.FatherAlive.ToLower() == "yes" ? true : false, new { @class = "flat" })
+                                                                @Html.ValidationMessageFor(model => model.FatherAlive)
+
+                                                            </div>*@
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>CNIC No.</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.CNIC, new { @class = "form-control has-feedback-left small", minlength = "7", maxlength = "17", placeholder = "CNIC" })
+                                                                <span class="fa fa-file form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.CNIC)
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Father Qualification</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.FatherQualification, new { @class = "form-control has-feedback-left small", maxlength = "50", placeholder = "Father Qualification" })
+                                                                <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.FatherQualification)
+                                                            </div>
+                                                        </div>
+
+
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Father Profession</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.FatherProfession, new { @class = "form-control has-feedback-left small", maxlength = "30", placeholder = "FatherProfession" })
+                                                                                                                        <span class="fa fa-users form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.FatherProfession)
+                                                                                                                    </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Father Nature of Job</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.FatherNatureOfJob, new { @class = "form-control has-feedback-left small", maxlength = "30", placeholder = "Father Nature Of Job" })
+                                                                                                                        <span class="fa fa-users form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.FatherNatureOfJob)
+                                                                                                                    </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Father Department</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.FatherDepartment, new { @class = "form-control has-feedback-left small", maxlength = "30", placeholder = "Father Department" })
+                                                                <span class="fa fa-wechat form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.FatherDepartment)
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12"></div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Mother's Name</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.MotherName, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "15", placeholder = "Mother Name" })
+                                                                <span class="fa fa-female form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.MotherName)
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Mother Qualification</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.MotherQualification, new { @class = "form-control has-feedback-left small", maxlength = "30", placeholder = "Mother Qualification" })
+                                                                                                                        <span class="fa fa-female form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.MotherQualification)
+                                                                                                                    </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Mother Profession</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.MotherProfession, new { @class = "form-control has-feedback-left small", maxlength = "30", placeholder = "Mother Profession" })
+                                                                                                                        <span class="fa fa-female form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.MotherProfession)
+                                                                                                                    </div>
+                                                        </div>
+                                                        <div class="col-12"></div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Guardian's Name</label>
+                                                            <div controls>
+                                                                @Html.TextBoxFor(model => model.GuardianName, new { @class = "form-control has-feedback-left", maxlength = "15", placeholder = "Guardian Name" })
+                                                                                                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.GuardianName)
+                                                                                                                    </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Student Relation with Guardian</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.StdRelation, new { @class = "form-control has-feedback-left small", maxlength = "15", placeholder = "Student Relation with Guardian" })
+                                                                <span class="fa fa-female form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.StdRelation)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row border pt-2 pb-4 mb-4" id="contacts">
+                                                        <div class="col-12">
+                                                            <h2>Contact Information</h2>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Postal address</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.PostalAddress, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "50", placeholder = "Postal Address" })
+                                                                <span class="fa fa-align-justify form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.PostalAddress)
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Permenant address</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.PermenantAddress, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "50", placeholder = "Permenant Address" })
+                                                                <span class="fa fa-align-justify form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.PermenantAddress)
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 form-group has-feedback">
+                                                            <label>Office telephone</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.OfficeTelephone, new { @class = "form-control number-only has-feedback-left small", placeholder = "OfficeTelephone" })
+                                                                                                                        <span class="fa fa-mobile-phone form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.OfficeTelephone)
+                                                                                                                    </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 has-feedback">
+                                                            <label>Residance telephone</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.ResidanceTelephone, new { @class = "form-control number-only has-feedback-left  small", placeholder = "Residance Telephone" })
+                                                                                                                        <span class="fa fa-mobile-phone form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.ResidanceTelephone)
+                                                                                                                    </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-6 form-group has-feedback">
+                                                            <label>Email</label>
+                                                            <div class="controls">
+                                                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control has-feedback-left small", minlength = "7", maxlength = "37", placeholder = "Email" })
+                                                                                                                        <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                        @Html.ValidationMessageFor(model => model.Email)
+                                                                                                                    </div>
+                                                        </div>
+                                                        <div class="col-12 mt-3">
+                                                            <h3>Mobile Contacts Detail</h3>
+                                                            <hr />
+                                                        </div>
+                                                        <div class="row no-gutters px-4">
+                                                            @{
+                                                                var mobiles = Model.StudentMobiles.ToArray();
+                                                            }
+                                                            @for (var i = 0; i < 6; i++)
+                                                            {
+                                                                StudentMobile mobile = null;
+                                                                try
+                                                                {
+                                                                    mobile = mobiles[i] == null ? new StudentMobile() : mobiles[i];
+                                                                }
+                                                                catch
+                                                                {
+                                                                    mobile = new StudentMobile();
+                                                                }
+                                                                <div class="checkbox col-12 col-md-3">
+                                                                    <label>
+                                                                        <input type="hidden" id="IsDefault_@i" value="@(mobile.IsDefault ? "1" : "0")" name="IsDefault" class="IsDefaulttxt" />
+                                                                        <input type="radio" data-id="IsDefault_@i" class="flat IsDefaultRdo" name="def" @(mobile.IsDefault ? "checked" : "") /> Is Default
+                                                                    </label>
+                                                                    @Html.HiddenFor(m => mobile.ID)
+                                                                </div>
+                                                                <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => mobile.MobileHolder, new { @class = "form-control has-feedback-left", placeholder = "Mobile Holder" })
+                                                                                                                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                                        @Html.ValidationMessageFor(model => mobile.MobileHolder)
+                                                                                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+                                                                    <div class="controls">@Html.TextBoxFor(model => mobile.Relation, new { @class = "form-control has-feedback-left", placeholder = "Relation with student" })
+                                                                    <span class="fa fa-female form-control-feedback left" aria-hidden="true"></span>
+                                                                    @Html.ValidationMessageFor(model => mobile.Relation)</div>
+                                                                </div>
+
+                                                                <div class="col-md-3 col-sm-3 col-xs-12 form-group has-feedback">
+                                                                    <div class="controls">
+                                                                        @Html.TextBoxFor(model => mobile.MobileNo, new { @class = "form-control number-only has-feedback-left", placeholder = "Mobile No" })
+                                                                                                                                        <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                                                                                                                        @Html.ValidationMessageFor(model => mobile.MobileNo)
+                                                                                                                                    </div>
+                                                                </div>
+                                                            }
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col order-1 student-form-pics">
+                                                    <div class="row">
+                                                        <div class="col-12 has-feedback max-180">
+                                                            <label class="d-block m-auto text-center" style="width: 150px;">Student Photo</label>
+
+                                                            <img src="@studentPath" id="StdPhotoPreview" class="d-block m-auto" style="width: 150px;" />
+                                                            <input type="file" data-preview="StdPhotoPreview" name="StudentPhotoFile" id="StudentPhotoFile" style="height: 0px; position: absolute; width: 0px;" />
+                                                            <label class="d-block m-auto" style="width: 150px;">Photo year</label>
+                                                            <input type="text" class="d-block m-auto number-only" style="width: 150px;" name="PhotoYear" id="PhotoYear" />
+                                                            @Html.ValidationMessage("StudentPhotoFile")
+                                                            <button type="button" class="btn btn-app btnFile float-left" data-targetfileinputid="StudentPhotoFile" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-file-o"></i>Browse</button>
+                                                            <button type="button" class="btn btn-app btnCamera float-right" data-preview="StdPhotoPreview" data-txtvalue="StdPhotoValue"><i class="fa fa-camera-retro"></i>Camera</button>
+                                                        </div>
+                                                        <div class="col-12 has-feedback max-180">
+                                                            <label class="d-block m-auto text-center" style="width: 150px;">Father's Photo</label>
+
+                                                            <img src="@fatherPath" id="FatherPhotoPreview" class="d-block m-auto" style="width: 150px;" />
+                                                            <input type="file" data-preview="FatherPhotoPreview" id="FatherPhotoFile" name="FatherPhotoFile" position:absolute; style="height: 0px; visibility: hidden; width: 0px;" />
+                                                            <button type="button" class="btn btn-app btnFile float-left" data-targetfileinputid="FatherPhotoFile" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-file-o"></i>Browse</button>
+                                                            <button type="button" class="btn btn-app btnCamera float-right" data-preview="FatherPhotoPreview" data-txtvalue="FatherPhotoValue"><i class="fa fa-camera-retro"></i>Camera</button>
+                                                        </div>
+                                                        <div class="col-12 has-feedback max-180">
+                                                            <label class="d-block m-auto text-center" style="width: 150px;">Father's Signature</label>
+                                                            <img src="@FatherSignPath" id="FatherSignPreview" class="d-block m-auto text-center" style="width: 150px;" />
+                                                            <input type="file" data-preview="FatherSignPreview" id="FatherSignFile" name="FatherSignFile" style="height: 0px; position: absolute; visibility: hidden; width: 0px;" />
+                                                            <button type="button" class="btn btn-app btnFile float-left" data-targetfileinputid="FatherSignFile" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-file-o"></i>Browse</button>
+                                                            @*<button type="button" class="btn btn-app btnCamera pull-right" data-preview="FatherSignPreview" data-txtvalue="FatherSignValue"><i class="fa fa-camera-retro"></i>Camera</button>*@
+                                                            <span class="clearfix"></span>
+                                                        </div>
+                                                        <div class="col-12 has-feedback max-180">
+                                                            <label class="d-block m-auto text-center" style="width: 150px;">Gaurdian's Signature</label>
+                                                            <img id="GaurdianSignPreview" src="@GuardianSignPath" class="d-block m-auto text-center" style="width: 150px;" />
+                                                            <input type="file" data-preview="GaurdianSignPreview" id="GaurdinaSignFile" name="GaurdinaSignFile" style="height: 0px; position: absolute; visibility: hidden; width: 0px;" />
+                                                            <button type="button" class="btn btn-app btnFile float-left " data-targetfileinputid="GaurdinaSignFile" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-file-o"></i>Browse</button>
+                                                            @*<button type="button" class="btn btn-app btnCamera pull-right" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-camera-retro"></i>Camera</button>*@
+                                                            <span class="clearfix"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="sico-form-col">
+                            <div class="row mt-4">
+                                <div class="col-lg-12">
+                                    @* <a href="@Url.Action("Index")" class="btn btn-dark"><i class="fa fa-chevron-circle-left"></i> Back to List</a>*@
+                                    <div id="studentcreationprogress" class="progress" style="border: 1px solid #ddd; border-radius: 3px; display: none; padding: 1px; position: relative; width: 400px;">
+                                        <div class="bar" style="background-color: #B4F5B4; border-radius: 3px; height: 20px; width: 0%;"></div>
+                                        <div class="percent" style="display: inline-block; font-size: 12px; font-weight: bold; left: 48%; line-height: 15px; position: absolute; top: 3px;">0%</div>
+                                    </div>
+                                    <div id="status"></div>
+                                </div>
+                                <div class="col-lg-12">
+
+                                    <button type="button" class="btn btn-primary float-left" id="btnback">Back</button>
+                                    <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mr-2">
+                                        <i class="fa fa-save mr-2"></i>
+                                        <span>
+                                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                        </span> Save
+                                    </button>
+
+                                </div>
+                            </div>
+                        </div>
+                   @* }*@
+
+                   </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script>
+
+        $('a.ajax_open').click(function (e) {
+            e.preventDefault();
+            url = $(this).attr('href');
+            BootstrapDialog.show({
+                title: 'Create New',
+                message: $('<div><img src="/Uploads/images/site/loader.gif"></div>').load(url)
+
+            });
+        });
+
+        $('#AllowTransport').on('click',
+            function() {
+                if ($(this).is(':checked')) {
+                    $('#tranportationContainer').show();
+                } else {
+                    $('#tranportationContainer').hide();
+                }
+            });
+
+        function checkdiscount(element) {
+            var currnrtrow = $(element).closest('tr');
+
+            if ($(element).is(':checked')) {
+                currnrtrow.find('#discount').val(1);
+                $(element).attr('checked', true);
+            } else {
+                currnrtrow.find('#discount').val(0);
+                $(element).attr('checked', false);
+            }
+        }
+
+    $('#discountcheck').on('change',
+        function() {
+            if ($(this).is(':checked')) {
+                $('#discountdive').show();
+
+             var studentid = $('#student_Id').val();
+             var url1 = '@Url.Action("GetfeeclassgroupEditList")';
+            url1 += '?studentId=' + studentid;
+                var grid = document.getElementById("discounList").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+            } else {
+                $('#discountdive').hide();
+            }
+        });
+    $('#discountcheck').trigger('change');
+
+
+            $('a .nav-link').click(function() {
+                $('a .nav-item').removeClass("active");
+                $(this).addClass("active");
+            });
+
+
+            $('.IsDefaultRdo').on('change',
+                function (event) {
+                        var id = $(this).data('id');
+                        $('.IsDefaulttxt').each(function() {
+                            $(this).val('0');
+                        });
+
+                        $('#' + id + '').val('1');
+                    });
+
+
+            $('.showhide').on('ifChecked',
+                function(event) {
+                    var id = $(this).data('targerid');
+                    alert(id);
+                    $('#' + id + '').show(500);
+                });
+
+            $('.showhide').on('ifUnchecked',
+                function(event) {
+                    var id = $(this).data('targerid');
+                    alert(id);
+                    $('#' + id + '').hide(500);
+                });
+
+
+            $('.btnCamera').on('click',
+                function() {
+                    var preview = $(this).data('preview');
+                    var value = $(this).data('txtvalue');
+                    var url = '@Url.Action("WebCam", "Dashboard")' + '?preview=' + preview + '&txtValue=' + value;
+                    BootstrapDialog.show({
+                        title: 'Take Photo',
+                        message: $('<div><img src="/Images/WebsiteContent/form-loader.gif" /></div>').load(url)
+                    });
+                });
+
+            $('.btnFile').on('click',
+                function() {
+                    var preview = $(this).data('preview');
+                    var value = $(this).data('txtvalue');
+                    var targetFileInputID = $(this).data('targetfileinputid');
+                    $('#' + targetFileInputID + '').trigger('click');
+                });
+
+            $('input[type=file]').on('change',
+                function(data) {
+
+                    var preview = $(this).data('preview');
+                    if (this.files) {
+                        for (i = 0; i < this.files.length; i++) {
+                            var reader = new FileReader();
+                            var cFile = this.files[i];
+                            reader.onload = (function(e) {
+                                $('#' + preview + '').attr('src', e.target.result);
+                            });
+                            reader.readAsDataURL(this.files[i]);
+                        }
+                    }
+                });
+
+            var bar = $('.bar');
+            var percent = $('.percent');
+            var status = $('#status');
+
+
+        function updatePagerIcons(table) {
+            var replacement =
+            {
+                'ui-icon-seek-first': 'ace-icon fa fa-angle-double-left bigger-140',
+                'ui-icon-seek-prev': 'ace-icon fa fa-angle-left bigger-140',
+                'ui-icon-seek-next': 'ace-icon fa fa-angle-right bigger-140',
+                'ui-icon-seek-end': 'ace-icon fa fa-angle-double-right bigger-140'
+            };
+            $('.ui-pg-table:not(.navtable) > tbody > tr > .ui-pg-button > .ui-icon').each(function() {
+                var icon = $(this);
+                var $class = $.trim(icon.attr('class').replace('ui-icon', ''));
+
+                if ($class in replacement) icon.attr('class', 'ui-icon ' + replacement[$class]);
+            });
+        }
+
+
+        var interval_driver = setInterval(function () {
+            LoadDriver()
+        }, 200);
+
+
+        function LoadDriver() {
+            var campus = $('#Campus').val();
+            if (campus) {
+                $.get('/api/students/drivers/' + $('#Campus').val(),
+                    function (driver) {
+                        var id = $('#tranport_DriverID').val();
+                        var drivers = JSON.parse(driver);
+                        $('#tranport_DriverID').html('').select2({
+                            data: drivers,
+                            width: '100%'
+                        });
+                        $('#tranport_DriverID').val(id).trigger('change');
+                    });
+                clearInterval(interval_driver);
+            }
+        }
+    $('#btnback').click(function () {
+        document.location = '@Url.Action("Search","Students")';
+    });
+
+
+</script>
+@Html.EJS().ScriptManager()

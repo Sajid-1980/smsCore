@@ -1,0 +1,269 @@
+﻿@*@model System.Data.DataTable*@
+@inject StaticResources resourse;
+
+@{
+    ViewBag.Title = "Sent Public message";
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Send Public Message
+            </li>
+
+        </ul>
+    </div>
+}
+
+
+<section class="content" id="content-holder">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <div class="row">
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-12">
+                            <label>Name</label>
+                            <div class="controls">
+                                <input type="text" name="Name" class="form-control" id="Name" minlength="3" maxlength="15" />
+                                <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Name")
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label>Mobile No</label>
+                            <div class="controls">
+                                <input type="text" name="MobileNo" class="form-control" id="mobileno" minlength="7" maxlength="17" />
+                                <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("MobileNo")
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label>Address</label>
+                            <div class="controls">
+                                <input type="text" name="Address" class="form-control" id="address" minlength="3" maxlength="50" />
+                                <span class="fa fa-address-book form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Address")
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label>Group</label>
+                            <div class="controls">
+                                <input type="text" name="Group" class="form-control" id="grouptype" minlength="3" maxlength="15" />
+                                <span class="fa fa-spinner form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Group")
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label>Remark</label>
+                            <div class="controls">
+                                <input type="text" name="remark" class="form-control" id="remark" maxlength="50" />
+                                <span class="fa fa-file-text-o form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Remark")
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <button type="button" class="btn btn-primary float-right  " name="search" onclick="reloadGridData()"><i class="fa fa-search mr-2"></i>Search</button>
+                            <button type="button" class="btn btn-primary float-right   mr-1 ml-1" name="view" id="add"><i class="fa fa-plus mr-2"></i>Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Sent public Message List</h3>
+                </div>
+                <div class="card-body">
+                    @*@using (Ajax.BeginForm("SentPublicmessage", "Message", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "SentPublicmessagemainForm #server-progress", OnBegin = "begin" }, new { id = "SentPublicmessagemainForm" }))
+                    {*@
+
+                    <form asp-action="SentPublicmessage" asp-controller="Message" data-ajax="true" OnSuccess="reloadGridData" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SentPublicmessagemainForm" data_reset="true">
+
+                        <div class="row">
+
+                            <div id="SentPublicmessage-gridContainer" class="col-12">
+                        @*        @Html.EJS().Grid("list_pub_message").SelectionSettings(sel => { sel.CheckboxOnly(true); }).Columns(col =>
+                           {
+                               col.Type("checkbox").Width("50").Add();
+                               col.Field("Name").HeaderText("Name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                               col.Field("MobileNo").HeaderText("Mobile").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                               col.Field("Address").HeaderText("Address").TextAlign(TextAlign.Left).Add();
+                               col.Field("GroupType").HeaderText("Group").TextAlign(TextAlign.Left).Add();
+                               col.Field("Remarks").HeaderText("Remarks").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                               col.Template("#action").HeaderText("Action").AutoFit(true).TextAlign(TextAlign.Center).Add();
+                           }).Render()*@
+
+                            @{
+                                var modelgrid = new GridModel()
+            {
+                GridId = "list_pub_message",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                            {
+                            new Column{Type="checkbox",Width="50"},
+                            new Column{FieldName="name",HeaderText="Name",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="mobileNo",HeaderText="Mobile",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="address",HeaderText="Address",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="groupType",HeaderText="Group",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="remarks",HeaderText="Remarks",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                            new Column{Template="#action",HeaderText="action",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+
+                            },
+                AllowFiltering = true,
+            };
+                            }
+                            @await Html.PartialAsync("_grid",modelgrid)
+                                <script type="text/x-jsrender" id="action">
+                                    <a href="javascript:void(0)" onclick="remove(${index})">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                </script>
+                            </div>
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12">
+                                <label>Message</label><br>
+                                <textarea name="MessageTxt" id="txtmessage" rows="2" cols="40"></textarea>
+                                <button type="button" onclick="Save();" class="btn btn-primary float-right mr-2" name="save"><i class="fa fa-send mr-2"></i><i id="server-progress" style="display: none;" class="fa fa-spinner fa-spin"></i> Send</button>
+                                
+                            </div>
+
+                        </div>
+                    @*}*@
+                    </form>
+                </div>
+         
+            </div>
+        </div>
+    </div>
+</section>
+<script @resourse.JavaScript>
+    function loaded() {
+        let grid = document.getElementById("list_pub_message").ej2_instances[0];
+        grid.dataSource = [];
+    }
+</script>
+
+<script @resourse.JavaScript>
+    function reloadGridData() {
+        var mobileno = $('#mobileno').val();
+        var name = $('#Name').val();
+        var grouptype = $('#grouptype').val();
+        var url1 = '@Url.Action("PublicContactList")';
+
+        url1 += '?mobileno=' + mobileno + '&name=' + name + '&grouptype=' + grouptype;
+
+        var grid = document.getElementById("list_pub_message").ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    $('#add').on('click',
+        function() {
+
+            var mobileno = $('#mobileno').val();
+            var name = $('#Name').val();
+            var grouptype = $('#grouptype').val();
+            var address = $('#address').val();
+            var remarks = $('#remark').val();
+
+            var url = '@Url.Action("Addrecords")';
+
+            url += '?mobileno=' + mobileno + '&name=' + name + '&grouptype=' + grouptype + '&remarks=' + remarks + '&address=' + address;
+            $.get(url,
+                function(result) {
+                    if (result == "success") {
+                        $('#message').html('<span class="float-left alert alert-info w-100">Message sent successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                        reloadGridData();
+                    }
+                });
+
+        });
+
+    function remove(i) {
+        if (!confirm('Are you sure to delete this record?'))
+            return false;
+        var grid = document.getElementById("list_pub_message").ej2_instances[0];
+        var toRemove = grid.getCurrentViewRecords()[i];
+        if (!toRemove)
+            return false;
+        block('#content-holder');
+        let url = '/Message/RemovePublicContact/' + toRemove.ID;
+        $.post(url,
+            function (result) {
+                if (result == "delete") {
+                    $('#message').html('<span class="float-left alert alert-info w-100">Selected record removed successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                    reloadGridData();
+                }
+                else {
+                    $('#message').html('<span class="float-left alert alert-danger w-100">'+result+'.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                }
+                $('#content-holder').unblock();
+            }).error(function () {
+                $('#message').html('<span class="float-left alert alert-danger w-100">An unknown network error occured.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+                $('#content-holder').unblock();
+            });
+    }
+
+    function Save() {
+        let Message = $('#txtmessage').val();
+        if (!Message) {
+            sweetalert("Plaese type message before continue", '', 'error');
+            $('#txtmessage').focus();
+            return false;
+        }
+        let url = `/Message/SendPublicmessage`;
+
+        let grid = document.getElementById('list_pub_message').ej2_instances[0];
+        var selected = grid.getSelectedRecords();
+        if (selected.length == 0) {
+            sweetalert("Plaese select atleast one contact before continue", '', 'error');
+            return false;
+        }
+
+        let regnos = selected.map(function (v, i, a) { return { Id: v.ID, Mobile: v.MobileNo, Name:v.Name } });
+        regnos[0].Message = Message;
+        block('#staff-message');
+        $.post(url, { data: regnos }, function (response) {
+            if (response.status) {
+                $('#message').html('<span class="float-left alert alert-info w-100">Messages sent successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            else {
+                $('#message').html('<span class="float-left alert alert-danger w-100">' + response.message + '.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            $('#staff-message').unblock();
+        }).error(function () {
+            $('#message').html('<span class="float-left alert alert-danger w-100">Unknow network error occured..<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            $('#staff-message').unblock();
+        });
+
+    }
+</script>

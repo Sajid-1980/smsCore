@@ -1,0 +1,252 @@
+﻿@inject StaticResources resources
+
+
+@{
+    //ViewBag.Title = "Add New Exam";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+
+    Layout = null;
+
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Attendance
+        </li>
+        <li class="active">
+            Staff Attendance
+        </li>
+    </ul>
+</div>
+
+<style>
+    .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox], .radio input[type=radio], .radio-inline input[type=radio] {
+        margin-left: -15px;
+    }
+
+    .list-group-item {
+        padding: 0.5rem;
+    }
+</style>
+<section class="content" id="staffattendance">
+    <div class="row ">
+        @*<div class="col-12">
+        <div id="newCreateMessage">
+        </div>
+        </div>*@
+        @Html.AntiForgeryToken()
+        <div class="col-12 col-md-3">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header with-border">
+                            <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { CampusLoadCallBack = "reloadGridData();", ParentContainerID = "staffattendance", ColCssClass = "col-12 pt-2 has-feedback", ForSearch = true, ShowCampus = true})
+                                <div class="col-12">
+
+                                    <label>Staff Name or ID</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        <select id="search-staff" name="staff" class="form-control" placeholder="Enter staff Name or Code">
+                                        </select>
+                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessage("ID")
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="col-12">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <div class="col-12 col-md-12">
+                                <img class="profile-user-img img-fluid rounded mx-auto d-block" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                                <h3 class="profile-username text-center">
+                                    <span class="col-md-9 col-sm-9 col-8 form-group" id="lblname">...</span>
+                                </h3>
+                                <ul class="list-group list-group-unbordered">
+                                    <li class="list-group-item listnoback">
+                                        <span>Father Name</span>
+                                        <a class="float-right text-aqua">
+                                            <span class="col-md-9 col-sm-9 col-8 form-group" id="lblfname">...</span>
+                                        </a>
+                                    </li>
+
+                                    <li class="list-group-item listnoback">
+                                        <span>Cnic</span>
+                                        <a class="float-right text-aqua">
+                                            <span class="col-md-9 col-sm-9 col-8 form-group" id="lblcnic">...</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Designation</span>
+                                        <a class="float-right text-aqua">
+                                            <span class="col-md-9 col-sm-9 col-8 form-group" id="lbldesign">...</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Address</span>
+                                        <a class="float-right text-aqua">
+                                            <span class="col-md-9 col-sm-9 col-8 form-group" id="lbladdress">...</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-sm-12 col-md-9">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-list mr-2"></i>Staff Attendance List</h3>
+
+                </div>
+                <div class="card-body">
+                    <div id="Existing">
+                        @{
+                            var gridmodel = new GridModel
+                            {
+                GridId = "list_attendance",
+                Columns=new List<Column>
+                {
+                        new Column{FieldName="employeeCode",HeaderText="Code",TextAlign=TextAlign.Left},
+                        new Column{FieldName="employeeName",HeaderText="Name",TextAlign=TextAlign.Left},
+                        new Column{FieldName="FatherName",HeaderText="FAther's Name",TextAlign=TextAlign.Left},
+                        new Column{FieldName="designationName",HeaderText="Designation",TextAlign=TextAlign.Left},
+                        new Column{FieldName="Time",HeaderText="Time",TextAlign=TextAlign.Left},
+                        new Column{FieldName="Status",HeaderText="Status",TextAlign=TextAlign.Left},
+                },
+
+                            };
+                        }
+                        @await Html.PartialAsync("_grid",gridmodel)
+                    </div>
+                    @*<div id="Existing">
+
+                        @Html.EJS().Grid("list_attendance").Columns(col =>
+                        {
+                        //col.Field("RegNo").HeaderText("Reg. No").TextAlign(TextAlign.Left).Add();
+                        col.Field("employeeCode").HeaderText("Code").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("employeeName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                        col.Field("FatherName").HeaderText("Father's name").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("designationName").HeaderText("Designation").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                        col.Field("Time").HeaderText("Time").TextAlign(TextAlign.Left).Add();
+                        col.Field("Status").HeaderText("Status").TextAlign(TextAlign.Left).Add();
+                        }).Load("loaded").Render()
+                    </div>*@
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<script>
+    function loaded() {
+        let grid = document.getElementById("list_attendance").ej2_instances[0];
+        grid.dataSource = [];
+    }
+</script>
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+    $('#search-staff').select2({
+        placeholder: "Search Employee",
+        allowClear: true,
+        minimumInputLength: 1,
+        ajax: {
+            url: '/api/payroll/get-employee-Info',
+            data: function (params) {
+                var query = {
+                    code: params.term,
+                    type: 'public'
+                }
+                // Query parameters will be ?SearchTerm=[term]&type=public
+                return query;
+            },
+            processResults: function (data) {
+                var data6 = data.Data.map(function (v) {
+                    return {
+                        id: v.employeeCode, text: v.employeeName,
+                        photo: v.photo, designation: v.designationName, fname: v.FatherName, cnic: v.CNIC, address: v.address
+                    };
+                });
+
+                return {
+                    results: data6
+                }
+            }
+        }
+    });
+
+    $('#search-staff').on('select2:select', function (e) {
+        let info = e.params.data;
+        if (info) {
+            $('#lblname').html(info.text);
+            $('#lblfname').html(info.fname);
+            $('#lbldesign').html(info.designation);
+            $('#lblcnic').html(info.cnic);
+            $('#lbladdress').html(info.address);
+            if (info.photo != "") {
+                $(pbxPhoto).attr('src', 'data:image/*;base64, ' + info.photo);
+            }
+        }
+        else {
+            $(lblname).html('...');
+            $(lblfname).html('...');
+            $(lblcnic).html('...');
+            $(lbldesign).html('...');
+            $(lbladdress).html('...');
+            $(pbxPhoto).attr('src', '/Uploads/images/user.png');
+            return false;
+        }
+        let grid = document.getElementById("list_attendance").ej2_instances[0];
+        var campusId = $('#Campus').val();
+        let code = info.id;
+        var found = (grid.dataSource).find(function (v, i) { return v.employeeCode == code; });
+        if (found) {
+            return false;
+        }
+        block('#staffattendance');
+        let saveUrl = '/Attendances/SaveStaffAttendance';
+        $.post(saveUrl,
+            { code: code, time: moment().format("DD-MM-YYYY HH:mm"), campusId: campusId },
+            function (data) {
+                if (data.status) {
+                    let info2 = {
+                        employeeCode: code,
+                        employeeName: info.text,
+                        FatherName: info.fname,
+                        designationName: info.designation,
+                        Time: moment().format("DD-MM-YYYY HH:mm"),
+                        Status: data.data.Status
+                    };
+                    (grid.dataSource).unshift(info2);
+                    grid.refresh();
+                } else {
+                    //alert();
+                }
+                $('#staffattendance').unblock();
+            }).error(function () {
+                $('#staffattendance').unblock();
+            });
+    });
+
+
+</script>

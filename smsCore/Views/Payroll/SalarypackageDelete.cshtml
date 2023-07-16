@@ -1,0 +1,75 @@
+﻿
+@*@using Models.accounts;*@
+@model  tbl_SalaryPackage
+@{
+    ViewBag.Title = "Salary package Delete";
+    Layout = null;
+}
+
+<div class="col-12">
+    <h5>Are You Sure You Want To Delete</h5>
+
+</div>
+<div class="col-12">
+    <dl class="dl-horizontal">
+        <dt>
+            salary Package Name 
+        </dt>
+        <dd>
+            @Html.DisplayFor(m => m.salaryPackageName)
+        </dd>
+        <dt>
+            Amount
+        </dt>
+        <dd>
+@*            @Html.DisplayFor(m => m.am)*@
+        </dd>
+        <dt>
+            Narration
+        </dt>
+        <dd>
+            @Html.DisplayFor(m => m.narration)
+        </dd>
+        <dt>
+            Active
+        </dt>
+        <dd>
+            @Html.DisplayFor(m => m.isActive)
+        </dd>
+    </dl>
+
+</div>
+
+
+@*@using (Ajax.BeginForm("SalarypackageDelete", "Payroll", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "classFeeIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "classFeeIndexmainForm" }))
+{*@
+<form asp-action="SalarypackageDelete" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="classFeeIndexmainForm" data_reset="true">
+  
+                   
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    @Html.HiddenFor(m => m.salaryPackageId, new { @class = "form-control has-feedback-left" })
+
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="col-12">
+        <div class="row">
+
+            <div class="form-group col-12 pb-2 mt-3">
+                <a href="@Url.Action("SalarypackageRegister","Payroll")" aria-label="Back to List" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to List</a>
+                <button type="submit" value="Create" class="btn btn-danger pull-right">
+                    <i class="fa fa-trash mr-2"></i> <span>
+                        <i id="server-progress" style="display:none;" class=" fa fa-spinner fa-spin "></i>
+                    </span> Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+</form>
+

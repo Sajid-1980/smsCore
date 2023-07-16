@@ -1,0 +1,123 @@
+﻿@using Utilities;
+@using smsCore.Data.Helpers;\
+@inject StaticResources rec;
+@{
+    ViewBag.Title = "Create";
+
+    var data = ViewBag.data;
+    List<ClsBussinessSetting> existings = ViewBag.settings;
+    if (existings == null)
+    {
+        existings = new List<ClsBussinessSetting>();
+    }
+}
+@*@using (Ajax.BeginForm("FounderInfo", "ApplicationConfiguration", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reload", OnComplete = "completed", LoadingElementId = "FounderInfomainForm #server-progress", OnBegin = "begin" }, new { id = "FounderInfomainForm", enctype = "multipart/form-data" }))
+{
+   *@ 
+  
+<form asp-action="FounderInfo" asp-controller="ApplicationConfiguration" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FounderInfomainForm" data_reset="true" enctype="multipart/form-data">
+      
+   
+   
+   
+   <input type="hidden" name="CampusID" value="@ViewBag.CampusId" />
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-3"></div>
+
+        <div class="col-12 col-md-6 form-group">
+            <div class="row">
+                <div class="col-12 form-group ">
+                    <label>Founder Name</label>
+                    <div class="controls">
+                        <input type="text" name="txtFounderName" id="txtFounderName" class="form-control has-feedback-left" minlength="3" maxlength="80" value="@existings.Where(w => w.PropertyName == "FounderName").Select(s => s.PropertyValue).FirstOrDefault()" />
+                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div class="col-12 form-group mb-2">
+                    <label>Remarks</label>
+                    <div class="controls">
+                        <textarea name="txtFounderRemarks" id="txtFounderRemarks" class="form-control has-feedback-left" maxlength="30" value="@existings.Where(w => w.PropertyName == "FounderRemarks").Select(s => s.PropertyValue).FirstOrDefault()">@existings.Where(w => w.PropertyName == "FounderRemarks").Select(s => s.PropertyValue).FirstOrDefault()</textarea>
+                    </div>      
+                </div>
+            </div>
+            <div class="row mt-4">
+
+                <div class="col-12 col-md-8">
+                    @*data:image/*;base64,@(Convert.ToBase64String(Model.Logo))*@
+                    <h5>Founder Picture</h5>
+                    <hr />
+                </div>
+                <div class="col-12 col-md-6">
+                    <img src="data:image/*;base64,@(ViewBag.Founderphoto != null ? Convert.ToBase64String(ViewBag.Founderphoto) : "")" id="FounderPicturePreview" class="d-block m-auto" style="border-style: inset; height: 100%; width: 100%;" />
+                    <input type="file" data-preview="FounderPicturePreview" name="FounderPictureFile" id="FounderPictureFile" onchange="imageChange(this)" style="height: 0px; position: absolute; width: 0px;" />
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="row" style="align-content: flex-end; height: 100%;">
+                        <div class="col-12 ">
+                            <button type="button" name="founderclear" id="clearbtn_class" class="clearbtn_class btn btn-default mt-2"><i class="fa fa-eraser mr-2"></i>Clear</button>
+                        </div>
+                        <div class="col-12 mb-1">
+                            <button type="button" id="founderbrowsebtn" class="browsebtn_class btn btn-default mr-2 mt-2" data-targetfileinputid="FounderPictureFile" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-folder mr-2"></i>Browse</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="col-3"></div>
+        <div class="col-12 float-right mt-2">
+            <button type="submit" class="float-right btn btn-primary mr-2"><i class="fa fa-save mr-2"></i> Save</button>
+        </div>
+    </div>
+</form>
+
+<script @rec.JavaScript>
+
+   
+    $(document).ready(function() {
+
+     
+        //browse button click event for load photos
+        $('.browsebtn_class').on('click',
+            function() {
+                var preview = $(this).data('preview');
+                var value = $(this).data('txtvalue');
+                var targetFileInputID = $(this).data('targetfileinputid');
+                $('#' + targetFileInputID + '').trigger('click');
+            });
+
+        /*$('input[type=file]').on('change', function (data)*/
+
+        //clear button click event
+        $(".clearbtn_class").click(function() {
+            var x = $('#FounderPicturePreview');
+            x.attr("src", "/Uploads/images/site/logo.png");
+        });
+    });
+
+    //image change function to show loaded image in image tag
+    function imageChange(input) {
+        var preview = $(input).data('preview');
+        if (input.files) {
+            for (i = 0; i < input.files.length; i++) {
+                var reader = new FileReader();
+                var cFile = input.files[i];
+                reader.onload = (function(e) {
+                    $('#' + preview + '').attr('src', e.target.result);
+                });
+                reader.readAsDataURL(input.files[i]);
+            }
+        }
+
+    }
+
+</script>

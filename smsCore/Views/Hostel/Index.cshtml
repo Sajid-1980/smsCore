@@ -1,0 +1,207 @@
+﻿@using sms.Models
+@model Hostel
+@inject StaticResources resources
+
+
+@{
+    ViewBag.Title = "Index";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Create Hostel
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+    @*@using (Ajax.BeginForm("Create", "Hostel", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "editHostelmainForm #server-progress", OnBegin = "begin" }, new { id = "editHostelmainForm", enctype = "multipart/form-data", data_reset = "true" }))
+    {*@
+
+    <form asp-action="Create" asp-controller="Hostel" data-ajax="true" data-ajax-method="post" data-ajax-success="reloadGridData" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editHostelmainForm" data_reset="true">
+
+
+
+        <div class="row">
+
+            <div class="col-12 ">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title titlefix">Create Hostel <a href="https://www.youtube.com/watch?v=yqoeHNNcBCw&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                    </div>
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="Container" id="hostelinfo">
+
+                            <div class="row ">
+
+                                @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "hostelinfo", ColCssClass = "col-12 col-md-3 col-sm-4 has-feedback", CampusFieldName = "CampusId", ShowCampus = true })
+
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Hostel</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.HostelName, new { @class = " form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-home small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.HostelName)
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Total Strengths</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.TotalStudents, new { @class = " form-control has-feedback-left", type = "number", required = "true" })
+                                        <span class="fa fa-users small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.TotalStudents)
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Total Rooms</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.TotalRooms, new { @class = " form-control has-feedback-left", type = "number", required = "true" })
+                                        <span class="fa fa-bed small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.TotalRooms)
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-md-3 col-sm-4 has-feedback">
+                                    <label>Address</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.Location, new { @class = " form-control has-feedback-left", required = "true" })
+                                        <span class="fa fa-map-marker small form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.Location)
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    @*  <a href="@Url.Action("Index", "Hostel")" aria-label="Close" class="btn btn-danger float-left mt-2"> <i class="fa fa-times mr-2"></i>Back to Dashboard</a>*@
+                                    <button type="reset" name="Reset" id="resetbtn" class="btn btn-primary float-right mt-2"><i class="fa fa-refresh mr-2"></i>Reset</button>
+                                    <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                                        <i class="fa fa-save mr-2"></i>
+                                        <span>
+                                            <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                        </span> Save
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    @*
+                    @Html.EJS().Grid("GridS").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                    {
+                    col.Field("CampusName").HeaderText("Campus").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                    col.Field("HostelName").HeaderText("Hostel Name").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                    col.Field("TotalStudents").HeaderText("Total Students").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                    col.Field("TotalRooms").HeaderText("Total Rooms").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                    col.Field("Location").HeaderText("Location").Width("80").TextAlign(Syncfusion.EJ2.Grids.TextAlign.Left).Add();
+                    col.Field("action").Template("#action").HeaderText("Action").Width("70").TextAlign(TextAlign.Left).Add();
+
+                    }).FilterSettings(filter => { filter.Type(Syncfusion.EJ2.Grids.FilterType.CheckBox); }).AllowSorting(true).PageSettings(page => page.PageSize(5)).Toolbar(new List<string>()
+                    { "PdfExport", "Print", "ExcelExport", "Search" ,"ColumnChooser" }).Render()*@
+                    @{
+                        var modelgrid = new GridModel()
+            {
+                GridId = "GridS",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                ShowHeader = false,
+                Columns = new List<Column>
+                    {
+                    new Column{FieldName="campusName",HeaderText="Campus",Width="80",TextAlign=TextAlign.Left},
+                    new Column{FieldName="hostelName",HeaderText="Hostel Name", Width="80",TextAlign=TextAlign.Left},
+                    new Column{FieldName="totalStudents",HeaderText="Total Students" ,Width="80",TextAlign=TextAlign.Left},
+                    new Column{FieldName="totalRooms",HeaderText="Total Rooms", Width="80",TextAlign=TextAlign.Left},
+                    new Column{FieldName="location",HeaderText="Location", Width="80",TextAlign=TextAlign.Left},
+                    new Column{FieldName="action",Template="#action",HeaderText="Action",Width="70",TextAlign=TextAlign.Left},
+
+                    },
+             };
+                    }
+                    @await Html.PartialAsync("_grid",modelgrid)
+                </div>
+                <script type="text/x-jsrender" id="action">
+                    <a title="Edit" class="editL" id="${Id}" href="/Hostel/Edit/${Id}"><i class="fa fa-edit"></i></a>
+                    <a title="Delete" class="delete" id="${Id}" href="/Hostel/Delete/${Id}"><i class="fa fa-trash ml-2"></i></a>
+                </script>
+            </div>
+
+        </div>
+    </form>
+</section>
+
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+    function reloadGridData() {
+        var url2 = '@Url.Action("GethostelList")';
+        var grid = document.getElementById("GridS").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url2,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+        gird.refresh();
+    };
+    // Modal For Delete Staff Issued Book List //
+    $('#GridS').on('click',
+        'a.delete',
+        function (e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            var title = "Edit Hostel"
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+
+    $('#GridS').on('click',
+        'a.editL',
+        function (e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            var title = "Delete Hostel"
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>

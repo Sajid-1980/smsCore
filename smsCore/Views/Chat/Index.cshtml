@@ -1,0 +1,356 @@
+﻿@using Microsoft.AspNetCore.Identity.EntityFrameworkCore
+@{
+    ViewData["Title"] = "Chat";
+
+}
+
+<style>
+    .isAdmincss {
+        border: 2px solid #000;
+    }
+
+    @@media(min-width:991px) {
+        .main-panel div.content {
+            padding: 20px !important;
+        }
+    }
+</style>
+@*@Html.Hidden("CurrentUserId", User.Identity.GetUserId())*@
+<div class="row main-container">
+    <div class="col-12 col-md-2 left">
+        <div class="header">
+            <h5>
+                Groups (<span data-bind="text: chatRooms.length"> </span>)
+            </h5>
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="#" id="create-room" data-toggle="modal" data-target="#create-room-modal"><span class="fa fa-plus nc-simple-add nc-icon "></span></a>
+            }
+        </div>
+        <div class="rooms">
+            <div>
+                <ul id="room-list" data-bind="foreach: chatRooms">
+                    <li id="" data-bind="attr: {'id': 'g-'+$data.roomId()}" class="@(User.IsInRole("Admin")?"admin":"")">
+                        <a href="#" data-id="" class="text-truncate name pr-1" data-bind="text: $data.name,attr:{'data-id':$data.roomId } , clickLink: joinRoom"></a>
+                        <span class="newmessage" data-bind="visible :$data.newMessageCount()>0">
+                            <i class="custom-badge" data-bind="text: $data.newMessageCount">0</i>
+                        </span>
+                        <span class="text-truncate name pr-1" data-bind="text: $data.count"></span>
+                        @if (User.IsInRole("Admin"))
+                        {<span class="action">
+                                <a href="#" title="Delete Group permanently" data-bind="click: function(){$parent.deleteRoom($data.name)}"><i class="fa fa-trash"></i></a>
+                                <a href="#" title="Add member" data-toggle="modal" data-target="#add-member-modal" data-bind="attr: { 'data-groupid': $data.roomId}" id=""><i class="fa fa-plus"></i></a>
+                            </span>
+                        }
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="user">
+            <div class="user-avatar">
+                <img class="avatar-icon2" src="~/Content/icons/avatar1.png" data-bind="attr: { src: myAvatar() }" />
+            </div>
+            <div class="user-name">
+                <a href="#" data-bind="text: myName"></a>
+            </div>
+            <div class="user-signout">
+                @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <a href="javascript:document.getElementById('logoutForm').submit()" title="Sign Out"><span class="glyphicon glyphicon-log-out"></span></a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-7 middle">
+        <div class="chat-header">
+            <h5 id="joinedRoom">
+                Lobby
+
+            </h5>
+            @if (User.IsInRole("Admin"))
+            {<button data-toggle="modal" data-target="#remove-room-modal" class="btnDeleteRoom glyphicon glyphicon-remove"></button>}
+            <div class="text-center old-action-container" data-bind="visible : !endOfMessage()">
+                <span data-bind="visible : !messageLoading(),event:{ click:messageHistory }" class="load-old">Load older messages</span>
+                <span data-bind="visible : messageLoading()"><i class="fa fa-spinner fa-spin"></i></span>
+            </div>
+        </div>
+        <div class="chat-body better-scrollbar">
+           
+            <div data-bind="visible :userNotExist">
+                <div id="usernotexistForm"><h3>User Not Exist</h3></div>
+            </div>
+            <ul data-bind="foreach: sortedMessages()">
+                <li>
+                    <div class="chat-message" data-bind="css: $data.isMine() === true ? 'ismine' : 'isother'">
+                        <div class="left-side">
+                            <img src="~/Content/icons/avatar1.png" class="message-avatar" data-bind="attr: { src: $data.avatar }" />
+                        </div>
+                        <div class="message-content">
+                            <span class="author" data-bind="text:$data.from"></span>
+                            <span class="timestamp">
+                                <i class="fa fa-clock-o"></i>
+                                <span data-bind="text:moment($data.timestamp()).format('LL hh:mm A')"></span>
+                            </span>
+                            <!--ko {if: $data.type()=='audio'}-->
+                            <audio data-bind="attr: { 'src': $data.content}" onplay="mplay(this)" controls></audio>
+                            <!--/ko-->
+                            <!--ko {if: $data.type()=='text'}-->
+                            <span class="content" data-bind="html:$data.content"></span>
+                            <!--/ko-->
+                            <!--ko {if: $data.type()=='image'}-->
+                            <img data-bind="attr: { 'src': $data.content}" onclick="showDiallog(this)" style="cursor:pointer; width:100%; max-width:200px; display:block; clear:both;" />
+                            <!--/ko-->
+
+                        </div>
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+        <div class="chat-input">
+            <i data-bind="event:{ click:onClickSend }" class="nc-icon nc-send ta-button" title="Send Message"></i>
+            <i data-bind="event:{ click:onClickNotification }" class="nc-icon na-button nc-bell-55" title="Send Notification"></i>
+            <input id="chat-message" type="text" value="" data-bind="value:message, valueUpdate: 'afterkeydown', event: { keypress: onEnter }" placeholder="What's on your mind?" />
+
+            <div id="audio-section" style="visibility:hidden">
+                <button id="btn-start-recording" class="btn btn-link ta-button"> <i class="nc-icon nc-audio-92 mr-2"></i></button>
+                @*<button id="btn-upload-media" class="btn btn-link ta-button"> <i class="nc-icon nc-attach-87 mr-2"></i></button>*@
+                <label for="btnUpload" id="btn-upload-media" class="btn btn-link ta-button custom-file-upload">
+                    <i class="nc-icon nc-attach-87 mr-2"></i>
+                    <i id="file-send-loader" class="fa fa-spin fa-spinner" style="display:none;position: absolute;right: 11px;"></i>
+                </label>
+                <input type="file" id="btnUpload" accept="image/*" name="files" />
+
+                <div id="start-recording" style="display:none;">
+                    @*<button id="btn-stop-recording">Stop </button>*@
+                    <button style="display:none;" id="btn-release-microphone">Release Mic</button>
+                    <button style="display:none;" id="btn-download-recording">download recording</button>
+                    <p>
+                        <audio id="el-recorder"></audio>
+                    </p>
+                </div>
+            </div>
+
+            <div id="recorder-container" @*style="display:none;"*@>
+                <div id="progress-cotainer">
+                    <div style="margin: auto;display: block;background-color: green;" class="spinner-grow" role="status"><span class="sr-only">Loading...</span></div>
+                </div>
+                <a href="#" id="btn-cancel-recording" title="Cancel">
+                    <span class="recordingbtn cancel">
+                        <i class="nc-icon nc-simple-remove"></i>
+                    </span>
+                </a>
+
+                <span class="recording-time">
+                    <span id="min" class="min">00</span><span class="sep"> :</span> <span id="sec" class="sec">00</span>
+                </span>
+
+                <a href="#" id="btn-stop-recording" title="Stop and Send">
+                    <span class="recordingbtn send">
+                        <i class="nc-icon nc-check-2"></i>
+                    </span>
+                </a>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-12 col-md-3 right">
+        <div class="header">
+            <h5>
+                Who's Here (<span data-bind="text: filteredChatUsers().length + filteredOfflineUsers().length">0</span>)
+                @if (User.IsInRole("Admin"))
+                {
+                    <button id="btn-start-broadcasting" title="Start audio broadcasting" class="btn btn-link ta-button"> <i class="nc-icon nc-audio-92 mr-2"></i></button>
+                    <button id="btn-stop-broadcasting" style="display:none;" title="Stop audio broadcasting" class="btn btn-link ta-button"><img src="~/assets/images/broadcast.gif" /> </button>
+
+                }
+            </h5>
+        </div>
+        <div class="chat-users better-scrollbar">
+            <span class="online-title font-weight-bold text-dark">
+                <i class="nc-icon nc-circle-09"></i> <span data-bind="text: roomText"></span>
+                @*Students*@ 
+                (<span data-bind="text: filteredChatUsers().length"></span>)
+            </span>
+            <ul id="user-list" class="online users" data-bind="foreach: filteredChatUsers">
+                <li id="" data-bind="attr: {'id': $data.userId}">
+                    <div class="user-inner">
+                        <div class="left-side">
+                            <img src="~/Content/icons/avatar1.png" data-bind="attr: { src:$data.avatar }, css:{ isAdmincss:$data.isAdmin}" class="user-avatar" />
+                        </div>
+                        <div class="right-side">
+                            <input type="hidden" class="username" data-bind="value:$data.userName" />
+                            <input type="hidden" class="userid" data-bind="value:$data.userId" />
+                            <span class="author" data-bind="text: $data.displayName"></span>
+
+                            <!--ko {if: $data.isAdmin() }-->
+                            <small><b>Admin</b></small>
+                            <!--/ko-->
+                            <!--ko {if: $data.isBroadcasting() }-->
+                            <img src="~/assets/images/broadcast.gif" style="width: 27px;position: absolute;right: 17px;top: 17px;" />
+                            <!--/ko-->
+                        </div>
+                        <span class="newmessage">
+                            <i class="badge badge-info new newmessage-count">0</i>
+                        </span>
+                    </div>
+                    @*@if (User.IsInRole("Admin"))
+                    {
+                        <span class="action">
+                            <a href="#" title="Remove user from group" class="remove-member" data-bind="attr: {'data-userid': $data.userId}">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </span>
+                    }*@
+                </li>
+            </ul>
+            <span class="offline-title font-weight-bold text-dark" data-bind="visible:filteredOfflineUsers().length>0">
+                <i class="nc-icon nc-circle-09"></i> Parents (<span data-bind="text: filteredOfflineUsers().length"></span>)
+            </span>
+            <ul id="user-list" class="offline parents" data-bind="foreach: filteredOfflineUsers">
+                <li id="" data-bind="attr: {'id': $data.userId}">
+                    <div class="user-inner">
+                        <div class="left-side">
+                            <img src="~/Content/icons/avatar1.png" data-bind="attr: { src:$data.avatar }" class="user-avatar" />
+                        </div>
+                        <div class="right-side">
+                            <input type="hidden" class="username" data-bind="value:$data.userName" />
+                            <span class="author" data-bind="text: $data.displayName"></span>
+                            <small data-bind="text: $data.device"></small>
+                        </div>
+                    </div>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <span class="action">
+                            <a href="#" title="Remove user from group" class="remove-member" data-bind="attr: {'data-userid': $data.userId}">
+                                <i class="fa fa-trash"></i>
+                            </a>
+                        </span>
+                    }
+                </li>
+            </ul>
+        </div>
+        <div class="search-user">
+            <input type="text" class="" placeholder="Search someone..." data-bind="value: filter, valueUpdate: 'afterkeydown'" />
+        </div>
+    </div>
+</div>
+
+<!-- CREATE ROOM MODAL -->
+<div class="modal" id="create-room-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Create Group</h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="roomName" placeholder="Group name">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click: createRoom">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- REMOVE ROOM MODAL -->
+<div class="modal" id="remove-room-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Delete Group</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this Chat Room?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click: deleteRoom">Yes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Member to Group MODAL -->
+<div class="modal" id="add-member-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Add Member To Group</h4>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" id="btn-add-progress" class="btn btn-primary" data-bind="click: addMember">
+                    <i id="add-progress" class="fa fa-spin fa-spinner mr-2" style="display:none;"></i>
+                    Add Selected Members
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="remote_stream"></div>
+<div id="local_stream"></div>
+
+<div class="alert alert-dismissible alert-warning hidden" id="errorAlert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <p data-bind="text:serverInfoMessage"></p>
+</div>
+
+<link href="~/Content/chat.css" rel="stylesheet" />
+@section Scripts{
+    <script src="~/assets/RecordRTC/RecordRTC.min.js"></script>
+    <script src="~/Scripts/chat/MyChat.js"></script>
+    <script src="~/Scripts/chat/MyScript.js"></script>
+    <script>
+       @if (User.IsInRole("Admin"))
+       {<text>  $('#add-member-modal').on('show.bs.modal', function (e) {
+            var groupid = $(e.relatedTarget).data('groupid');
+            $(this).find('.modal-body').html('<i class="fa fa-spin fa-spinner"></i>').load('/home/AddMemberToGroup?groupid=' + encodeURIComponent(groupid));
+
+       });
+        </text>
+       }
+
+        function showDiallog(me) {
+             //define a new dialog
+             let img = '<img src="' + $(me).attr('src') + '" style="max-width:100%; max-height:100%;display:block; margin:auto;"> ';
+
+             alertify.myAlert ||  alertify.dialog('myAlert',function(){
+                return{
+                    main: function (message) {
+                        this.message = message;
+                  },
+                  //setup:function(){
+                  //    return {
+                  //      buttons:[{text: "Close", key:27/*Esc*/}],
+                  //        focus: { element: 0 },
+                  //        options: {
+                  //            title:'Image View'
+                  //        }
+                  //    };
+                  //},
+                  prepare:function(){
+                    this.setContent(this.message);
+                  }
+                 }
+             });
+            //launch it.
+            alertify.myAlert(img).set('title', 'Image Viewer').resizeTo('90%', '90%').set('resizable',false);
+        }
+
+        function mplay(me) {
+            $('audio').not(me).each(function () {
+                $(this).trigger('pause');
+            });
+        }
+    </script>
+}

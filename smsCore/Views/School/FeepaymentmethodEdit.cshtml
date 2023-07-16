@@ -1,0 +1,79 @@
+﻿@using m = Models;
+@using sms.Models
+@model FeeSlipPaymentMethod
+
+@{
+    ViewBag.Title = "Fee payment method Edit";
+    
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Fee payment method Edit
+            </li>
+
+        </ul>
+    </div>
+}
+
+@*@using (Ajax.BeginForm("FeepaymentmethodEdit", "School", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "editSchoolmainForm #server-progress", OnBegin = "begin"}, new {id = "editSchoolmainForm", enctype = "multipart/form-data"}))
+{*@
+
+<form asp-action="FeepaymentmethodEdit" asp-controller="School"  data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editSchoolmainForm" data_reset="true">
+                   
+    <div class="row" id="feepaymentsedit">
+        <div class="col-12 ">
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <div class="row">
+                <div class="col-12">
+                    <div id="message">
+
+                    </div>
+                </div>
+            </div>
+            <div class="Container">
+
+                <div class="row ">
+
+                    <div class="col-12 col-sm-6  has-feedback">
+                        <label>Payment Method Name</label>
+                        <div class="controls">
+                            @Html.HiddenFor(m => m.Id)
+                                                @Html.TextBoxFor(model => model.PaymentMethodName, new { @class = "form-control has-feedback-left", minlength = "3", maxlength = "30", required = "true" })
+                                                <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
+                                                @Html.ValidationMessageFor(model => model.PaymentMethodName)
+                                            </div>
+                    </div>
+
+                    @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "feepaymentsedit", ColCssClass = "col-sm-4", CampusID = Model.CampusID, ShowCampus = true})
+
+                    <div class="col-12 col-sm-4 has-feedback mt-4">
+                        <label>@Html.EditorFor(m => m.AllowPartialPayment) Allow Partial Payment</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <a href="@Url.Action("feepaymentmethod", "School")" aria-label="Close" class="btn btn-danger float-left mt-2"> <i class="fa fa-times mr-2"></i>Back </a>
+                        <button type="reset" name="Reset" id="resetbtn" class="btn btn-danger float-right mt-2"><i class="fa fa-refresh mr-2"></i>Reset</button>
+                        <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                            <i class="fa fa-save mr-2"></i>
+                            <span>
+                                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>

@@ -1,0 +1,306 @@
+﻿@model tbl_MonthlySalaryDetails
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Edit Monthly Salary";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Edit Employee Monthly Salary
+        </li>
+
+    </ul>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 col-md-4">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Employee Info</h3>
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 form-group has-feedback">
+                            <label class="control-label">Employee Code</label><font class="text-danger">*</font>
+                            <div class="controls">
+                                <input type="text" id="employeeCode" name="employeeCode" class="chosen form-control" minlength="1" maxlength="15" />
+                                <span class="fa fa-neuter form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <div class="col-12 form-group has-feedback">
+                            <label> For Month:</label><font class="text-danger">*</font>
+                            <div class="controls">
+                                <select name="Month" id="Month" style="width:100%"></select>
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("ForMonth")
+                            </div>
+                        </div>
+
+                        <div class="col-12 form-group has-feedback pt-4">
+                            <button type="button" id="search" name="Search" class="btn btn-primary float-right"><i class="fa fa-search pr-2"></i> Search</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <div class="col-12 col-md-12">
+                        <div class="row no-gutters">
+                            <div class="col-4">
+
+                                <img class="profile-user-img img-responsive img-circle" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                                <h3 class="profile-username text-center">
+                                    <span class="name" id="employeeName">......</span>
+                                </h3>
+                            </div>
+                            <div class="col-8">
+                                <ul class="list-group list-group-unbordered">
+                                    <li class="list-group-item listnoback">
+                                        <b>Employee Code</b>
+                                        <a class="pull-right text-aqua">
+                                            <span class="classname" id="lblEmployeeCode">...</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <b>Designation</b>
+                                        <a class="pull-right text-aqua">
+                                            <span class="sectionname" id="lblDesignation" style="font-size:12px">..</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <b>Salary Type</b>
+                                        <a class="pull-right text-aqua">
+                                            <span class="sectionname" id="lblSalaryType">..</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <b>Salary Month</b>
+                                                <label id="salaryMonth" class="text-center pull-right text-aqua" style="background-color: black; color: white; width: 100%;">......</label>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Employee Monthly Salary List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            @Html.EJS().Grid("list").Columns(col =>
+                            {
+                            col.Field("payHeadName").HeaderText("Description").TextAlign(TextAlign.Left).Add();
+                            col.Field("Amount").HeaderText("Amount").TextAlign(TextAlign.Left).Width(200).Add();
+                            col.Field("action").Template("#action").HeaderText("Action").Width(100).TextAlign(TextAlign.Center).Add();
+                            }).Height("auto").Width("auto").Render()
+                        </div>
+                        <script type="text/x-jsrender" id="action">
+                            <a title="Edit" href="/Payroll/MonthlySalaryAmountEdit/${getid(Id)}" class="ajax-load ml-1"><i class="fa fa-edit"></i></a>
+                            <a rel="nofollow" title="Delete" href="javascrpt:void(0);" onclick="deleteData(${Id})" class="ml-1"><i class="fa fa-trash"></i></a>
+                        </script>
+                    </div><!-- /.box-body -->
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Payment history</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+
+                            @Html.EJS().Grid("list2").Columns(col =>
+                            {
+                            col.Field("EntryDate").Format("dd/MM/yyyy").HeaderText("Date").TextAlign(TextAlign.Left).Add();
+                            col.Field("SalaryType").HeaderText("Salary Type").Width("200").TextAlign(TextAlign.Left).Add();
+                            col.Field("Amount").HeaderText("Amount").Width("170").TextAlign(TextAlign.Left).Add();
+                            col.Field("action").Template("#action1").HeaderText("Action").Width("170").TextAlign(TextAlign.Center).Add();
+                            }).Height("auto").Width("auto").Render()
+                        </div>
+                        <script type="text/x-jsrender" id="action1">
+                            <a title="Edit" href="/Payroll/MonthlySalaryAmountEdit/${getid(Id)}" class="ajax-load ml-1"><i class="fa fa-edit"></i></a>
+                            <a rel="nofollow" title="Delete" href="javascrpt:void(0);" onclick="deleteData(${Id})" class="ml-1"><i class="fa fa-trash"></i></a>
+                        </script>
+                    </div><!-- /.box-body -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+
+    function reloadGridData() {
+        resetgrid();
+        let month = $('#Month').val();
+        if (!month)
+            return false;
+        var code = $('#employeeCode').val();
+        if (!code)
+            return false;
+        var url = '/api/payroll/get-monthly-salary-pkg_details/' + month;
+
+        var grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+        var url1 = '/api/payroll/get-employee-salaryInfo-for-month/' + month;
+        var grid = document.getElementById("list2").ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    $('#list, #list2').on('click', 'a.ajax-load', function (e) {
+        e.preventDefault();
+        var title = 'Salary Amount Edit';
+        var url = $(this).attr('href');
+
+        BootstrapDialog.show({
+            title: title,
+            message: $('#bootstrap-diallog').html('<div />').load(url),
+            onhide: function (dialogRef) {
+                $('body').append('<div id="bootstrap-diallog"></div>');
+                reloadGridData();
+            }
+        });
+        return false;
+    })
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn btn-success',
+            cancelButton: 'btn btn-danger'
+        },
+        buttonsStyling: false
+    });
+
+    function deleteData(id) {
+        Swal.fire({
+            title: "Are your sure to delete the selected record?",
+            showCancelButton: true,
+            icon: 'question',
+            confirmButtonText: "Delete Confirm"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.post('/Payroll/MonthlySalaryDelete/' + id, null, function (response) {
+                    if (response.status) {
+                        sweetalert(response.message, "", "info");
+                        resetgrid();
+                    }
+                    else {
+                        sweetalert(response.message, "", "error");
+                    }
+                }).error(function () {
+                    sweetalert("An unknow Network error occured.", "", "error");
+                });
+            }
+        });
+    }
+    if (($('tbody').is(':empty')))
+
+        $('#Month').html('<option>---Select Month---</option>').select2({
+            width: '100%'
+        });
+    $('#Month').on('change',
+        function () {
+            $('#salaryMonth').html($("#Month option:selected").text());
+        });
+
+    function resetgrid() {
+        let grid = document.getElementById('list').ej2_instances[0];
+        grid.dataSource = [];
+        let grid2 = document.getElementById('list2').ej2_instances[0];
+        grid2.dataSource = [];
+
+    }
+    $('#Month').on('change', function () {
+        resetgrid();
+    })
+    $('#employeeCode').on('change',
+        function () {
+            //resetgrid();
+            var code = $(employeeCode).val();
+            var id = @ViewBag.id;
+            if (!code)
+                return false;
+            $.get('/api/payroll/get-employeeSalaryMonth/' + code,
+                function (months) {
+                    var data = JSON.parse(months);
+                    $('#Month').html('').select2({
+                        data: data,
+                        width: '100%'
+                    });
+                });
+            $('#employeeName').html('.......');
+            $(lblEmployeeCode).html('...');
+            $(lblDesignation).html('...');
+            $(lblSalaryType).html('...');
+            $(pbxPhoto).attr('src', "/Uploads/images/user.png");
+
+            $.get('/api/payroll/get-employee-Info-bycode/' + code,
+                function (dataa) {
+                    let data = dataa.Data;
+                    if (data) {
+                        $('#employeeName').html(data.employeeName);
+                        $(lblEmployeeCode).html(data.employeeCode);
+                        $(lblDesignation).html(data.designationName);
+                        $(lblSalaryType).html(data.salaryType);
+                        $(pbxPhoto).attr('src', data.EmployeePhoto);
+                        $('#salaryMonth').html($("#Month option:selected").text());
+                    }
+                    else {
+                        $('#employeeName').html('.......');
+                        $(lblEmployeeCode).html('...');
+                        $(lblDesignation).html('...');
+                        $(lblSalaryType).html('...');
+                        $(pbxPhoto).attr('src', "/Uploads/images/user.png");
+                    }
+                }).error(function () {
+                    $('#employeeName').html('.......');
+                    $(lblEmployeeCode).html('...');
+                    $(lblDesignation).html('...');
+                    $(lblSalaryType).html('...');
+                    $(pbxPhoto).attr('src', "/Uploads/images/user.png");
+                });
+        }
+    );
+
+
+    $('#search').on('click',
+        function () {
+            reloadGridData();
+        });
+
+</script>
+@Html.EJS().ScriptManager()

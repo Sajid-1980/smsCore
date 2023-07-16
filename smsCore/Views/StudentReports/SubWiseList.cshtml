@@ -1,0 +1,133 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+@{
+    ViewBag.Title = "SubWise List";
+}
+
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                <a href="@Url.Action("StudentReports", "Reports")">Student Report</a>
+            </li>
+            <li class="active">
+                Subscription Wise List
+            </li>
+        </ul>
+    </div>
+
+
+<section class="content" id="subwiselist">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "subwiselist", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = true, ShowCampus = true, ShowClasses = true })
+
+                        <div class="col-12 col-md-6 col-sm-8 col-lg-5  mt-2 pt-3  form-group has-feedback">
+                            <label> <input id="attendance" type="checkbox" /> Attendance</label>
+                            <label> <input id="result" type="checkbox" class="ml-2"/> Result</label>
+                            <label> <input id="issuefee" type="checkbox" class="ml-2" /> IssuedFee</label>
+                            <label> <input id="receivefee" type="checkbox" class="ml-2"/> ReceiveFee</label>
+                        </div>
+                        <div class="col-sm-2 col-lg-2 col-md-2 col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 ">
+            @{
+                var grid = new GridModel
+                {
+                    GridId="list_rpt_messagesubs",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Message Subscription List",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="RegistrationNo", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+                        new Column{ FieldName="Attendance", HeaderText="Attendance", AutoFit=true },
+
+                        new Column{ FieldName="Result", HeaderText="Result", AutoFit=true },
+                        new Column{ FieldName="ReceiveFee", HeaderText="Receive Fee", AutoFit=true },
+                        new Column{ FieldName="IssueFee", HeaderText="Issue Fee", AutoFit=true },
+                        }
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("list_rpt_subwise").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+      {
+            col.Template("#sno").HeaderText("S.No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("RegistrationNo").HeaderText("Registration No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("StudentName").HeaderText("StudentName").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("ClassName").HeaderText("ClassName").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("Attendance").HeaderText("Attendance").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("Result").HeaderText("Result").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("ReceiveFee").HeaderText("ReceiveFee").AutoFit(true).TextAlign(TextAlign.Left).Add();
+            col.Field("IssueFee").HeaderText("IssueFee").AutoFit(true).TextAlign(TextAlign.Left).Add();
+        }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("list_rpt_subwise").ej2_instances[0];
+        if (args.item.id === 'list_rpt_subwise_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'list_rpt_subwise_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+
+    $('#btnSearch').on('click',
+        function() {
+            var currids = [];
+            var campus = $('#Campus').val();
+            var issuefee = "false";
+            var classId = $('#Classes').val();
+            var receivefee = "false";
+            var result = "false";
+            var attendane = "false";
+            if ($('#issuefee').is(':checked')) {
+                issuefee = "true";
+            }
+            if ($('#receivefee').is(':checked')) {
+                receivefee = "true";
+            }
+            if ($('#result').is(':checked')) {
+                result = "true";
+            }
+            if ($('#attendance').is(':checked')) {
+                attendane = "true";
+            }
+            var url1 = '@Url.Action("GetSubWiseList")';
+            url1 += '?clasId=' + classId + '&campusID=' + campus + '&attendane=' + attendane + '&issuefee=' + issuefee + '&receivefee=' + receivefee + '&result=' + result;
+            $.get(url1,
+                null,
+                function (data) {
+                    var gridValue = document.getElementById("@grid.GridId").ej2_instances[0];
+                    gridValue.dataSource = (data);
+                });
+        });   
+</script>
+@Html.EJS().ScriptManager()

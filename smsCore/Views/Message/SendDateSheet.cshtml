@@ -1,0 +1,183 @@
+﻿@inject StaticResources resourse;
+@using sms.Models
+@{
+    ViewBag.Title = "Send Date Sheet";
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Send Date Sheet
+            </li>
+
+        </ul>
+    </div>
+}
+
+<style>
+    select.form-control { max-height: 30px; }
+</style>
+@*@using (Ajax.BeginForm("SendDateSheet", "TimeTable", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "SendDateSheetmainForm #server-progress", OnBegin = "begin"}, new {id = "SendDateSheetmainForm"}))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)*@
+    <section class="content" id="senddatesheet">
+        <div class="row">
+            <div class="col-12">
+                <div id="message">
+
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "senddatesheet", ColCssClass = "col-12", ShowCampus = true, ShowClasses = true, ShowExams = true, ShowSections = true })
+
+                            
+                            <div class="col-12 mt-3">
+                                <button type="button" class="btn btn-primary float-right" id="search" onclick="reloadGridData();">
+                                    <i class="mr-2 fa fa-search ">Search</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            Date Sheet <a href="https://www.youtube.com/watch?v=Qf-M08OGFwU&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=190s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right mr-5"><i class="fa fa-question-circle"></i> Help </a>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div id="SendDateSheet-gridContainer" class="col-12">
+                             @*   @Html.EJS().Grid("list_datesheet_message").SelectionSettings(sel => { sel.CheckboxOnly(true); }).Columns(col =>
+                              {
+                                  col.Field("SubjectName").HeaderText("Subject").TextAlign(TextAlign.Left).Add();
+                                  col.Field("ExamDate1").HeaderText("Date").Format("dd/MM/yyyy").TextAlign(TextAlign.Left).Add();
+                                  col.Field("TimeFrom").HeaderText("From").TextAlign(TextAlign.Left).Add();
+                                  col.Field("ToTime").HeaderText("To").TextAlign(TextAlign.Left).Add();
+                               }).Render()*@
+
+                            @{
+                                var modelgrid = new GridModel()
+            {
+                GridId = "list_datesheet_message",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                            {
+                            
+                            new Column{FieldName="SubjectName",HeaderText="Subject",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="ExamDate1",HeaderText="Date",DateFormat="dd/MM/yyyy",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="TimeFrom",HeaderText="From",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="ToTime",HeaderText="To",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                      
+
+                            },
+                AllowFiltering = true,
+            };
+                            }
+                            @await Html.PartialAsync("_grid",modelgrid)
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-8">
+                                <label>
+                                    <input type="checkbox" name="regNocheck" id="regNocheck" value="false" class="mt-3 mr-1" /><span id="regNolabel"> Don't Send to these students(put registration no. comma(,) seprated)</span>
+                                </label>
+
+                                <div class="controls">
+                                    <input type="text" name="RegNo" class="form-control toExcludeRegNo" id="toExcludeRegNo" style="display: none" />
+                                    <span class="fa fa-registered form-control-feedback left toExcludeRegNo" aria-hidden="true" style="display: none"></span>
+                                </div> 
+                            </div>
+                            <div class="col-12 col-sm-6 mt-3 col-md-4 text-right">
+                                <button type="button" onclick="Save();" class="btn btn-primary" name="save"><i class="fa fa-send mr-2"></i> Send</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+@*}*@
+@Html.EJS().ScriptManager()
+<script @resourse.JavaScript>
+   function reloadGridData() {
+
+       var classid = $('#Classes').val();
+       var examid = $('#Exams').val();
+       var sectionid = $('#Sections').val();
+       var campusid = $('#Campus').val();
+       if (!campusid || !examid || !sectionid || !classid) {
+            return false;
+        }
+
+       var url1 = '/Message/DateSheetList';
+       url1 += '?classid=' + classid + '&campusid=' + campusid + '&sectionid=' + sectionid + '&examid=' + examid;
+
+       var grid = document.getElementById("list_datesheet_message").ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    function Save() {
+        var classid = $('#Classes').val();
+        var examid = $('#Exams').val();
+        var sectionid = $('#Sections').val();
+        var campusid = $('#Campus').val();
+        if (!campusid || !examid || !sectionid || !classid) {
+            sweetalert("Plaese select exam and campus before continue", '', 'error');
+             return false;
+        }
+
+        let url = `/Message/SendDateSheet`;
+        url += '?classid=' + classid + '&campusid=' + campusid + '&sectionid=' + sectionid + '&examid=' + examid + '&toExcludeRegNos=' + $('#toExcludeRegNo').val();
+
+        block('#senddatesheet');
+        $.post(url, null, function (response) {
+            if (response.status) {
+                $('#message').html('<span class="float-left alert alert-info w-100">Messages sent successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            else {
+                $('#message').html('<span class="float-left alert alert-danger w-100">' + response.message + '.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            $('#senddatesheet').unblock();
+        }).error(function () {
+            $('#message').html('<span class="float-left alert alert-danger w-100">Unknow network error occured..<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            $('#senddatesheet').unblock();
+        });
+
+    }
+
+</script>
+
+
+<script @resourse.JavaScript>
+    $('#regNocheck').on('change',
+        function() {
+            if ($(this).is(':checked')) {
+                $('.toExcludeRegNo').show();
+            } else {
+                $('#toExcludeRegNo').val('');
+                $('.toExcludeRegNo').val('').hide()
+            }
+        });
+</script>

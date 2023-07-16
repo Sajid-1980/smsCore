@@ -1,0 +1,93 @@
+/* This is a compiled file, you should be editing the file in the templates directory */
+.pace {
+    -moz-perspective: 12rem;
+    -moz-user-select: none;
+
+    -ms-perspective: 12rem;
+    -o-perspective: 12rem;
+    -webkit-perspective: 12rem;
+
+    -webkit-pointer-events: none;
+    -webkit-user-select: none;
+    bottom: 0;
+    height: 6rem;
+    left: 0;
+
+    margin: auto;
+    perspective: 12rem;
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    top: 0;
+    user-select: none;
+    width: 6rem;
+    z-index: 2000;
+}
+
+.pace.pace-inactive .pace-progress { display: none; }
+
+.pace .pace-progress {
+    -moz-animation: pace-theme-center-circle-spin linear infinite 2s;
+    -moz-transform-style: preserve-3d;
+    -ms-animation: pace-theme-center-circle-spin linear infinite 2s;
+    -ms-transform-style: preserve-3d;
+    -o-animation: pace-theme-center-circle-spin linear infinite 2s;
+    -o-transform-style: preserve-3d;
+    -webkit-animation: pace-theme-center-circle-spin linear infinite 2s;
+    -webkit-transform-style: preserve-3d;
+    animation: pace-theme-center-circle-spin linear infinite 2s;
+    background: rgba(252, 210, 90, 0.8);
+    border-radius: 50%;
+    color: #fff;
+    display: block;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 2rem;
+    font-weight: 100;
+
+    height: 6rem;
+    left: 0;
+    line-height: 6rem;
+    position: fixed;
+    position: absolute;
+
+    text-align: center;
+    top: 0;
+    transform-style: preserve-3d;
+    width: 6rem !important;
+    z-index: 2000;
+}
+
+.pace .pace-progress:after {
+    content: attr(data-progress-text);
+    display: block;
+}
+
+@-webkit-keyframes pace-theme-center-circle-spin {
+    from { -webkit-transform: rotateY(0deg) }
+
+    to { -webkit-transform: rotateY(360deg) }
+}
+
+@-moz-keyframes pace-theme-center-circle-spin {
+    from { -moz-transform: rotateY(0deg) }
+
+    to { -moz-transform: rotateY(360deg) }
+}
+
+@-ms-keyframes pace-theme-center-circle-spin {
+    from { -ms-transform: rotateY(0deg) }
+
+    to { -ms-transform: rotateY(360deg) }
+}
+
+@-o-keyframes pace-theme-center-circle-spin {
+    from { -o-transform: rotateY(0deg) }
+
+    to { -o-transform: rotateY(360deg) }
+}
+
+@keyframes pace-theme-center-circle-spin {
+    from { transform: rotateY(0deg) }
+
+    to { transform: rotateY(360deg) }
+}

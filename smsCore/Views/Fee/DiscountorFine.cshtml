@@ -1,0 +1,243 @@
+﻿@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Discount or Fine";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Discount or Fine
+        </li>
+
+    </ul>
+</div>
+
+@*<div class="col-md-12 mainDive">
+    <div class="card mb-4">*@
+
+<section class="content" id="searchstudent-container">
+    <div class="row">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria <a href="https://www.youtube.com/watch?v=tWKtJDvxtT8&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=115s" target="_blank" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                @*<div class="col-md-3 col-12">
+                                <label> For Month:</label><font class="text-danger">*</font>
+                                <div class="controls date-picker-container">
+                                <input type="text" class="input-month-picker form-control" readonly />
+                                <input type="hidden" name="month" class="date form-control" id="month" />
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                </div>
+                                </div>*@
+                                @await Html.PartialAsync("_PartialDate", new PartialDateViewModels { Label = "Month:", PickerType = "month", Format = "MM yy", ParentContainerID = "mont-date", ColCssClass = "col-md-3 col-12", ShowAltField = true, AltFieldId = "month", AltFieldName = "month", AltFieldFormat = "dd/mm/yy", DateFieldId = "monthpick", DateFieldName = "monthpick", KeepDataFieldReadOnly = true })
+
+                                @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "searchstudent-container", ColCssClass = "col-6 col-sm-3 col-md-3", ShowCampus = true, ShowClasses = true})
+                                <div class="col-12"></div>
+                                <div class="col-md-3 col-12">
+                                    <label>
+                                        Fee Type
+                                    </label>
+                                    <div class="controls">
+                                        <select name="feetype" id="feetype" class="form-control"></select>
+                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-12">
+                                    <label>
+                                        Amount
+                                    </label>
+                                    <div class="controls">
+                                        <input type="text" name="amounts" class="form-control" id="amounts" value="0" />
+                                        <span class="form-control-feedback left" aria-hidden="true">
+                                            <i class="fa fa-dollar-sign"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 mt-3">
+
+                                    <button type="button" name="search" onclick="$('#search_text').val('');searches(this);" value="search_filter" class="btn btn-primary btn-sm pull-right checkbox-toggle"><i class="fa fa-search"></i> Search</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header with-border">
+            <h3 class="card-title"><i class="fa fa-list"></i> Student List</h3>
+        </div>
+        <div class="card-body">
+            <p class="col-12" id="message"></p>
+            <div class="col-12">
+                @*@Html.EJS().Grid("list").AllowSelection().Columns(col =>
+                {
+                col.Type("checkbox").Width("50").AllowEditing(true).Add();
+                col.Field("RegistrationNo").HeaderText("Reg. No").Width("100").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                col.Field("StudentName").HeaderText("Name").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                col.Field("FName").HeaderText("Father's Name").TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                col.Field("ClassName").HeaderText("Class").Width("100").AllowEditing(false).TextAlign(TextAlign.Left).Add();
+                col.Field("Amount").HeaderText("Amount").AllowEditing(true).Width("100").Add();
+                }).Load("load").AllowFiltering().AllowPaging().EditSettings(edit => { edit.AllowEditing(true).Mode(Syncfusion.EJ2.Grids.EditMode.Batch); }).SelectionSettings(select => select.CheckboxOnly(true).CheckboxMode(Syncfusion.EJ2.Grids.CheckboxSelectionType.Default).Type(Syncfusion.EJ2.Grids.SelectionType.Multiple)).FilterSettings(filter => filter.Type(FilterType.Menu)).Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().PageSettings(page => page.PageSize(15)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()*@
+                @{
+                    var girdModel = new GridModel()
+            {
+                GridId = "list",
+                Columns = new List<Column>
+                {
+                new Column{Type="checkbox",Width="50",AllowEditing=true},
+                new Column{FieldName="registrationNo",HeaderText="Reg. No",Width="100",TextAlign=TextAlign.Left,AllowEditing=false},
+                new Column{FieldName="studentName",HeaderText="Name",TextAlign=TextAlign.Left,AllowEditing=false},
+                new Column{FieldName="fName",HeaderText="Father's Name",Width="",TextAlign=TextAlign.Left,AllowEditing=false},
+                new Column{FieldName="className",HeaderText="Class",Width="100",TextAlign=TextAlign.Left,AllowEditing=false},
+                new Column{FieldName="amount",HeaderText="Amount",Width="100",TextAlign=TextAlign.Left,AllowEditing=true},
+                },
+            };
+                }
+                @await Html.PartialAsync("_grid",girdModel)
+                </ div >
+
+                </ div >
+
+                <div class=" card-footer">
+                    <button type="button" class="btn float-right btn-primary" id="btnSave"><i class="fa fa-save"></i> Save</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    function load(args) {
+        var instance = document.getElementById('list').ej2_instances[0];
+        instance.element.addEventListener('mousedown', function (e) {
+            if (e.target.classList.contains("e-rowcell")) {
+                var index = parseInt(e.target.getAttribute("Index"));
+                var colindex = parseInt(e.target.getAttribute("aria-colindex"));
+                var field = instance.getColumns()[colindex].field;
+                instance.editModule.editCell(index, field);
+            };
+        });
+    }
+    function reloadGridData() {
+
+        var classid = $('#Classes').val();
+        var typeId = $('#feetype').val();
+        var month = $('#month').val();
+
+        var amounts = $('#amounts').val();
+        if ($('#month').val() == null || $('#month').val() == "") {
+            $('#month').focus();
+            return
+        }
+        var grid = document.getElementById("list").ej2_instances[0];
+        grid.dataSource = [];
+        var url = '@Url.Action("FeedetailsForDiscountOrFine")';
+        url += '?campusId=' + $('#Campus').val() + '&classid=' + classid + '&typeId=' + typeId + '&formonth=' + month + '&amounts=' + amounts;
+
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    var fee_url = '/api/fee/GetFeetype';
+    $.get(fee_url,
+        function (data) {
+            var newdata = JSON.parse(data);
+            $('#feetype').html('').select2({
+                data: newdata,
+                width: '100%'
+            });
+        });
+
+    $('#Classes').on('change', function () { $('#feetype').trigger('change'); });
+    $('#feetype').on('change',
+        function () {
+            if ($('#month').val() == null || $('#month').val() == "") {
+                $('#month').focus();
+                return
+            }
+            var url = '/api/fee/GetFeetypeAmount';
+            url += '?typeId=' + $(feetype).val() + '&campus=' + $('#Campus').val() + '&classes=' + $('#Classes').val();
+            $.get(url,
+                function (data) {
+                    $('#amounts').val(data);
+                });
+        });
+
+
+    $('#btnSave').on('click',
+        function () {
+
+            var feetype = $('#feetype').val();
+            var result = [];
+            var data = [];
+            var grid = document.getElementById("list").ej2_instances[0];
+            console.log(grid);
+            var changedrecords = grid.getBatchChanges().changedRecords;  // getCurrentEditCellData get the selected records.
+            let allselectedrecords = grid.getSelectedRecords();
+
+            var i = 0;
+            let selectedrecords = allselectedrecords.map(function (v) {
+                let changed = changedrecords.find(function (f) {
+                    return v.Id == f.Id;
+                });
+                if (changed) {
+                    v.Amount = changed.Amount;
+                }
+                return v;
+            });
+            if (selectedrecords.length == 0) {
+
+                sweetalert("Plaese select atleast one student before continue", '', 'error');
+                return false;
+            }
+            $.each(selectedrecords, function (i, v) {
+                data[i] = v.Amount;
+                result[i] = v.Id;
+            });
+            
+            $.post('@Url.Action("fineordiscountsave", "Fee")',
+                { Id: result, amount: data, feetype: feetype },
+                function (result) {
+
+                    if (result == "success") {
+
+                        $('#message').html('<p class="alert alert-info w-100">Information Updated to database successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></p>');
+                        reloadGridData();
+                    }
+                    else {
+                        $('#message').html('<p class="alert alert-danger w-100">' + result + '<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></p>');
+                    }
+                });
+
+        });
+    $('#amounts').on('change',
+        function () {
+            $('.amountId').val($(this).val());
+        });
+
+    function searches() {
+        reloadGridData();
+    }
+
+</script>

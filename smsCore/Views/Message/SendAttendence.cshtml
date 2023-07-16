@@ -1,0 +1,167 @@
+﻿@model System.Data.DataTable
+@inject StaticResources resourse;
+
+@{
+    ViewBag.Title = "Send Attendence";
+}
+
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Send Attendance Message
+            </li>
+
+        </ul>
+    </div>
+}
+
+@*@using (Ajax.BeginForm("SendAttendence", "Message", new AjaxOptions { HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "SendAttendencemainForm #server-progress", OnBegin = "begin" }, new { id = "SendAttendencemainForm" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)*@
+<form asp-action="SendAttendence" asp-controller="Message" data-ajax="true" data-ajax-method="post" OnSuccess = "reloadGridData" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="SendAttendencemainForm" data_reset="true">
+
+<section class="content" id="student-attandance-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        Attendance List <a href="https://www.youtube.com/watch?v=Qf-M08OGFwU&list=UUQFf95Tyl3o9y-DE0vvlTQg#t=270s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a>
+
+                    </h3>
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+
+                        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "student-attandance-container", ColCssClass = "col-12 col-sm-4 col-md-3", ShowCampus = true, ShowClasses = true, ShowSections = true })
+
+
+                        <div class="col-12 my-3">
+                            <button type="button" class="btn btn-primary float-right" id="search" onclick="reloadGridData();">
+                                <i class="mr-2 fa fa-search ">Search</i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="SendAttendence-gridContainer" class="col-12">
+                  @*          @Html.EJS().Grid("list_att_message").SelectionSettings(sel => { sel.CheckboxOnly(true); }).Columns(col =>
+                       {
+                           col.Type("checkbox").Width("50").Add();
+                           col.Field("RegistrationNo").HeaderText("Reg. No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                           col.Field("StudentName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                           col.Field("FName").HeaderText("Father's Name").TextAlign(TextAlign.Left).Add();
+                           col.Field("AttendanceType").HeaderText("Attendance").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                           col.Field("AttendanceDate").HeaderText("Attendance Time").AutoFit(true).Format("dd/MM/yyyy hh:mm a").TextAlign(TextAlign.Left).Add();
+                           col.Field("Mobile").HeaderText("Mobile").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                       }).Render()*@
+
+                            @{
+                                var modelgrid = new GridModel()
+            {
+                GridId = "list_att_message",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+                Columns = new List<Column>
+                            {
+                            new Column{Type="checkbox",Width="50"},
+                            new Column{FieldName="registrationNo",HeaderText="Reg. No",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="studentName",HeaderText="Name",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="fName",HeaderText="Father's Name",HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="attendanceType",HeaderText="Attendance",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                            new Column{FieldName="attendanceDate",HeaderText="Attendance Time",DateFormat="dd/MM/yyyy hh:mm a",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+                            new Column{Template="mobile",HeaderText="Mobile",AutoFit=true,HeaderTextAlign=TextAlign.Left},
+
+                            },
+                AllowFiltering = true,
+            };
+                            }
+                            @await Html.PartialAsync("_grid",modelgrid)
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 text-right">
+                            <button type="submit" class="btn btn-primary" name="save" onclick="Save()"><i class="fa fa-send mr-2"></i>Sent Message</button>
+                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</Form>
+<script @resourse.JavaScript>
+    function loaded() {
+        let grid = document.getElementById("list_att_message").ej2_instances[0];
+        grid.dataSource = [];
+    }
+</script>
+<script @resourse.JavaScript>
+    function reloadGridData() {
+
+        var classid = $('#Classes').val();
+        var sectionid = $('#Sections').val();
+        var campusid = $('#Campus').val();
+        if (!campusid || !sectionid || !classid) {
+            return false;
+        }
+
+        var url1 = '/Message/AttendenceList';
+        url1 += '?classid=' + classid + '&campusid=' + campusid + '&sectionid=' + sectionid;
+
+        var grid = document.getElementById("list_att_message").ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    function Save() {
+
+        let url = `/Message/SendAttendence`;
+        let campusid = $('#Campus').val();
+
+        let grid = document.getElementById('list_att_message').ej2_instances[0];
+        var selected = grid.getSelectedRecords();
+        if (selected.length == 0) {
+            sweetalert("Plaese select atleast one employee before continue", '', 'error');
+            return false;
+        }
+
+        block('#student-attandance-container');
+        $.post(url, { data: selected, campusid }, function (response) {
+            if (response.status) {
+                $('#message').html('<span class="float-left alert alert-info w-100">Messages sent successfully.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            else {
+                $('#message').html('<span class="float-left alert alert-danger w-100">' + response.message + '.<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            }
+            $('#student-attandance-container').unblock();
+        }).error(function () {
+            $('#message').html('<span class="float-left alert alert-danger w-100">Unknow network error occured..<a class="close" style="top: 4px;position: absolute;right: 7px;" onclick="clearMessage();"><i class="fa fa-close"></i></a></span>');
+            $('#student-attandance-container').unblock();
+        });
+
+    }
+
+</script>

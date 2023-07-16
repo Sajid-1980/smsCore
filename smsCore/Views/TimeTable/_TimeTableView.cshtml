@@ -1,0 +1,138 @@
+﻿@using System.Data
+@using Models
+@using Utilities;
+@using smsCore.Data.Helpers;
+@model List<StaffTimeTable>
+@inject StaticResources rec;
+
+@{
+    ViewBag.Title = "Subject Period";
+    Layout = null;
+    var thisTimeTable = new DataTable();
+    if (Model.Count > 0)
+    {
+        var pt = new Pivot(Model.AsDataTable());
+        thisTimeTable = pt.PivotData("SubjectName", AggregateFunction.First, new[] {"ClassName", "SectionName"}, new[] {"PeriodNo"}, false);
+    }
+}
+<div id="" style="min-width: 1200px;">
+    <table id="timetable" class="table table-bordered table-hover " border="1">
+        <thead>
+        <tr>
+            @if (Model != null)
+            {
+                foreach (DataColumn cols in thisTimeTable.Columns)
+                {
+                    <th>
+                        @Html.Raw(cols.Caption)
+                    </th>
+                }
+            }
+        </tr>
+        </thead>
+        <tbody>
+
+        @if (Model != null)
+        {
+            foreach (DataRow dr in thisTimeTable.Rows)
+            {
+                <tr>
+                    @foreach (DataColumn cols in thisTimeTable.Columns)
+                    {
+                        <td>
+                            <div class="timetabledata">
+                                @Html.Raw(dr[cols.ColumnName].ToString())
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+        }
+
+        </tbody>
+    </table>
+</div>
+<div class="col-12">
+   @* @using (Ajax.BeginForm("TimeTableAutoDesigner", "TimeTable", null, new AjaxOptions {HttpMethod = "post", LoadingElementId = "TimeTableAutoDesignerForm #server-progress", OnBegin = "begin", OnComplete = "completed"}, new {enctype = "multipart/form-data", @class = "form-horizontal form-label-left input_mask", id = "TimeTableAutoDesignerForm"}))
+    {*@
+    <form asp-action="TimeTableAutoDesigner" asp-controller="TimeTable" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="TimeTableAutoDesignerForm" data_reset="true">
+  
+
+
+
+
+        var i = 0;
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+       @* foreach (var m in Model)
+        {
+            var subjectName = Model[i].SubjectName.Contains("<") ? Model[i].SubjectName.Remove(Model[i].SubjectName.IndexOf("<br />")) : Model[i].SubjectName;
+            <text>
+                @Html.HiddenFor(model => Model[i].CampusID)
+                @Html.HiddenFor(model => Model[i].ClassID)
+                @Html.HiddenFor(model => Model[i].ClassName)
+                @Html.HiddenFor(model => Model[i].Period)
+                @Html.HiddenFor(model => Model[i].SectionID)
+                <input name="[@i].SubjectName" type="hidden" value="@subjectName">
+                @Html.HiddenFor(model => Model[i].StaffID)
+                @Html.HiddenFor(model => Model[i].StaffName)
+                @Html.HiddenFor(model => Model[i].SubjectID)
+                @Html.HiddenFor(model => Model[i].TimeFrom)
+                @Html.HiddenFor(model => Model[i].TimeFromDate)
+                @Html.HiddenFor(model => Model[i].TimeTo)
+                @Html.HiddenFor(model => Model[i].TimeToDate)
+            </text>
+            i++;
+        }*@
+
+        @{
+            var i = 0;
+        }
+        @foreach (var m in Model)
+        {
+            var subjectName = Model[i].SubjectName.Contains("<") ? Model[i].SubjectName.Remove(Model[i].SubjectName.IndexOf("<br />")) : Model[i].SubjectName;
+            <input asp-for="@Model[i].CampusID" type="hidden" />
+            <input asp-for="@Model[i].ClassID" type="hidden" />
+            <input asp-for="@Model[i].ClassName" type="hidden" />
+            <input asp-for="@Model[i].Period" type="hidden" />
+            <input asp-for="@Model[i].SectionID" type="hidden" />
+            <input name="[@i].SubjectName" type="hidden" value="@subjectName" />
+            <input asp-for="@Model[i].StaffID" type="hidden" />
+            <input asp-for="@Model[i].StaffName" type="hidden" />
+            <input asp-for="@Model[i].SubjectID" type="hidden" />
+            <input asp-for="@Model[i].TimeFrom" type="hidden" />
+            <input asp-for="@Model[i].TimeFromDate" type="hidden" />
+            <input asp-for="@Model[i].TimeTo" type="hidden" />
+            <input asp-for="@Model[i].TimeToDate" type="hidden" />
+
+            i++;
+        }
+
+        <div id="message">
+
+        </div>
+        <button type="submit" value="Save" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+            <i class="fa fa-save mr-2"></i>
+            <span>
+                <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+            </span> Save
+        </button>
+    </form>
+</div>
+<script @rec.JavaScript>
+    var messageTop = "";
+    var title = "Time Table";
+    $('#timetable').DataTable({
+        dom: "<'row no-gutters py-1'<'col-sm-12 col-md-2 pl-2'l><'col-sm-12 col-md-7 pt-1 text-center'B><'col-sm-12 col-md-3 pr-2'f>>" +
+            "<'row no-gutters'<'col-sm-12'tr>>" +
+            "<'row no-gutters py-1'<'col-sm-12 col-md-5 pl-1'i><'col-sm-12 col-md-7 pr-2'p>>",
+        buttons: [
+            { extend: 'copy', text: '<i class="fa fa-copy"></i> copy', className: 'sico-export-btn', messageTop: messageTop, title: title },
+            { extend: 'excel', text: '<i class="fa fa-file-excel-o"></i> export(xls)', className: 'sico-export-btn', messageTop: messageTop, title: title },
+            { extend: 'pdf', text: '<i class="fa fa-file-pdf-o"></i> export (pdf)', className: 'sico-export-btn', messageTop: messageTop, title: title },
+            { extend: 'csv', text: '<i class="fa fa-file-text-o"></i> export (csv,text)', className: 'sico-export-btn', messageTop: messageTop, title: title },
+            { extend: 'print', text: '<i class="fa fa-print"></i> print', className: 'sico-export-btn', messageTop: messageTop, title: title },
+            { extend: 'colvis', text: '<i class="fa fa-columns"></i> columns', className: 'sico-export-btn', messageTop: messageTop, title: title }
+        ]
+    });
+</script>

@@ -1,0 +1,127 @@
+﻿@inject StaticResources resourse;
+@{
+    ViewBag.Title = "Employee Reports";
+}
+
+<section id="ReportSection" class="content">
+    <div class="row">
+        <div class="col-12">
+
+            <div class="card">
+                <div class="card-header">
+                    <h4>Employee Reports</h4>
+                </div>
+                <div class="card-body">
+                    <ul>
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("AllEmployeeList", "EmployeeReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/reports/employee address book.png" alt="" />
+                                <label>All Employee List</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("EmployeeCard", "EmployeeReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/reports/employee.png" alt="" />
+                                <label>Employee Card</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("StaffStatement", "EmployeeReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/certificates/staff statement.png" alt="" />
+                                <label>Staff Statement</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("ServiceCard", "EmployeeReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/certificates/service card.png" alt="" />
+                                <label>Service Card</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("ExperienceCertificate", "EmployeeReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/certificates/experience certificate.png" alt="" />
+                                <label>Experince Certificate</label>
+                            </a>
+                        </li>
+
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("QualificationWiseList", "EmployeeReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/certificates/qualification wise list.png" alt="" />
+                                <label>Qualification Wise List</label>
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="ajax-load" href="@Url.Action("EmployeePhoneList", "EmployeeReports")">
+                                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/certificates/phone list.png" alt="" />
+                                <label>Employee Phone List</label>
+                            </a>
+                        </li>
+
+                        @*<li>
+            <a class="ajax-load" href="@Url.Action("NoObjectionCertificate", "EmployeeReports" )">
+                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/certificates/no objection certificate.png" alt="" />
+                <label>No Objection Certificate </label>
+            </a>
+        </li>*@
+
+
+
+
+                        @*<li>
+            <a class="ajax-load" href="@Url.Action("DailySalaryRecord", "EmployeeReports" )">
+                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/reports/daily salary.png" alt="" />
+                <label>Daily Salary Record List</label>
+            </a>
+        </li>
+
+        <li>
+            <a class="ajax-load" href="@Url.Action("MonthlySalaryRecord", "EmployeeReports" )">
+                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/Reports/monthly salary.png" alt="" />
+                <label>Monthly Salary Record List</label>
+            </a>
+        </li>*@
+
+                        @*<li>
+            <a class="ajax-load" href="@Url.Action("PayHeadReport", "EmployeeReports" )">
+                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/Reports/payhead.png" alt="" />
+                <label>Pay Head Report</label>
+            </a>
+        </li>
+
+        <li>
+            <a class="ajax-load" href="@Url.Action("SalaryPackage", "EmployeeReports" )">
+                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/Reports/salary package.png" alt="" />
+                <label>Salary Package</label>
+            </a>
+        </li>*@
+
+                        @*<li>
+            <a class="ajax-load" href="@Url.Action("AdvancePaymentReport", "EmployeeReports" )">
+                <img class="profile-user-img img-responsive img-circle" src="~/Content/Photos/ReportIcons/Payroll/reports/advance pament.png" alt="" />
+                <label>Advance Payment Report</label>
+            </a>
+        </li>*@
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<script @resourse.JavaScript>
+
+    $('#ReportSection a.ajax-load').on('click', function (e) {
+        e.stopPropagation();
+        var url = window.$(this).attr('href');
+        Navigate(url);
+        return false;
+
+    });
+
+</script>

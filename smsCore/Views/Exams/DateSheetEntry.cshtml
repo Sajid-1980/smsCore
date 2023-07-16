@@ -1,0 +1,180 @@
+﻿@using Models
+@inject StaticResources resources
+
+@model IEnumerable<Models.Subject>
+@{
+    
+        Layout = null;
+    
+    int? examId = ViewBag.examId;
+    int? campusId = ViewBag.campusId;
+    int? classId = ViewBag.classId;
+    int? sectionId = ViewBag.sectionId;
+
+}
+
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li>
+            <i class="fa fa-book ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("NewExamHelds", "Exams")">Exams</a>
+        </li>
+        <li class="active">
+            Date Sheet Entry
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="Datesheet">
+    <div class="row">
+        <div class="col-12 col-md-5">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Date Sheet Entry <a href="https://www.youtube.com/watch?v=gZt3JnbKx0U#t=135s" target="_blank" title="Watch our Youtube Video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>                    
+                </div>
+
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ExamID=ViewBag.examId??-1,CampusID=ViewBag.campusId??-1, ClassID=ViewBag.classId??-1, SectionID=ViewBag.sectionId??-1, ParentContainerID = "Datesheet", ColCssClass = "col-12 col-md-12 col-lg-6 col-sm-6", ShowCampus = true, ShowClasses = true, ShowSections = true, ShowExams = true })
+                    </div>
+                </div>
+                <div class="card-footer">
+                    @*<a href="@Url.Action("Index","Dashboard")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Dashboard</a>*@
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="button" value="Create" id="btnloaddatesheet" class="btn btn-primary float-right">
+                                <i class="fa fa-search mr-2"></i>
+                                <span>
+                                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                </span> Find Subjects
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-7">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">Subjects List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="col-12">
+                        @{
+                            var gridmodel = new GridModel()
+                            {
+                GridId = "list",
+                AllowPaging=true,
+                AddSerialNo=true,
+                //DataUrl = "/Exams/SaveDateSheet",
+               Columns=new List<Column>
+               {
+                        new Column{FieldName="subjectName",HeaderText="Subject",Width="70",AllowEditing=false,TextAlign=TextAlign.Left},
+                        new Column{FieldName="examDate1",HeaderText="Date",AllowEditing=false,TextAlign=TextAlign.Left},
+                        new Column{FieldName="timeFrom",HeaderText="From",AllowEditing=true,Width="100",TextAlign=TextAlign.Left},
+                        new Column{FieldName="toTime",HeaderText="To",AllowEditing=true,Width="100",TextAlign=TextAlign.Left},
+                        new Column{FieldName="totalMarks",HeaderText="T. Marks",TextAlign=TextAlign.Left},
+                       // new Column{Template="#action",HeaderText="Action",AllowEditing=false,TextAlign=TextAlign.Left},
+                        },
+                            };
+                        }
+                        @await Html.PartialAsync("_grid",gridmodel)
+                        <script type="text/x-jsrender" id="action">
+                            ${if(ID>0)}
+                                <a title="Delete" onclick="deleteDate(${ID})" href="javascript:void(0)" class="edit ml-1"><i class="fa fa-trash"></i></a>
+                            ${/if}
+                        </script>
+                    </div>
+                   @* <div class="col-12">
+                        @Html.EJS().Grid("list").DataSource(source => source.BatchUrl("/Exams/SaveDateSheet")).AllowPaging(true).PageSettings(new GridPageSettings { PageSize=1000 }).AllowSelection().Columns(col =>
+                   {
+                       col.Template("${sno(index)}").HeaderText("S.No").Width("70").AllowEditing(false).TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                       col.Field("SubjectName").HeaderText("Subject").AutoFit(true).AllowEditing(false).TextAlign(TextAlign.Left).AllowEditing(false).Add();
+                       col.Field("ExamDate1").HeaderText("Date").EditType("datepickeredit").ValidationRules(new { required="true" }).Format("dd-MMM-yyyy").Width(150).TextAlign(TextAlign.Left).AllowEditing(true).Add();
+                       col.Field("TimeFrom").HeaderText("From").AllowEditing(true).Width(100).TextAlign(TextAlign.Left).Add();
+                       col.Field("ToTime").HeaderText("To").AllowEditing(true).Width(100).TextAlign(TextAlign.Left).Add();
+                       col.Field("TotalMarks").HeaderText("T. Marks").Width(70).ValidationRules(new { required = "true", min="1" }).AllowEditing(true).Width("100").Add();
+                       col.Template("#action").HeaderText("Action").AllowEditing(false).Width("100").Add();
+                   }).Load("load").EditSettings(edit => { edit.AllowEditing(true).Mode(Syncfusion.EJ2.Grids.EditMode.Batch);  }).Render()
+                    <script type="text/x-jsrender" id="action">
+                        ${if(ID>0)}
+                            <a title="Delete" onclick="deleteDate(${ID})" href="javascript:void(0)" class="edit ml-1"><i class="fa fa-trash"></i></a>
+                        ${/if}
+                    </script>
+                    </div>*@
+                    <div class="col-12 pt-3 text-right">
+                        <button type="button" class="btn btn-primary" onclick="batchSave()">Save</button>
+                    </div>
+                    <div id="datesheet-gridContainer">
+                        <table id="jqgdatesheet" cellpadding="0" cellspacing="0"></table>
+                        <div id="jqgpdatesheet" style="text-align: center;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    function deletedate(id) {
+        $.post('/Exams/DateSheetDelete/' + id, null, function (response) {
+            if (response == "Success") {
+                sweetalert('Date deleted successfully.', '', 'info');
+                reloadGridData();
+            }
+            else {
+                sweetalert('An unknown error error occured.', '', 'error');
+            }
+            
+        }).error(function () {
+            sweetalert('An unknown error occured.', '', 'error');
+
+        })
+    }
+    function deleteDate(id) {
+        //Confirm(title, showDenyButton, showCancelButton, confirmButtonText, denyButtonText, confirmCallBack, denyCallBack)
+        Confirm("Are you Sure to delete?", true, true, 'Yes', null, function () { deletedate(id); }, null);
+    }
+    function load() { }
+    function reloadGridData() {
+        //editurl = 'DateSheetEntry';
+        var url = '@Url.Action("DateSheetList")';
+                url += '?examId=' + $('#Exams').val() + '&ClassID=' + $('#Classes').val() + '&SectionID=' + $('#Sections').val() + '&CampusID=' + $('#Campus').val();
+
+        let grid = document.getElementById('list').ej2_instances[0];
+        grid.dataSource = new ej.data.DataManager({
+            batchUrl: '/Exams/SaveDateSheet',
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    $('#btnloaddatesheet').on('click', function () {
+        reloadGridData();
+    });
+
+    function batchSave() {
+
+        let grid = document.getElementById('list').ej2_instances[0];
+        var changes = grid.getBatchChanges();
+        if (changes.changedRecords.length > 0) { grid.endEdit(); }
+    }
+</script>

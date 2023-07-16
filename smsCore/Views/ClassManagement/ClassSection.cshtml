@@ -1,0 +1,279 @@
+﻿@inject StaticResources resources
+@{
+    //ViewBag.Title = "Add New Exam";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+   
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Class Management
+        </li>
+        <li class="active">
+            New Class Section
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="classection-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"> <a href="https://www.youtube.com/watch?v=oEQiT2G9uPQ&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+                <div class="card-body">
+                    @*@using (Html.BeginForm("Create", "ClassManagement", null, FormMethod.Post, new { id = "newCreateForm" }))
+                    {*@
+                    <form asp-action="Create" asp-controller="ClassManagement" data-ajax="true" data-ajax-method="post"  class="form-horizontal form-label-left input_mask" id="newCreateForm"  >
+                   
+
+                        @Html.AntiForgeryToken()
+                        <div class="row sico-form-col">
+                            <div class="control-group">
+                                <div id="newCreateMessage">
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+
+                            <div class="col-md-3 col-sm-3 col-12" id="class-container">
+                                <div class="row">
+                                    @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { CampusLoadCallBack="$('ul#classes li.active').trigger('click');", ParentContainerID = "class-container", ColCssClass = "col-12", ShowCampus = true })
+
+                                </div>
+                                <h5 class="heading">Classes<a href="@Url.Action("Create", "ClassManagement", new {type = EnumManager.newgroupEntry.Classes})" class="float-right">new</a></h5>
+                                <ul id="classes" class="list">
+                                </ul>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                                <h5 class="heading">Existing Sections</h5>
+                                <ul id="existingSection" class="list listc">
+                                </ul>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6" style="padding-top: 10%;">
+                                <button type="button" id="btnAdd" class="btn btn-primary"><i class="fa fa-chevron-left"></i> Add</button>
+                                <button type="button" id="btnRemove" class="btn btn-danger">Remove <i class="fa fa-chevron-right"></i> </button>
+                            </div>
+                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                                <h5 class="heading">New Sections<a href="@Url.Action("Create", "ClassManagement", new {type = EnumManager.newgroupEntry.Section})" class="float-right">new</a></h5>
+                                <ul id="newSections" class="list listc">
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+function LoadClasses() {
+
+        //fetch('@Url.Action("GetClasses", "ClassManagement")')
+        //    .then(response => response.json())
+        //    .then(data => {
+        //        let html = '';
+        //        let i = 0;
+
+        //        data.existing.forEach((value, index) => {
+        //            const cls = index === 0 ? 'active' : '';
+        //            html += `<li id="${value.ID}" class="${cls}">${value.ClassName}</li>`;
+        //            i++;
+        //        });
+
+        //        document.querySelector('ul#classes').innerHTML = html;
+        //    })
+        //    .catch(error => console.error(error));
+
+            $.getJSON('@Url.Action("GetClasses", "ClassManagement")',           
+                function(data) {
+                    var html = '';
+                    var i = 0;
+                
+                    $.each(data.existing,
+                        function (key, value) {
+                            let cls = i == 0 ? 'active' : '';
+                            html += '<li id="' + value.id + '" class="' + cls + '">' + value.className + '</li>'; 
+                            i++;
+                        });
+
+                  
+                $('ul#classes').html(html);
+
+
+        $("ul#classes").on("click",
+            "li",
+            function() {
+                loader('show');
+                $('ul#newSections').html('');
+                $('ul#existingSection').html('');
+
+                $.getJSON('@Url.Action("GetSectionInClass", "ClassManagement")',
+                    { classid: $(this).attr('id'), campusId: $('#Campus').val() },
+                    function(data) {
+                        var html = '';
+                        $.each(data.existing,
+                            function(key, value) {
+                                html += '<li id="' + value.id + '">' + value.sectionName + '</li>';
+                            });
+
+                        $('ul#existingSection').html(html);
+                        html = '';
+                        $.each(data.newsection,
+                            function(key, value) {
+                                html += '<li id="' + value.id + '">' + value.sectionName + '</li>';
+                            });
+                        $('ul#newSections').html(html);
+
+                        $('ul.listc li').click(function() {
+                            $(this).closest('ul').find('li').each(function() { $(this).removeClass('active'); });
+                            $(this).addClass('active');
+                        });
+                        loader('hide');
+
+                    }).error(function () {
+                        loader('hide');
+                    });;
+                $(this).closest('ul').find('li').each(function() { $(this).removeClass('active'); });
+                $(this).addClass('active');
+            });
+                });
+        }
+
+    $(function() {
+        setTimeout(function() { LoadClasses(); }, 300);
+
+
+        $('#Campus').on('change',
+            function() {
+                $('ul#classes li.active').trigger('click');
+            });
+
+
+
+
+        $('#btnAdd').click(function() {
+            loader('show');
+            var campusId = $('#Campus').val();
+            var selectedSection = $('ul#newSections > li.active');
+            var selectedClass = $('ul#classes > li.active');
+            if (selectedClass.length == 0) {
+                loader('hide');
+                alert('Please select a class.');
+            } else {
+                if (selectedSection.length != 0) {
+                    var classid = selectedClass.attr('id');
+                    var sectionid = selectedSection.attr('id');
+                    $.post('@Url.Action("AddClassSection", "ClassManagement")',
+                        { classid: classid, sectionid: sectionid, campusId: campusId },
+                        function(data) {
+                            if (data == 'true') {
+                                selectedSection.remove();
+                                $('ul#existingSection').append(selectedSection.clone().removeClass('active'));
+
+                                $('ul.listc li').unbind('click');
+                                $('ul.listc li').click(function() {
+                                    $(this).closest('ul').find('li').each(function() { $(this).removeClass('active'); });
+                                    $(this).addClass('active');
+                                });
+
+                                $('ul#existingSection li').each(function() { $(this).removeClass('active'); });
+                                var existingIndex = $('ul#existingSection li').length - 1;
+                                $('ul#existingSection li').eq(existingIndex).addClass('active');
+
+                                var index = $('ul#newSections').find('li').length;
+                                $('ul#newSections li').eq(index - 1).addClass('active');
+                                loader('hide');
+
+                            } else if (data == 'invalid') {
+                                alert('Invalid data request');
+                                loader('hide');
+
+                            }
+                        }).error(function () {
+                            loader('hide');
+                        });
+                } else {
+                    loader('hide');
+                    alert('Please select a section.');
+                }
+            }
+        });
+        $('#btnRemove').click(function() {
+            loader('show');
+            var selectedSection = $('ul#existingSection li.active');
+            var selectedClass = $('ul#classes li.active');
+            if (selectedClass.length == 0) {
+                alert('Please select a class.');
+                loader('hide');
+            } else {
+                if (selectedSection.length != 0) {
+                    var classid = selectedClass.attr('id');
+                    var sectionid = selectedSection.attr('id');
+                    $.post('@Url.Action("RemoveClassSection", "ClassManagement")',
+                        { classsectionid: sectionid },
+                        function(data) {
+                            if (data == 'true') {
+                                selectedSection.remove();
+                                $('ul#newSections').append(selectedSection.clone().removeClass('active'));
+                                $('ul.listc li').unbind('click');
+                                $('ul.listc li').click(function() {
+                                    $(this).closest('ul').find('li').each(function() { $(this).removeClass('active'); });
+                                    $(this).addClass('active');
+                                });
+
+                                $('ul#newSections li').each(function() { $(this).removeClass('active'); });
+                                var existingIndex = $('ul#newSections li').length - 1;
+                                $('ul#newSections li').eq(existingIndex).addClass('active');
+
+                                var index = $('ul#existingSection').find('li').length;
+                                $('ul#existingSection li').eq(index - 1).addClass('active');
+                                loader('hide');
+                            } else if (data == 'invalid') {
+                                alert('Invalid data request');
+                                loader('hide');
+                            }
+                        }).error(function () {
+                            loader('hide');
+                        });;
+                } else {
+                    loader('hide');
+                    alert('Please select a section.');
+
+                }
+
+            }
+        });
+
+        $('.heading a').click(function(e) {
+            e.preventDefault();
+            url = $(this).attr('href');
+            BootstrapDialog.show({
+                title: 'Create New',
+                message: $('<div><img src="/Uploads/images/site/loader.gif"></div>').load(url)
+
+            });
+        });
+
+    }); //end body
+
+    function loader(type) {
+        if (type == 'hide') {
+            $('#classection-container').unblock();
+        }
+        else {
+            block('#classection-container');
+
+        }
+    }
+</script>

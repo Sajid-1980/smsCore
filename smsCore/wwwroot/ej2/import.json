@@ -1,0 +1,40 @@
+{
+    "name": "ej2.bootstrap.20.4.49",
+    "version": "20.4.49",
+    "components": [
+        "grid"
+    ],
+    "injectables": {
+        "grid": [
+            "Filter",
+            "Page",
+            "Selection",
+            "Sort",
+            "Group",
+            "Reorder",
+            "RowDD",
+            "DetailRow",
+            "Toolbar",
+            "Aggregate",
+            "Search",
+            "VirtualScroll",
+            "Edit",
+            "Resize",
+            "ExcelExport",
+            "PdfExport",
+            "CommandColumn",
+            "ContextMenu",
+            "Freeze",
+            "ColumnMenu",
+            "ColumnChooser",
+            "ForeignKey",
+            "InfiniteScroll",
+            "LazyLoadGroup"
+        ]
+    },
+    "minified": true,
+    "themes": [
+        "bootstrap"
+    ],
+    "userMailId": "ejazmusavi11@gmail.com"
+}

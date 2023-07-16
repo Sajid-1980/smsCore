@@ -1,0 +1,414 @@
+﻿@model PaymentMasterInfo
+@{
+
+    string title = "Payment Voucher";
+    string action = "PaymentVoucher";
+    string createAction = "PaymentVoucher";
+    string listdataAction = "PaymentRegister";
+    string deleteMasterAction = "DeletePaymentVoucherDetails";
+    string voucherDetailsaction = "PaymentVoucherDetails";
+
+    ViewBag.Title = title;
+    bool edit = Model != null;
+    DateTime? date=null;
+
+    if (edit)
+    {
+        date = Model.Date;
+    }
+
+    DateTime? cdate=null;
+
+    if (edit)
+    {
+        date = Model.ChequeDate;
+    }
+}
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Accounts
+            </li>
+            <li class="active">
+                @title
+            </li>
+
+        </ul>
+    </div>
+}
+
+
+
+<section class="content">
+   @* @using (Ajax.BeginForm(action, "Accounts", new AjaxOptions { HttpMethod = "POST",OnSuccess="reset", OnComplete = "completed", LoadingElementId = "PaymentVouchermainForm #server-progress", OnBegin = "begin" }, new { id = "PaymentVouchermainForm" }))
+    {
+      *@  
+
+        <form asp-action="@action" asp-controller="Accounts"
+          data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-begin="begin" data-ajax-complete="completed" data_reset="true" class="form-horizontal form-label-left input_mask">
+              
+           
+        <div class="row">
+    @Html.HiddenFor(m => Model.PaymentMasterId)
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header with-border">
+                <h3 class="card-title">@title Creation</h3>
+            </div><!-- /.box-header -->
+
+
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div id="message">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6 col-md-3">
+                        <label>Voucher No <span class="asterisk">*</span></label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.VoucherNo, new { @class = "form-control number-only has-feedback-left small", placeholder = "Voucher No", required = "" })
+                            <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessage("voucherNo")
+                        </div>
+                    </div>
+                    @Html.Partial("_PartialDate", new PartialDateViewModels
+                  {
+                      Label = "Voucher Date",
+                      ParentContainerID = "entry-date",
+                      ColCssClass = "col-6 col-md-2",
+                      ShowAltField = false,
+                      DateFieldId = "Extra1",
+                      DateFieldName = "Extra1",
+                      KeepDataFieldReadOnly = true,
+                      DefaultDate = date
+                  })
+
+                    <div class="col-6 col-md-7">
+                        <label>Notes</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.Narration, new { @class = "form-control number-only has-feedback-left", placeholder = "Notes" })
+                            <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessage("Narration")
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <label>Bank/Cash<span class="asterisk">*</span></label>
+                        <div class="controls">
+                            @Html.DropDownListFor(model => model.LedgerId, (SelectList)ViewBag.BankOrCash, new { @class = "form-control has-feedback-left select2" })
+                            <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessage("LedgerId")
+                        </div>
+                    </div>
+                    @Html.Partial("_PartialDate", new PartialDateViewModels
+                  {
+                      Label = "Check Date",
+                      ParentContainerID = "check-date",
+                      ColCssClass = "col-6 col-md-2 cash-hide",
+                      ShowAltField = false,
+                      DateFieldId = "Extra2",
+                      DateFieldName = "Extra2",
+                      KeepDataFieldReadOnly = true,
+                      DefaultDate = date,
+                      IsRequired =false
+                  })
+                    <div class="col-6 col-md-3 cash-hide">
+                        <label>Check Number</label>
+                        <div class="controls">
+                            @Html.TextBoxFor(model => model.ChequeNo, new { @class = "form-control has-feedback-left small", placeholder = "Check Number"})
+                            <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                            @Html.ValidationMessage("LedgerId")
+                        </div>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover table-sm sico-table" border="1">
+
+                                <thead>
+                                    <tr>
+                                        <th class="sno">
+                                            S. No
+                                        </th>
+                                        <th>
+                                            Ledger
+                                        </th>
+                                        <th>
+                                            Amount
+                                        </th>
+                                        <th class="action">
+                                            <button type="button" class="btn bt-dark" id="add" > <i class="fa fa-plus-circle"></i> </button>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablebody">
+
+                                    @if (Model == null || Model.PaymentDetails.Count() == 0)
+                                    {
+                                        <tr>
+                                            <td class="sno">
+                                                1
+                                            </td>
+                                            <td width="30%">
+                                                @Html.DropDownList("PaymentDetails[0].LedgerId", (SelectList)ViewBag.LedgerLists, new { @class = "form-control has-feedback-left select2 required" })
+                                            </td>
+
+                                            <td>
+                                                <input type="text" min="1" required name="PaymentDetails[0].Amount" id="PaymentDetails_0_Amounts" value="0" class="form-control amount_total" />
+                                            </td>
+                                            <td class="action"><a href="#" onclick="removeRow(this)" class="btn fa fa-trash btn-danger"></a></td>
+
+                                        </tr>
+                                    }
+                                    else
+                                    {
+                                        for (int i = 0; i < Model.PaymentDetails.Count(); i++)
+                                        {
+                                            <tr>
+                                                <td class="sno">
+                                                    @Html.Hidden("Model.PaymentDetails["+i+"].PaymentDetailsId", Model.PaymentDetails.ToList()[i].PaymentDetailsId,new { @class="detailPk" })
+
+                                                    @(i+1)
+                                                </td>
+                                                <td width="30%">
+                                                    @Html.DropDownList("Model.PaymentDetails["+i+"].LedgerId", new SelectList(((SelectList)ViewBag.LedgerLists).Select(s => new { s.Value, s.Text }), "Value", "Text", Model.PaymentDetails.ToList()[i].LedgerId), new { @class = "form-control has-feedback-left select2" })
+                                                </td>
+
+                                                <td>
+                                                    @Html.TextBox("Model.PaymentDetails["+i+"].Amount", Model.PaymentDetails.ToList()[i].Amount, new { min="1",required="", id = "PaymentDetails_"+i+"_Amounts", @class = "form-control amount_total" })
+                                                </td>
+                                                <td class="action"><a href="#" onclick="removeRow(this, @Model.PaymentDetails.ToList()[i].PaymentDetailsId)" class="btn fa fa-trash btn-danger"></a></td>
+
+                                            </tr>
+
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                            <div class="w-100">
+                                <label class="float-right">
+                                    Total Amount
+                                    <input type="text" id="totalAmount" value="0" name="totalAmount" class="form-control" readonly />
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="card-footer px-2">
+                <div class="row">
+                    <div class="form-group col-12 pb-2 mt-3 text-right">
+                        <button type="submit" value="Create" class="btn btn-primary sico-btn pull-right">
+                            <i class="fa fa-save mr-2"></i> <span>
+                                <i id="server-progress" style="display:none;" class=" fa fa-spinner fa-spin "></i>
+                            </span> Save
+                        </button>
+
+                        <a href="@Url.Action(listdataAction, "Accounts")" aria-label="Back to List" class="btn btn-dark ajax-load-menu float-left"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to List</a>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+    </form>
+</section>
+
+
+<script>
+
+    $('#PaymentVouchermainForm').validate();
+    $('.select2').select2({ 'width': '100%' });
+
+    $('td .cdate').datepicker({
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        buttonImage: '/assets/images/calendar.png',
+        buttonImageOnly: true,
+        showOn: 'button',
+        showAnim: "clip",
+        dateFormat: "dd/mm/yy",
+        changeMonth: true,
+        changeYear: true,
+        defaultDate: new Date(),
+        yearRange: "-50:+5",
+
+    });
+
+    function reset(response) {
+        @if (!edit) {
+            <text>
+        if (response.status) {
+            $('#PaymentVouchermainForm')[0].reset();
+            var i = 0;
+            $('#tablebody tr').each(function () {
+                if (i == 0) {
+                    $(this).find('select').val('').trigger('change');
+                    $(this).find('.amount_total').val('0');
+                }
+                else
+                    $(this).remove();
+                i++;
+            });
+        }
+                </text>
+        }else
+            {
+                <text>
+        loadTable();
+        </text>
+            }
+
+    }
+
+    function loadTable() {
+        var id = $('#PaymentMasterId').val();
+        if (!id) {
+            return false;
+        }
+        block('#tablebody');
+        $.get('/accounts/@voucherDetailsaction/' + id, function (response) {
+            console.log(response)
+            if (response.status) {
+                var i = 0;
+                $.each(response.data, function (i,a) {
+                    console.log(a);
+                    var select = $('#tablebody tr:first select').html();
+                    var name = 'PaymentDetails[' + i + ']';
+                    var id = 'PaymentDetails_' + i + '_';
+                    var html = '<tr><td class="sno"><input type="hidden" value="' + a.Id + '" name="' + name + '.PaymentDetailsId"> ' + (i + 1).toString() + '</td><td width="30%" class="tdGroupid"><select name="' + name + '.LedgerId" id="' + id + 'LegerId" required class="form-control" > ' + select + '</select></td><td><input type="text" min="1" required id="' + id + 'Amount" class="form-control amount_total" name="' + name + '.Amount" value="'+a.Amount+'" /></td><td class="action"><a class="btn fa fa-trash btn-danger" href="#" onclick="removeRow(this,'+a.Id+')"></a></td></tr>';
+                    if (i == 0) {
+                        $('#tablebody').html('');
+                    }
+                    $('#tablebody').append(html);
+                    var last = $('#tablebody tr:last');
+                    $(last).find('select').val(a.LedgerId).select2({ width: '100%' });
+
+                    bindChange();
+                    calculateTotal();
+                    i++;
+                })
+            }
+        }).always(function () {
+            $('#tablebody').unblock();
+        });;
+}
+
+    $('td .cdate').inputmask({ mask: "99/99/9999" });
+
+    $('body').on('change', '.cdate', function () {
+        var val = $(this).val();
+        console.log(val);
+        if (val == '') {
+            $(this).closest('td').find('.conversion-error').remove();
+            return false;
+        }
+        try {
+            var mo = moment(val, "DD/MM/YYYY").format('YYYY-MM-DD');
+            console.log(mo);
+            if (mo.toLowerCase() == 'invalid date') {
+                $(this).closest('td').find('.conversion-error').remove();
+                $(this).closest('td').append('<span class="nosubmit conversion-error text-danger">Please select a valid date</span>');
+            } else {
+                $(this).closest('td').find('.conversion-error').remove();
+            }
+            //console.log(mo)
+            //alert('converted',mo);
+        } catch {
+            alert('conversion error');
+        };
+    });
+    function removeRow(selector, id) {
+        function callback() {
+            var clickedA = $(selector);
+            var CurrentRow = clickedA.closest('tr');
+            if ($('#tablebody tr').length > 1) {
+                var amount = CurrentRow.find(".amount_total").val();
+                total = $('#totalAmount').val() - amount;
+                $(selector).closest('tr').remove();
+                $('#totalAmount').val(total);
+            }
+            else {
+                CurrentRow.find('select').val('').trigger('change');
+                CurrentRow.find('.amount_total').val('0');
+            }
+            loadTable();
+            calculateTotal();
+        }
+        if (id) {
+            sweetalertWithUrl("Are you sure to delete this record?", `/Accounts/@deleteMasterAction/${id}`, true, callback)
+        }
+        else {
+            Confirm("Are you sure to remove this record?", false, true, 'Yes', null, callback, null);
+        }
+
+    }
+
+    $(document).ready(function () {
+        $('#add').on('click', function () {
+            var i = $('#tablebody tr').length;
+            var select = $('#tablebody tr:first select').html();
+            var name = 'PaymentDetails[' + i + ']';
+            var id = 'PaymentDetails_' + i + '_';
+            var html = '<tr><td class="sno">' + (i + 1).toString() + '</td><td width="30%" class="tdGroupid"><select name="' + name + '.LedgerId" id="' + id + 'LegerId" required class="form-control" > ' + select + '</select></td><td><input type="text" min="1" required id="' + id +'Amount" class="form-control amount_total" name="' + name + '.Amount" value="0" /></td><td class="action"><a class="btn fa fa-trash btn-danger" href="#" onclick="removeRow(this)"></a></td></tr>';
+            $('#tablebody').append(html);
+            var last = $('#tablebody tr:last');
+            $(last).find('select').select2({ width: '100%' });
+
+            bindChange();
+            calculateTotal();
+        });
+
+        bindChange();
+        calculateTotal();
+
+
+        $('#LedgerId').on('change', function () {
+            if ($(this).val() == 1) {
+                $('.cash-hide').hide();
+            }
+            else {
+                $('.cash-hide').show();
+            }
+        });
+        $('#LedgerId').trigger('change');
+
+    });
+
+    function bindChange() {
+        $('#tablebody tr .amount_total').each(function () {
+
+            $(this).unbind('change');
+
+            $(this).on('change', function () {
+                calculateTotal();
+
+            });
+        });
+    }
+
+    function calculateTotal() {
+        var grantTotal = 0;
+        $('#tablebody tr').each(function () {
+            grantTotal += parseFloat($(this).find('.amount_total:first').val().trim());
+
+        });
+        $('#totalAmount').val(grantTotal);
+    }
+
+</script>
+

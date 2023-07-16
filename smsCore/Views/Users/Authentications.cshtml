@@ -1,0 +1,118 @@
+﻿@model List<smsCore.Data.Models.ViewModels.PrivlidgeViewModel>
+@inject StaticResources resources
+@{ ViewBag.Title = "Prvilidges"; }
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Users
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="userIndex-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="card w-100">
+                <div class="card-header">
+                   
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-sm-4 col-md-3 my-3">
+                            <div class="form-group m-r-8">
+                                @Html.DropDownList("roleid", (SelectList)ViewBag.roles, new { @class = "form-control", onchange = "reloadGridData()" })
+                            </div>
+                        </div>
+                        <div class="col-12">
+@*
+                            @Html.EJS().Grid("list_priv").Columns(col =>
+                       {
+                           col.Field("Controller").HeaderText("Parent").AllowEditing(false).TextAlign(TextAlign.Left).Add();
+                           col.Field("DisplayText").HeaderText("Description").AllowEditing(false).TextAlign(TextAlign.Left).Add();
+                           col.Field("Allow").Template("#allow").HeaderText("Allow").DisplayAsCheckBox(false).AllowEditing(true).EditType("booleanedit").TextAlign(TextAlign.Left).Add();
+                       }).Toolbar(new string[] { "Search" }).EditSettings(edit => { edit.AllowEditing(true); edit.Mode(EditMode.Batch); }).Height("60vh").Width("auto").AllowGrouping().GroupSettings(g=> { g.ShowDropArea(false); g.Columns(new string[] { "Controller" }); }).Render()*@
+
+                            @{
+                                var gridmodel = new GridModel()
+            {
+                GridId = "list_priv",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                //AddSerialN = true;
+
+
+
+                Columns = new List<Column>
+                            {
+                            new Column{FieldName="controller",HeaderText="Parent",TextAlign=TextAlign.Left},
+                            new Column{FieldName="displayText",HeaderText="Description",TextAlign=TextAlign.Left},
+                            new Column{FieldName="allow",Template="#allow",HeaderText="Allow",TextAlign=TextAlign.Left},
+
+                            },
+            };
+                            }
+                            @await Html.PartialAsync("_grid",gridmodel)
+                        </div>
+                        <script type="text/x-jsrender" id="allow">
+                            ${if(Allow)}
+                            <i class="fa fa-check-circle-o text-info"></i>
+                            ${else}
+                            <i class="fa fa-window-close-o text-danger"></i>
+                            ${/if}
+                        </script>
+
+                        <script type="text/x-jsrender" id="deny">
+                            ${if(Deny)}
+                            <i class="fa fa-check-circle-o text-info"></i>
+                            ${else}
+                            <i class="fa fa-window-close-o text-danger"></i>
+                            ${/if}
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="col-12 pt-3 text-right">
+                    <button type="button" class="btn btn-primary" onclick="batchSave()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@Html.EJS().ScriptManager()
+<script @resources.JavaScript>
+    
+    function reloadGridData() {
+        let roleid = $('#roleid').val();
+        if (!roleid)
+            return false;
+
+        let grid = document.getElementById('list_priv').ej2_instances[0];
+        let batchurl = '/Users/Privilidges/' + roleid;
+        let url = '/Users/PrvilidgeList/' + roleid;
+
+        grid.dataSource = new ej.data.DataManager({
+            batchUrl: batchurl,
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+    reloadGridData();
+    function batchSave() {
+
+        let grid = document.getElementById('list_priv').ej2_instances[0];
+        var changes = grid.getBatchChanges();
+        if (changes.changedRecords.length > 0) { grid.endEdit(); }
+    }
+</script>

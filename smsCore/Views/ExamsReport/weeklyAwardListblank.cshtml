@@ -1,0 +1,99 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "weekly Award List";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("ExamReports", "Reports")">Exam Report</a>
+        </li>
+        <li class="active">
+            Weekly Award List
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="weeklyawardlist">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "weeklyawardlist", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ShowCampus = true, ShowClasses = true, ShowSections = true, ShowExams = true, ShowSubjects = true})
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-12">
+            @Html.EJS().Grid("GridList").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).ShowColumnMenu().ShowColumnChooser().AllowSorting().AllowPdfExport().AllowExcelExport().AllowResizing().ToolbarClick("toolbarClick").EditSettings(edit => edit.AllowAdding(true).AllowEditing(true).AllowDeleting(true)).AllowFiltering().AllowGrouping().Height("200").Width("auto").EnableInfiniteScrolling().Columns(col =>
+            {
+                col.Field("c2").HeaderText("Reg.No").Width("120").TextAlign(TextAlign.Left).Add();
+                col.Field("c3").HeaderText("Name").Width("160").TextAlign(TextAlign.Left).Add();
+                col.Field("c7").HeaderText("Test 1").Width("160").TextAlign(TextAlign.Left).Add();
+                col.Field("c4").HeaderText("Test 2").Width("160").TextAlign(TextAlign.Left).Format("yMd").Add();
+                col.Field("c5").HeaderText("Test 3").Width("160").Format("C2").TextAlign(TextAlign.Left).Add();
+                col.Field("c6").HeaderText("Test 4").Width("160").Format("C2").TextAlign(TextAlign.Left).Add();
+                col.Field("Total").HeaderText("Total").Width("160").Format("C2").TextAlign(TextAlign.Left).Add();
+            }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).PageSettings(page => page.PageSize(5)).Toolbar(new List<string> {"ExcelExport", "PdfExport", "ColumnChooser", "Print", "Search"}).AllowGrouping().Render()
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+
+    $('#btnSearch').click(function() {
+        $('#example tbody').html('');
+
+        var sectionid = $("#Sections").val();
+        if ($("#Sections").val() == null) {
+            return $("#Sections").focus();
+        }
+        var Subjects = $("#Subjects").val();
+        if ($("#Subjects").val() == null) {
+            return $("#Subjects").focus();
+        }
+        var examsid = 0;
+        if ($("#Exams").val() != null) {
+            examsid = $("#Exams").val();
+        }
+
+        var url1 = '@Url.Action("GetweeklyAwardListblank")';
+        url1 += '?Classes=' + $("#Classes").val() + '&Sections=' + sectionid + '&campus=' + $('#Campus').val() + '&exams=' + examsid + '&Subject=' + Subjects + '&group=' + '';
+        var messageTop = 'Weekly Award List ' + 'Campus:' + $("#Campus :selected").html() + 'Class:' + $("#Classes :selected").html() + 'Section:' + $("#Sections :selected").html() + 'Subject:' + $("#Subject :selected").html();
+        $.get(url1,
+            null,
+            function(data) {
+                var gridObj = document.getElementById("GridList").ej2_instances[0];
+                // Refreshes the grid data source
+                gridObj.dataSource = (data);
+            });
+    });
+
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("GridList").ej2_instances[0];
+        if (args.item.id === 'GridList_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'GridList_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+</script>
+@Html.EJS().ScriptManager()

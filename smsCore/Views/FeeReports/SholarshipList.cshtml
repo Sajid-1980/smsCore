@@ -1,0 +1,123 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "View";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action(" Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Scholarship Report</a>
+        </li>
+        <li class="active">
+            Scholarship List
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="feeslip-container">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-sm-4 col-lg-3">
+                            <label>Registration No</label>
+                            <div class="controls">
+                                <input type="text" name="regno" id="regno" class="form-control" minlength="1" maxlength="15" />
+                                <span class="fa fa-registered form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "feeslip-container", ColCssClass = "col-sm-3 col-lg-2", ShowCampus = true, ShowClasses = true})
+
+
+                        <div class="col-sm-3 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent  btn-primary pull-left sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                var grid = new  GridModel
+                {
+                    GridId="list_rpt_classwise_sch",
+                    AddSerialNo=true,
+                    AllowPdfExport=true,
+                    ReportTitle="Scholorship",
+                    Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father Name", AutoFit=true },
+                        new Column{ FieldName="ClassName", HeaderText="Class", AutoFit=true },
+                        new Column{ FieldName="DiscountAmount", HeaderText="Discount", AutoFit=true },
+                        new Column{ FieldName="TotalFee", HeaderText="Fee", AutoFit=true }
+},
+                    GridAggregateColumns=new List<GridAggregateColumn> {
+
+                    new GridAggregateColumn() { Field="ClassName", Type="none", GroupFooterTemplate= "Total",FooterTemplate="Total"},
+                        new GridAggregateColumn() { Field="TotalFee", Type="Sum", GroupFooterTemplate= "${Sum}",FooterTemplate="${Sum}"}
+                    },
+
+                };
+            }
+            @Html.Partial("_grid", grid)
+
+            @*@Html.EJS().Grid("fee").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("300").Width("auto").ToolbarClick("toolbarClick").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnChooser().AllowResizing().Columns(col =>
+            {
+                col.Field("AdmissionID").HeaderText("Reg No").Width("50").TextAlign(TextAlign.Left).Add();
+                col.Field("StudentName").HeaderText("Student Name").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("FName").HeaderText("FName").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("ClassName").HeaderText("Class").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("DiscountAmount").HeaderText("Discount").Width("80").TextAlign(TextAlign.Left).Add();
+                col.Field("TotalFee").HeaderText("Total").Width("80").TextAlign(TextAlign.Left).Add();
+            }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser" }).Render()*@
+      
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    $('#btnSearch').click(function() {
+
+        let campid = $("#Campus").val();
+        let clsid = $('#Classes').val();
+        let regno = $('#regno').val();
+        if (!campid || !clsid) {
+            alert('Please select a valid campus or class.');
+            return false;
+        }
+        var url1 = '@Url.Action("SholarshipListData")';
+        url1 += '?cmpId=' + campid + '&clsId=' + clsid + '&regno=' + regno;
+        $.get(url1,
+            null,
+            function (data) {
+                var gridList = document.getElementById("@grid.GridId").ej2_instances[0];
+                gridList.dataSource = (data);
+            });
+    });
+
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("fee").ej2_instances[0];
+    //    if (args.item.id === 'fee_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'fee_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+</script>
+@Html.EJS().ScriptManager()

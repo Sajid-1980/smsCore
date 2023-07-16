@@ -1,0 +1,95 @@
+﻿@model List<MessagePackage>
+@inject StaticResources resourses;
+@{
+    ViewBag.title = "Message Pakages";
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Message Pakages
+        </li>
+
+    </ul>
+</div>
+
+<section class="content" id="feeSlipIndex-container">
+    <div class="row">
+        <div class="col-12">
+
+            @foreach (var p in Model)
+            {
+                <div class="col-lg-3">
+                    <div class="card mb-5 mb-lg-0">
+                        <div class="card-body">
+                            <h5 class="card-title text-muted text-uppercase text-center">@p.PackageName</h5>
+                            <h6 class="card-price text-center">
+                                @p.Amount<span class="period">PKR</span>
+                            </h6>
+                            <hr>
+                            <ul class="fa-ul">
+                                <li>
+                                    <span class="fa-li">
+                                        <i class="fa fa-check"></i>
+                                    </span>Brand: @p.PaymentDate
+                                </li>
+                                <li>
+                                    <span class="fa-li">
+                                        <i class="fa fa-check"></i>
+                                    </span>@p.TotalMessages SMS
+                                </li>
+                                <li>
+                                    <span class="fa-li">
+                                        <i class="fa fa-check"></i>
+                                    </span>Expiry @p.ExpireDate 
+                                </li>
+                                <li class="text-muted">
+                                    <span class="fa-li">
+                                        <i class="fa fa-times"></i>
+                                    </span>Dedicated Phone Support
+                                </li>
+                                <li class="text-muted">
+                                    <span class="fa-li">
+                                        <i class="fa fa-times"></i>
+                                    </span>No Free Mask
+                                </li>
+                                <li class="text-muted">
+                                    <span class="fa-li">
+                                        <i class="fa fa-times"></i>
+                                    </span>Monthly Status Reports
+                                </li>
+                                <li class="text-muted">
+                                    <span class="fa-li">
+                                        <i class="fa fa-times"></i>
+                                    </span>Dedicated Logs
+                                </li>
+                            </ul>
+
+                           @* @using (Ajax.BeginForm("MessagePakages", "MyMessages", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "smsPurchase #server-progress", OnBegin = "begin"}, new {id = "smsPurchase"}))
+                            {*@
+                            <form asp-action="MessagePakages" asp-controller="MyMessages" data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="smsPurchase" data_reset="true">
+   
+                                <input type="hidden" name="PackageId" value="@p.Id"/>
+                                <button type="submit" value="Create" class="btn btn-primary pull-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Select and Continue
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+<script @resourses.JavaScript>
+
+</script>

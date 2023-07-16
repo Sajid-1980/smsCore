@@ -1,0 +1,144 @@
+﻿@model PartialDateViewModels
+@inject StaticResources StaticResources
+@{ 
+    Model.ParentContainerID = Model.ParentContainerID.StartsWith("#") ? Model.ParentContainerID : "#" + Model.ParentContainerID;
+    //Model.ParentContainerID = Model.ParentContainerID.EndsWith(" ") ? Model.ParentContainerID : Model.ParentContainerID + " ";
+    DateTime defDate = DateTime.Now;
+    var dateclass = Model.PickerType == "date" ? "_date" : Model.PickerType;
+}
+<style>
+    .date-picker-container .ui-datepicker-trigger {
+        position: absolute;
+        right: 8px;
+        top: 11px;
+        cursor: pointer;
+    }
+    .small.time{
+        max-width:230px !important;
+    }
+</style>
+<div id="@Model.ParentContainerID.Replace("#","")" class="@Model.ColCssClass">
+    @if (!string.IsNullOrEmpty(Model.Label))
+    {
+        <label> @Model.Label @(Model.IsRequired ? Html.Raw("<span class=\"asterisk\" style=\"color: red\">*</span>") : Html.Raw("")) </label>
+    }
+    <div class="controls date-picker-container small @dateclass">
+        <input type="text" class="input-date-picker form-control small @dateclass" name="@Model.DateFieldName" id="@Model.DateFieldId" @(Model.IsRequired? "required":"")  @(Model.KeepDataFieldReadOnly? "readonly":"") />
+        @if (Model.ShowAltField)
+        {<input type="hidden" class="selectdate form-control" name="@Model.AltFieldName" id="@Model.AltFieldId" value="" />}
+        <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+    </div>
+</div>
+
+<script @StaticResources.JavaScript>
+
+    @if(Model.PickerType == "date") {
+    <text>
+    $("@Model.ParentContainerID .input-date-picker").datepicker({
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        buttonImage: '/assets/images/calendar.png',
+        buttonImageOnly: true,
+        showOn: 'button',
+        showAnim: "clip",
+        dateFormat: "@Model.Format",
+        changeMonth: true,
+        changeYear: true,
+        defaultDate: new Date(),
+        yearRange: "-50:+5",
+        @if (Model.ShowAltField){<text>
+        altField: '@Model.ParentContainerID #@Model.AltFieldId',
+        altFormat: '@Model.AltFieldFormat'</text>}
+
+    });
+    @if (!string.IsNullOrEmpty(Model.DefaultDateString) && DateTime.TryParse(Model.DefaultDateString, out defDate))
+    {<text>
+    $("@Model.ParentContainerID .input-date-picker").datepicker('setDate', new Date(@defDate.Year,@defDate.Month-1,@defDate.Day));
+    </text>}
+
+    @if (Model.DefaultDate != null && Model.DefaultDate.HasValue)
+    {<text>
+        $("@Model.ParentContainerID .input-date-picker").datepicker('setDate', new Date(@Model.DefaultDate.Value.Year,@Model.DefaultDate.Value.Month-1,@Model.DefaultDate.Value.Day));
+    </text>}
+    $("@Model.ParentContainerID .input-date-picker").on('change', function () {
+        var val = $(this).val();
+        if (val == '') {
+            $(this).closest('div').find('.conversion-error').remove();
+            return false;
+        }
+        try {
+            var mo = moment(val, '@Model.Format');
+            if (mo._d == 'Invalid Date') {
+                $(this).closest('div').find('.conversion-error').remove();
+                $(this).closest('div').append('<span class="nosubmit conversion-error text-danger">Please select a valid date</span>');
+            } else {
+                $(this).closest('div').find('.conversion-error').remove();
+            }
+            //console.log(mo)
+            //alert('converted',mo);
+        } catch {
+            alert('conversion error');
+        };
+    });
+    </text>
+    }
+    else if(Model.PickerType == "month") {
+    <text>
+    $('@Model.ParentContainerID .input-date-picker').MonthPicker({
+        changeMonth: true,
+        @if (Model.ShowAltField)
+            {
+         <text>       AltField: '@Model.ParentContainerID #@Model.AltFieldId',
+        AltFormat: '@Model.AltFieldFormat',
+        </text>
+        }
+        changeYear: true,
+        showAnim: "clip",
+        defaultDate: new Date(),
+        showButtonPanel: true,
+        MonthFormat: '@Model.Format',
+        onClose: function (dateText, inst) {
+            $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+        }
+    });
+    @if (Model.DefaultDate != null && Model.DefaultDate.HasValue)
+    {<text>
+    $("@Model.ParentContainerID .input-date-picker").MonthPicker('option','SelectedMonth', new Date(@Model.DefaultDate.Value.Year,@Model.DefaultDate.Value.Month-1,@Model.DefaultDate.Value.Day));
+    </text>}
+    </text>
+    }
+    else if(Model.PickerType == "time") {
+    <text>
+    $('@Model.ParentContainerID .input-date-picker').datetimepicker({
+        showOtherMonths: true,
+        selectOtherMonths: true,
+        buttonImage: '/assets/images/calendar.png',
+        buttonImageOnly: true,
+        showOn: 'button',
+        showAnim: "clip",
+        dateFormat: "@Model.Format",
+        changeMonth: true,
+        changeYear: true,
+        defaultDate: new Date(),
+        yearRange: "-50:+5",
+        controlType: 'select',
+        oneLine: true,
+        timeFormat: "hh:mm TT",
+        @if (Model.ShowAltField)
+        {<text>
+        altField: '@Model.ParentContainerID #@Model.AltFieldId',
+        altFieldTimeOnly: false,
+        altFormat: '@Model.AltFieldFormat',
+        altTimeFormat: "hh:mm tt",
+        </text>}
+
+    });
+    </text>
+    }
+    @if(Model.SetMask)
+            {
+                <text>
+    $('@Model.ParentContainerID .input-date-picker').inputmask({ mask: '@Model.Mask' });
+    </text>
+            }
+</script>

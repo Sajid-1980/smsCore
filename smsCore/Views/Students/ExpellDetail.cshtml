@@ -1,0 +1,155 @@
+﻿@model Models.ExpellDetail
+
+@{
+    ViewBag.Title = "Delete";
+
+}
+
+@*@using (Ajax.BeginForm("ExpellDetail", "Students", new AjaxOptions {HttpMethod = "POST",OnSuccess="successUnExpell", OnComplete = "completed", LoadingElementId = "expelldetail #server-progress", OnBegin = "begin"}, new {id = "expelldetail", enctype = "multipart/form-data"}))
+{*@
+
+<form asp-action="ExpellDetail" asp-controller="Students" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="expelldetail" data_reset="true">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.ID)
+    @Html.HiddenFor(model => model.StudentID)
+    @Html.HiddenFor(model => model.UserID)
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="container" id="expellDetail">
+        <div class="row">
+            <div class="col-sm-12 form-group has-feedback">
+                <label>Character</label>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.Particular, new { @class = "form-control has-feedback-left", placeholder = "Character" })
+                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.Particular)
+                </div>
+            </div>
+
+            @Html.Partial("_PartialDate", new PartialDateViewModels
+       {
+           Label = "Date",
+           ParentContainerID = "entry-date",
+           ColCssClass = "col-6 col-md-6",
+           ShowAltField = false,
+           DateFieldId = "EntryDate",
+           DateFieldName = "EntryDate",
+           KeepDataFieldReadOnly = true,
+           DefaultDate=Model==null ? DateTime.Now : Model.EntryDate
+       })
+
+            @*<div class="col-sm-6 form-group has-feedback">
+                <label>Date</label>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.EntryDate, new { @class = "form-control has-feedback-left", placeholder = "Date" })
+                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.EntryDate)
+                </div>
+            </div>*@
+
+            <div class="col-sm-6 form-group has-feedback">
+                <label>SLC No.</label>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.SLCNo, new { @class = "form-control has-feedback-left", placeholder = "SLC No.", value = "0" })
+                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.SLCNo)
+                </div>
+            </div>
+
+            <div class="col-sm-6 form-group has-feedback">
+                <label>Last Class</label>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.LastClass, new { @class = "form-control has-feedback-left", placeholder = "Last Class", @readonly = "readonly" })
+                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.LastClass)
+                </div>
+            </div>
+
+            <div class="col-sm-6 form-group has-feedback">
+                <label>Conduct</label>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.Conduct, new { @class = "form-control has-feedback-left", placeholder = "Conduct", value = "Satisfactory" })
+                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.Conduct)
+                </div>
+            </div>
+
+            <div class="col-sm-6 form-group has-feedback">
+                <label>Last Section</label>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.LastSection, new { @class = "form-control has-feedback-left", placeholder = "Last Section", @readonly = "readonly" })
+                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.LastSection)
+                </div>
+            </div>
+
+            <div class="col-sm-6 form-group has-feedback">
+                <label>Last Campus</label>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.LastCampus, new { @class = "form-control has-feedback-left", placeholder = "Last Campus", @readonly = "readonly" })
+                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.LastCampus)
+                </div>
+            </div>
+
+            <div class="col-sm-6 form-group has-feedback">
+                <label>Type</label>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.ExpellType, new { @class = "form-control has-feedback-left", placeholder = "Expell Type", value = "" })
+                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.ExpellType)
+                </div>
+            </div>
+
+            <div class="col-sm-12 form-group has-feedback">
+                <label>Reason/Notes</label>
+                <div class="controls">
+                    @Html.TextBoxFor(model => model.Reason, new { @class = "form-control has-feedback-left", placeholder = "Reason/Notes", value = "" })
+                    <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                    @Html.ValidationMessageFor(model => model.Reason)
+                </div>
+            </div>
+
+
+            @*<div class="col-lg-12 form-group">
+            <span class="alert alert-success" id="ExpellDetailMessage"></span>
+        </div>*@
+        </div>
+        <div class="row">
+            <div class="col-12 text-right">
+                @*<button type="reset" name="Reset" id="resetbtn" class="btn btn-danger float-left mt-2"><i class="fa fa-refresh mr-2"></i>Reset</button>*@
+                <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary mt-2">
+                    <i class="fa fa-save mr-2"></i>
+                    <span>
+                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                    </span> Save
+                </button>
+            </div>
+        </div>
+        <div class="clearfix">
+        </div>
+    </div>
+@*}*@
+
+</form>
+<script>
+            //$('#ExpellDetailsForm').ajaxForm({
+    //    target: '#ExpellDetailMessage'
+    //});
+    @*$('#EntryDate').datepicker('update',new Date('@Model.EntryDate'));*@
+
+      function successUnExpell(response) {
+          if (response.status) {
+              var modal = $('.modal.bootstrap-dialog.show').attr('id');
+              $('#' + modal + '').modal('hide');
+              var url = '/Students/Studentview?id=@Model.StudentID';
+              ConfirmNavigate(url, 'Selected Students has been Deleted and Archived Successfully.', showDenyButton = false, showCancelButton = false, confirmButtonText = "Ok", denyButtonText = "Cancel");
+          }
+      }
+</script>

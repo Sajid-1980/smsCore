@@ -1,0 +1,73 @@
+﻿@model  FeeSlipDetail
+@{
+    ViewBag.Title = "Fee Slip Detail Edit";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+@*
+@using (Ajax.BeginForm("FeeSlipDetailEdit", "Fee", new AjaxOptions {HttpMethod = "POST", OnSuccess = "reloadGridData", OnComplete = "completed", LoadingElementId = "FeeSlipDetailEditmainForm #server-progress", OnBegin = "begin"}, new {id = "FeeSlipDetailEditmainForm"}))
+{*@
+<form asp-action="FeeSlipDetailEdit" asp-controller="Fee"
+      data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeSlipDetailEditmainForm" data_reset="true">
+         
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+
+    <h3>Edit fee</h3>
+    @Html.HiddenFor(m => m.Id)
+    <div class=row>
+        <div class="col-md-8 col-sm-8 col-xs-12 form-group has-feedback">
+            <label> Fee type:</label><font class="text-danger">*</font>
+                                     <div class="controls">
+                                         @Html.TextBoxFor(model => Model.FeeType.TypeName, new { @class = "form-control", required = "required", @readonly = "true" })
+                                         <span class="fa fa-neuter form-control-feedback left" aria-hidden="true"></span>
+                                         @Html.ValidationMessage(" TypeName")
+                                     </div>
+        </div>
+        <div class="col-md-8 col-sm-8 col-xs-12 form-group has-feedback">
+
+            <label> Amount:</label><font class="text-danger">*</font>
+                                   <div class="controls">
+                                       @Html.TextBoxFor(model => Model.Amount, new { @class = "form-control", required = "required" })
+                                       <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                       @Html.ValidationMessage(" Amount")
+                                   </div>
+        </div>
+
+        <div class="col-md-8 col-sm-8 col-xs-12 form-group has-feedback">
+            <label> Discount:</label><font class="text-danger">*</font>
+                                     <div class="controls">
+                                         @Html.TextBoxFor(model => Model.Discount, new { @class = "form-control", required = "required" })
+                                         <span class="fa fa-dollar form-control-feedback left" aria-hidden="true"></span>
+                                         @Html.ValidationMessage("Discount")
+                                     </div>
+        </div>
+        <div class="col-md-8 col-sm-8 col-xs-12 form-group has-feedback pb-3">
+            <label>
+                Discount in Amount:
+                <input type="checkbox" id="DiscountInAmount" name="DiscountInAmount" class="form-check" value="@Model.DiscountInAmount" @(Model.DiscountInAmount ? "checked" : "")/>
+            </label>
+
+        </div>
+
+        <div class="form-group col-12 pb-2">
+            <a href="@Url.Action("EditFeeIndex", "Fee")" aria-label="Back to Dashboard" class="btn btn-danger"> <i class="fa fa-chevron-circle-left mr-2"></i> Back to Fee Slip</a>
+
+            <button type="submit" value="Create" class="btn btn-primary pull-right">
+                <i class="fa fa-save mr-2"></i>
+                <span>
+                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                </span> Save
+            </button>
+        </div>
+    </div>
+</form>

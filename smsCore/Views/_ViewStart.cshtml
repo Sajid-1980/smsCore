@@ -1,0 +1,8 @@
+﻿@using System.Security.Claims
+@inject LoggedInUserHelper _helper;
+@{   
+        Layout =Context.Request.IsAjaxRequest() ? null : "~/Views/Shared/_LayoutAdmin.cshtml";
+        string? userid = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier);
+        if(!string.IsNullOrEmpty(userid))
+        ViewContext.ViewBag.CurrentUser = _helper.GetLoggedInUserHelper(userid);
+}

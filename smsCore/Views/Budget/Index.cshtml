@@ -1,0 +1,174 @@
+﻿@model System.Data.DataTable
+@inject StaticResources resources
+
+
+@{
+    /**/
+    string title = "Budgets";
+    string action = "Index";
+    string createAction = "Create";
+    string listdataAction = "BudgetList";
+    string deleteMasterAction = "DeleteBudget";
+    string gridId = "Grid";
+    ViewBag.Title = title;
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+            </i>
+            <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Accounts
+        </li>
+        <li class="active">
+            @title
+        </li>
+    </ul>
+</div>
+@*@using (Html.BeginForm(action, "Budget", FormMethod.Get, new { enctype = "multipart/form-data", @class = "form-horizontal form-label-left " }))
+{*@
+<form asp-action="@action" asp-controller="Budget"
+                          data-ajax="true" data-ajax-method="get" enctype="multipart/form-data"   class="form-horizontal form-label-left input_mask"  >
+      
+
+    <section class="content">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <label>Budget Name</label>
+                                <div class="controls">
+                                    <input type="text" name="BudgetName" value="@ViewBag.Budgetname" class="form-control has-feedback-left" id="budgetname" />
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("BudgetName")
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <label>Type</label>
+                                <div class="controls">
+                                    @Html.DropDownList("type", new SelectList(new[] {"", "Account Ledger", "Account Group" }, Model == null ? null : "type"), new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-file-text form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessage("type")
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 mt-2">
+                                <button type="button" id="btnSearch" class="btn btn-primary sico-btn float-right" name="Search"><i class="fa fa-search mr-2"></i> Search</button>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            
+
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-header px-2">
+                        <h3>
+                            @title
+                            <a href="@Url.Action(createAction)" class="btn btnSearchStudent btn-primary float-right sico-button sico-btn ajax-load-menu"><i class="fa fa-plus-circle"></i> Add New Record</a>
+                        </h3>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="row no-gutters sico-form-col mt-1">
+                            <div class="col-12">
+                             @*   @Html.EJS().Grid(gridId).AllowGrouping().Height("auto").Width("auto").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                           {
+                               col.Template("#sno").HeaderText("S.No").TextAlign(TextAlign.Left).Width("90").Add();
+                               col.Field("BudgetName").HeaderText("Budget Name").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("Type").HeaderText("Type").TextAlign(TextAlign.Left).Add();
+                               col.Field("FromDate").HeaderText("From").TextAlign(TextAlign.Left).AutoFit(true).Format(new { type = "dateTime", format = "dd/MM/yyyy" }).Add();
+                               col.Field("ToDate").HeaderText("To").TextAlign(TextAlign.Left).AutoFit(true).Format(new { type = "dateTime", format = "dd/MM/yyyy" }).Add();
+                               col.Field("Debit").HeaderText("Debit").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                               col.Field("Credit").HeaderText("Credit").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                               col.Template("#action").HeaderText("Action").Width("100").TextAlign(TextAlign.Left).Add();
+                           }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+                             {  "Print", "ColumnChooser", "Search" }).Render()*@
+                                @{
+                                    var modelgrid = new GridModel()
+            {
+                GridId = "gridId",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                ShowHeader = false,
+                AddSerialNo=true,
+                Columns = new List<Column>
+                                {
+                                new Column{FieldName="budgetName",HeaderText="Budget Name",Width="80",TextAlign=TextAlign.Left},
+                                new Column{FieldName="type",HeaderText="Type",Width="120",TextAlign=TextAlign.Left},
+                                new Column{FieldName="fromDate",HeaderText="From",Width="80",TextAlign=TextAlign.Left ,Type="dateTime" , DateFormat="dd/MM/yyyy" },
+                                new Column{FieldName="toDate",HeaderText="To",Width="80",TextAlign=TextAlign.Left , DateFormat="dd/MM/yyyy", Type="dateTime"},
+                                new Column{FieldName="debit",HeaderText="Debit",Width="80",TextAlign=TextAlign.Left},
+                                new Column{Template="#credit",HeaderText="Credit",Width="70",AutoFit=true,TextAlign=TextAlign.Left},
+                                new Column{Template="#action",HeaderText="Action",Width="100",TextAlign=TextAlign.Left},
+                                },
+             };
+                                }
+                                <script id="sno" type="text/x-jsrender">
+                                    ${sno(index)}
+                                </script>
+                                <script type="text/x-jsrender" id="action">
+                                    <a title="Edit" href="/Budget/@createAction/${Id}" class="ajax-load-menu ml-1"><i class="fa fa-edit"></i></a>
+                                    <a title="Delete" href="javascrpt:void(0);" onclick="deleteRecord(${Id})" class="ml-1"><i class="fa fa-trash"></i></a>
+                                </script>
+                                @await Html.PartialAsync("_grid",modelgrid)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</form>
+<script @resources.JavaScript>
+
+    $('#btnSearch').on('click',
+        function() {
+            var type = $('#type').val();
+            var budget = $('#budgetname').val();
+            
+            var url1 = '@Url.Action("BudgetList")';
+            url1 += encodeURI('?type=' + type + '&name=' + budget );
+            var grid = document.getElementById("gridId").ej2_instances[0]
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+    function reloadGridData() {
+        let grid = document.getElementById('gridId').ej2_instances[0];
+        grid.refresh();
+    }
+
+    function deleteRecord(id) {
+
+        sweetalertWithUrl("Are you sure to delete this record?", `/Budget/@deleteMasterAction/${id}`, true, reloadGridData)
+
+    }
+
+    $(function () {
+        $('#btnSearch').trigger('click');
+    });
+</script>
+ 

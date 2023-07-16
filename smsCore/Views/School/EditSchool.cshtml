@@ -1,0 +1,322 @@
+﻿@model tbl_Company
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Edit School View";
+    //if (Request.IsAjaxRequest())
+    //{
+    //    Layout = null;
+    //}
+}
+
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Edit School
+        </li>
+
+    </ul>
+</div>
+<section class="content">
+   @* @using (Ajax.BeginForm("EditSchool", "School", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "editSchoolmainForm #server-progress", OnBegin = "begin"}, new {id = "editSchoolmainForm", enctype = "multipart/form-data"}))
+    {*@
+    <form asp-action="EditSchool" asp-controller="School" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="editSchoolmainForm" data_reset="true">
+                   
+    <div class="row">
+        <div class=" col-12 col-md-3">
+            <div class="card">
+                <div class="card-body box-profile">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h5>Upload Logo</h5>
+                            @if (Model.logo != null)
+                            {
+                                <text>
+                                    @Html.HiddenFor(m => m.logo)
+                                </text>
+                            }
+                            <hr/>
+                            <img src="data:image/*;base64,@(Model.logo != null ? Convert.ToBase64String(Model.logo) : "")" id="ComLogoPreview" class="d-block m-auto" style="width: 150px;"/>
+                            <button type="button" id="browsebtn" class="btn btn-app btnFile mr-2 mt-2" data-targetfileinputid="CompanyLogoFile" data-preview="GaurdianSignPreview" data-txtvalue="GaurdianSignValue"><i class="fa fa-folder mr-2"></i>Browse</button>
+                            <button type="button" name="clear" id="clearbtn" class="btn btn-app btnFile mt-2"><i class="fa fa-eraser mr-2"></i>Clear</button>
+                            <input type="file" data-preview="ComLogoPreview" name="CompanyLogoFile" id="CompanyLogoFile" style="height: 0px; position: absolute; width: 0px;"/>
+                            @Html.ValidationMessage("CompanyLogoFile")
+                        </div>
+                    </div>
+                    <h3 class="profile-username text-center">@Model.companyName</h3>
+                    <ul class="list-group list-group-unbordered">
+                        <li class="list-group-item listnoback">
+                            <b>Contact</b> <a class="pull-right text-aqua">@Model.phone</a>
+                        </li>
+                        <li class="list-group-item listnoback">
+                            <b>Email</b> <a class="pull-right text-aqua">@Model.emailId</a>
+                        </li>
+                        <li class="list-group-item listnoback">
+                            <b>Address</b> <a class="pull-right text-aqua">@Model.address</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-9">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title titlefix">School Details</h3>
+                </div>
+                <div class="card-body">
+
+
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    @Html.HiddenFor(model => model.companyId)
+                    <div class="Container">
+
+                        <div class="row mr-md-5 ml-md-5">
+
+                            <div class="col-12 col-md-6 has-feedback">
+                                <label>School Name</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.companyName, new { @class = "form-control has-feedback-left", required = "true" })
+                                    <span class="fa fa-building form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.companyName)
+                                </div>
+                                </div>
+                                <div class="col-12 col-md-6 has-feedback">
+                                    <label>Mailing Name</label>
+                                    <div class="controls">
+                                        @Html.TextBoxFor(model => model.mailingName, new { @class = "form-control has-feedback-left" })
+                                        <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.mailingName)
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-6 has-feedback">
+                                    <label>Address</label>
+                                    <div class="controls">
+                                        @Html.TextAreaFor(model => model.address, new { @class = "form-control has-feedback-left" })
+                                        <span class="fa fa-address-book form-control-feedback left" aria-hidden="true"></span>
+                                        @Html.ValidationMessageFor(model => model.address)
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        <div class="row mr-md-5 ml-md-5">
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>Phone No</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.phone, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.phone)
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>Email </label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.emailId, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.emailId)
+                                </div>
+                            </div>
+
+
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>MobileNo </label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.mobile, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-mobile form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.mobile)
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>Web</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.web, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-globe form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.web)
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>Country</label>
+                                <div class="controls">
+                                    @Html.DropDownList("country", new SelectList(ViewBag.countryName), new { @class = "form-control" })
+                                    <span class="fa fa-globe form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.country)
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>City</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.state, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-dot-circle-o form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.state)
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>Pincode</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.pin, new { @class = "form-control has-feedback-left", required = "true" })
+                                    <span class="fa fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.pin)
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>Currency</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.currencyId, new { @class = "form-control has-feedback-left" })
+                                                                <span class="fa fa-money form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.currencyId)
+                                                            </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row mr-md-5 ml-md-5">
+                            <div class="col-12 mt-4">
+                                <h3>Session Information</h3>
+                                <hr/>
+                            </div>
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>Session Start</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.financialYearFrom, new { id = "SessionDatePicker", @class = "date form-control has-feedback-left", required = "true" })
+                                                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                                                @Html.ValidationMessageFor(model => model.financialYearFrom)
+                                                            </div>
+                            </div>
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>Books Begining</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.booksBeginingFrom, new { id = "BookerDatePicker", @class = "date form-control has-feedback-left", required = "true" })
+                                    <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.booksBeginingFrom)
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>NTN no</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.tin, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.tin)
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 has-feedback">
+                                <label>PAN no</label>
+                                <div class="controls">
+                                    @Html.TextBoxFor(model => model.pan, new { @class = "form-control has-feedback-left" })
+                                    <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                    @Html.ValidationMessageFor(model => model.pan)
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row mr-md-5 ml-md-5">
+                            <div class="col-12">
+                                <a href="@Url.Action("Index", "Dashboard")" aria-label="Close" class="btn btn-danger float-right mt-2"> <i class="fa fa-times mr-2"></i>Back to Dashboard</a>
+                                <button type="reset" name="Reset" id="resetbtn" class="btn btn-danger float-right mt-2"><i class="fa fa-refresh mr-2"></i>Reset</button>
+                                <button type="submit" value="Create" name="Update" id="updatebtn" class="btn btn-primary float-right mt-2 mr-2">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+</section>
+<script @resources.JavaScript>
+    function reload() {
+        location.reload();
+    }
+
+    $('Document').ready(function() {
+
+        $('#browsebtn').on('click',
+            function() {
+                var preview = $(this).data('preview');
+                var value = $(this).data('txtvalue');
+                var targetFileInputID = $(this).data('targetfileinputid');
+                $('#' + targetFileInputID + '').trigger('click');
+
+            });
+
+        $('input[type=file]').on('change',
+            function(data) {
+
+                var preview = $(this).data('preview');
+                if (this.files) {
+                    for (i = 0; i < this.files.length; i++) {
+                        var reader = new FileReader();
+                        var cFile = this.files[i];
+                        reader.onload = (function(e) {
+                            $('#' + preview + '').attr('src', e.target.result);
+                        });
+                        reader.readAsDataURL(this.files[i]);
+                    }
+                }
+
+            });
+
+        $("#clearbtn").click(function() {
+            $('img#ComLogoPreview').attr("src", "data:image/*;base64,@(Model.logo != null ? Convert.ToBase64String(Model.logo) : "")");
+        });
+
+        //$('#BookerDatePicker').datepicker();
+        //$('#SessionDatePicker').datepicker();
+    });
+    $(function() {
+        $('.date').val('');
+        $(".date").datepicker({
+            showOtherMonths: true,
+            selectOtherMonths: true,
+            showAnim: "clip",
+            dateFormat: "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            defaultDate: new Date(),
+            yearRange: "-50:+0"
+        });
+
+        $(".date").on('change', function() {
+            var val = $(this).val();
+            try {
+                var mo = moment(val, 'YYYY-MM-DD');
+                if (mo._d == 'Invalid Date') {
+                    $(this).closest('div').append('<span class="nosubmit conversion-error text-danger">Please select a valid date</span>');
+                } else {
+                    $(this).closest('div').find('.conversion-error').remove();
+                }
+                //console.log(mo)
+                //alert('converted',mo);
+            } catch{
+                alert('conversion error');
+        };
+    });
+
+    $('.date').inputmask({ mask: '99/99/9999' });
+    });
+
+</script>

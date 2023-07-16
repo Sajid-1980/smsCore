@@ -1,0 +1,183 @@
+﻿@model System.Data.DataTable
+@{
+    ViewBag.Title = "Index Vender";
+}
+@section BreadCrumbs{
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index","Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Accounts
+            </li>
+            <li class="active">
+                Registers
+            </li>
+            <li class="active">
+                Vendor Bill Register
+            </li>
+
+        </ul>
+    </div>
+}
+<style>
+    select.form-control {
+        max-height: 30px;
+    }
+</style>
+
+@*@using (Html.BeginForm("indexvender", "AccountTransaction", FormMethod.Get, new { enctype = "multipart/form-data", @class = "form-horizontal form-label-left " }))
+{*@
+
+    
+<form asp-action="indexvender" asp-controller="AccountTransaction"
+          data-ajax="true" data-ajax-method="get" enctype="multipart/form-data"  class="form-horizontal form-label-left input_mask"   >
+           
+
+    <section class="content">
+        <div class="row">
+            <div class="col-12 col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="row">
+                            <div class="col-6 col-md-6">
+                                <label>From Date</label>
+                                <input type="date" name="Fromdate" class="small form-control has-feedback-left" required />
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Fromdate")
+                            </div>
+                            <div class="col-6 col-md-6">
+                                <label>To Date</label>
+                                <input type="date" name="Todate" class="small form-control has-feedback-left" required />
+                                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("Todate")
+                            </div>
+                            <div class="col-6 col-md-8">
+                                <label>Bank/Cash</label>
+                                @Html.DropDownList("LedgerId", (SelectList)ViewBag.LedgerLists, new { @class = "form-control has-feedback-left select2" })
+                                <span class="fa fa-bank form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("LedgerId")
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <label>Voucher No</label>
+                                <input type="text" name="VoucherNo" class="small form-control has-feedback-left" required />
+                                <span class="fa fa-sort-numeric-asc form-control-feedback left" aria-hidden="true"></span>
+                                @Html.ValidationMessage("VoucherNo")
+                            </div>
+                            <div class="col-12 col-md-12 pt-3">
+                                <button type="submit" class="sico-btn btn btn-info float-right" name="Search"><i class="fa fa-search mr-2"></i> Search</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Vendor Payment Voucher List</h3>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="row no-gutters sico-form-col mt-1">
+                            <div class="col-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover table-sm" border="1" id="datatable">
+
+                                        <thead>
+                                            <tr>
+                                                <th>
+                                                    S. No
+                                                </th>
+                                                <th>
+                                                    Voucher No
+                                                </th>
+                                                <th>
+                                                    Voucher Type
+                                                </th>
+                                                <th>
+                                                    Date
+                                                </th>
+                                                <th>
+                                                    Narration
+                                                </th>
+                                                <th>
+                                                    Bank/Cash
+                                                </th>
+                                                <th>
+                                                    Amount
+                                                </th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablebody">
+                                            @foreach (System.Data.DataRow item in Model.Rows)
+                                            {
+                                                <tr>
+                                                    <td>
+                                                        @item["SINo"].ToString()
+
+                                                    </td>
+                                                    <td>
+                                                        @item["invoiceNo"].ToString()
+                                                    </td>
+                                                    <td>
+                                                        @item["voucherTypeName"].ToString()
+                                                    </td>
+                                                    <td>
+                                                        @item["date"].ToString()
+                                                    </td>
+                                                    <td>
+                                                        @item["narration"].ToString()
+                                                    </td>
+                                                    <td>
+                                                        @item["ledgerName"].ToString()
+                                                    </td>
+                                                    <td>
+                                                        @item["amount"].ToString()
+                                                    </td>
+                                                    <td>
+                                                        <a>
+                                                            @Html.ActionLink("Edit", "PaymentEdit", new { id = item["PaymentMasterId"] })
+                                                            <i class="fa fa-edit mr-2"></i>
+                                                        </a>
+                                                        <a>
+                                                            @Html.ActionLink("Delete", "PaymentDelete", new { id = item["PaymentMasterId"] })
+                                                            <i class="fa fa-edit mr-2"></i>
+                                                        </a>
+
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+<script>
+    $('#datatable').DataTable();
+</script>

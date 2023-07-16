@@ -1,0 +1,106 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "ClassWise List Of FeeGroup";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("FeeReports", "Reports")">Fee Report</a>
+        </li>
+        <li class="active">
+            ClassWise List Of FeeGroup
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="classwiseLOG-container">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "classwiseLOG-container", ColCssClass = "col-sm-2  form-group has-feedback", ShowCampus = true, ShowClasses = true, ForSearch = false})
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary  sico-button sico-btn" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div id="report-printable" class="card">
+                @{
+                    var grid = new GridModel
+                    {
+                        GridId="list_rpt_classwise_feegroup",
+                        AddSerialNo=true,
+                        AllowPdfExport=true,
+                        ReportTitle="Class Wise Fee Group",
+                        Columns=new List<Column> {
+                        new Column{ FieldName="AdmissionID", HeaderText="Reg No.", AutoFit=true },
+                        new Column{ FieldName="StudentName", HeaderText="Name", AutoFit=true },
+                        new Column{ FieldName="FName", HeaderText="Father's Name", AutoFit=true },
+                        new Column{ FieldName="FeeGroupName", HeaderText="Fee Group", AutoFit=true },
+}
+                    };
+                }
+                @Html.Partial("_grid", grid)
+
+                @*@Html.EJS().Grid("list_rpt_fee-classwise-fee-group").AllowGrouping().Height("auto").ToolbarClick("toolbarClick").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+           {
+               col.Template("#sno").HeaderText("S.No").Width("100").TextAlign(TextAlign.Left).Add();
+               col.Field("AdmissionID").HeaderText("Reg No").Width("150").TextAlign(TextAlign.Left).Add();
+               col.Field("StudentName").HeaderText("Student Name").Width("150").TextAlign(TextAlign.Left).Add();
+               col.Field("FName").HeaderText("Father Name").Width("150").TextAlign(TextAlign.Left).Add();
+               col.Field("FeeGroupName").HeaderText("Fee Group").Width("150").TextAlign(TextAlign.Left).Add();
+           }).AllowFiltering().FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "15", "30", "50", "All" })).Toolbar(new List<string>
+           { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render();
+                <script id="sno" type="text/x-jsrender">
+                    ${sno(index)}
+                </script>*@
+            </div>
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+    //function reloadGridData() {
+    //    $('#jqgclasswisereport').trigger('reloadGrid', { current: true, fromserver: true });
+    //}
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("list_rpt_fee-classwise-fee-group").ej2_instances[0];
+    //    if (args.item.id === 'list_rpt_fee-classwise-fee-group_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'list_rpt_fee-classwise-fee-group_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+    $('#btnSearch').on('click',
+        function() {
+
+            var classId = $('#Classes').val();
+            var url1 = '@Url.Action("GetClassWiseListOfFeeGroup")';
+            url1 += '?CampusId=' + $('#Campus').val() + '&clasId=' + classId;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+</script>
+@Html.EJS().ScriptManager()

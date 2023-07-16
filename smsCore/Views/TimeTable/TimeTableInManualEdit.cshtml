@@ -1,0 +1,85 @@
+﻿@model Models.TimeTable ;
+@inject StaticResources rec; 
+
+        <div class="row">
+            <div class="col-12">
+               @* @using (Ajax.BeginForm("TimeTableInManualEdit", "TimeTable", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", OnSuccess="successEdit", LoadingElementId = "timeTableEditForm #server-progress", OnBegin = "begin"}, new {id = "timeTableEditForm"}))
+                {*@
+
+        <form asp-action="TimeTableInManualEdit" asp-controller="TimeTable"
+              data-ajax="true" data-ajax-method="post" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="timeTableEditForm" data_reset="true">
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div id="message">
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        @Html.HiddenFor(model => model.CampusID)
+                        @Html.HiddenFor(model => model.ClassID)
+                        @Html.HiddenFor(model => model.SectionID)
+                        @Html.HiddenFor(model => model.SubjectID)
+                        @Html.HiddenFor(model => model.SubjectName)
+                        <div class="col-12 col-sm-4 col-md-4">
+                            <label>Period No</label>
+                            <div class="controls">
+                                @Html.TextBoxFor(model => model.Pno, new { type = "number", @class = "form-control" })
+                                <span class="fa fa-key form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+
+                        </div>
+                        <div class="col-12 col-sm-4 col-md-4">
+                            <label>Period Start</label>
+                            <div class="controls">
+                                @Html.TextBoxFor(model => model.TimeFrom, new { @class = "form-control" })
+                                <span class="fa fa-clock-o form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+
+                        </div>
+                        <div class="col-12 col-sm-4 col-md-4">
+                            <label>Period End</label>
+                            <div class="controls">
+                                @Html.TextBoxFor(model => model.TimeTo, new { @class = "form-control" })
+                                <span class="fa fa-clock-o form-control-feedback left" aria-hidden="true"></span>
+                            </div>
+
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" value="Create" class="btn sico-btn btn-primary float-right mt-2">
+                                <i class="fa fa-save mr-2"></i>
+                                <span>
+                                    <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                </span> Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+<script src="~/assets/js/bootstrap-timepicker.min.js"></script>
+<script @rec.JavaScript>
+    $('#TimeFrom').timepicker({
+        template: false,
+        showInputs: false,
+        minuteStep: 1
+    });
+    $('#TimeFrom').timepicker('setTime', '@Model.TimeFrom.ToString("hh:mm tt")');
+    $('#TimeTo').timepicker({
+        template: false,
+        showInputs: false,
+        minuteStep: 1
+    });
+    $('#TimeTo').timepicker('setTime', '@Model.TimeTo.ToString("hh:mm tt")');
+    function successEdit(data) {
+        console.log(data)
+        if (data == "success" || data.startsWith('Success:')) {
+            reloadGridData();
+            var id = $(this).closest('.modal.bootstrap-dialog').attr('id');
+            $('#' + id + '').modal('hide');
+        }
+    }
+</script>

@@ -1,0 +1,120 @@
+﻿@inject StaticResources resources
+
+@{
+    ViewBag.Title = "SessionWiseSearch";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        @*<li class="active">
+                <a href="@Url.Action("Student", "SessionWiseSearch")">Session Wise Student List</a>
+            </li>*@
+        <li class="active">
+            Session Wise Student List
+        </li>
+    </ul>
+</div>
+<section class="content" id="sessionstudent">
+    <div class="row">
+        <div class="col-12 ">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "sessionstudent", ColCssClass = " col-12 col-md-2 col-sm-6 col-lg-2   form-group has-feedback", ForSearch = true, ShowCampus = true, ShowClasses = true, ShowSession = true })
+
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary  sico-button sico-btn mt-2" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+@*            @Html.EJS().Grid("list_student").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.HeaderTemplate("#header").TextAlign(TextAlign.Center).Columns(new List<Syncfusion.EJ2.Grids.GridColumn>()
+           {
+             new Syncfusion.EJ2.Grids.GridColumn { Template = "#sno", Width = "100", HeaderText = "S.No",TextAlign=Syncfusion.EJ2.Grids.TextAlign.Left, MinWidth="10" },
+             new Syncfusion.EJ2.Grids.GridColumn { Field = "AdmissionID", Width = "130", TextAlign=Syncfusion.EJ2.Grids.TextAlign.Center, HeaderText = "RegNo",  MinWidth="10" },
+             new Syncfusion.EJ2.Grids.GridColumn { Field = "StudentName", Width = "130", TextAlign=Syncfusion.EJ2.Grids.TextAlign.Center, HeaderText = "Students", Format="C2", MinWidth="10" },
+             new Syncfusion.EJ2.Grids.GridColumn { Field = "FName", Width = "130", TextAlign=Syncfusion.EJ2.Grids.TextAlign.Center, HeaderText = "FName", MinWidth="10" },
+             new Syncfusion.EJ2.Grids.GridColumn { Field = "Class", Width = "130", TextAlign=Syncfusion.EJ2.Grids.TextAlign.Center, HeaderText = "Class Name", MinWidth="10" }}).Add();
+   }).AllowSorting(true).AllowPaging().PageSettings(page => page.PageSize(15).PageSizes(new string[] { "5", "15", "30", "50", "100", "All" })).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()*@
+
+            @{
+                var gridmodel = new GridModel()
+            {
+                GridId = "list_student",
+                AllowExcelExport = true,
+                AllowPdfExport = true,
+                AllowGrouping = true,
+                Width = "auto",
+                Height = "auto",
+                ShowColumnMenu =true,
+                ShowColumnChooser =true,
+                AllowResizing = true,
+                HeaderTemplate = "#header",
+                AddSerialNo=true,
+                
+               
+
+                Columns = new List<Column>
+            {
+             //new Column{Template="#sno",Width=" 100",HeaderText="S.No",TextAlign=TextAlign.Left,MinWidth="10"},
+            new Column{FieldName="admissionID",Width="130",HeaderText="RegNo",TextAlign=TextAlign.Left},
+            new Column{FieldName="studentName",Width="130",HeaderText="Students",MinWidth="10",TextAlign=TextAlign.Left},
+            new Column{FieldName="fName", Width = "130",MinWidth="10",HeaderText="FName",TextAlign=TextAlign.Left},
+            new Column{FieldName="class", Width = "130",MinWidth="10",HeaderText="Class",TextAlign=TextAlign.Left},
+            },
+            }; 
+            }
+            @await Html.PartialAsync("_grid",gridmodel)
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>
+
+            <script id="header" type="text/x-jsrender">
+                <h3>${schoolName()}</h3>
+                <h5>${schoolAddress()}</h5>
+            </script>
+        </div>
+    </div>
+</section>
+<script @resources.JavaScript>
+
+    function toolbarClick(args) {
+        var gridObj = document.getElementById("list_student").ej2_instances[0];
+        if (args.item.id === 'list_student_pdfexport') {
+            gridObj.pdfExport();
+        }
+        if (args.item.id === 'list_student_excelexport') {
+            gridObj.excelExport();
+        }
+    }
+    $('#btnSearch').on('click',
+        function() {
+            
+            var yearId = $('#Session').val();
+            var campusId = $('#Campus').val();
+
+            var classId = $('#Classes').val();
+
+            var url1 = '@Url.Action("GetSessionWiseStudentsList")';
+            url1 += '?clasId=' + classId + '&yearId=' + yearId + '&campusId=' + campusId;
+            var grid = document.getElementById("list_student").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+            url: url1,
+            adaptor: new ejs.data.UrlAdaptor()
+            });
+            });
+        </script>
+            

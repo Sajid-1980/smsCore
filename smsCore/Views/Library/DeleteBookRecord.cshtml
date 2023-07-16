@@ -1,0 +1,77 @@
+﻿@model Models.LibraryBookRecord
+@{
+    ViewBag.Title = "DeleteBookRecord";
+}
+
+@*@using (Ajax.BeginForm("DeleteBookRecord", "Library", new AjaxOptions {HttpMethod = "POST", OnComplete = "completed", LoadingElementId = "deleteLibraryBookRecordForm #server-progress", OnBegin = "begin"}, new {id = "deleteLibraryBookRecordForm", enctype = "multipart/form-data"}))
+{*@
+<form asp-action="DeleteBookRecord" asp-controller="Library" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="deleteLibraryBookRecordForm" data_reset="true">
+  
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+
+    <div class="row">
+        <div class="col-12">
+            <div id="message">
+
+            </div>
+        </div>
+    </div>
+    <div class="card">       
+        <div class="card-body">
+            <div class="row">
+
+                @Html.HiddenFor(model => model.ID)
+
+                <div>
+                    <h5>Are You Sure You Want to Delete This!!.</h5>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            @Html.DisplayNameFor(model => model.Library.LibraryName)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.Library.LibraryName)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.LibraryBookList.Title)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.LibraryBookList.Title)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.ShelfNo)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.ShelfNo)
+                        </dd>
+
+                        <dt>
+                            @Html.DisplayNameFor(model => model.EntryDate)
+                        </dt>
+
+                        <dd>
+                            @Html.DisplayFor(model => model.EntryDate)
+                        </dd>
+
+                    </dl>
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+
+                        <input type="submit" value="Delete" class="btn btn-danger"/>
+                    }
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</form>

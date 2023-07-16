@@ -1,0 +1,164 @@
+﻿@using sms.Models
+@model   tbl_Employee
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Employee Register";
+}
+    <div class="breadcrumbs ace-save-state" id="breadcrumb">
+        <ul class="breadcrumb">
+            <li>
+                <i class="fa fa-home ace-icon home-icon">
+
+                </i>
+                <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+            </li>
+            <li class="active">
+                Employee Register
+            </li>
+
+        </ul>
+    </div>
+
+<section class="content" id="emp-register">
+    <div class="row">
+        <div class="col-12">
+            @*@using (Html.BeginForm("EmployeeRegister", "Payroll", FormMethod.Post, new {enctype = "multipart/form-data", @class = "form-horizontal form-label-left", id = "emploeecreation"}))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)*@
+            <form asp-action="EmployeeRegister" asp-controller="Payroll" data-ajax="true" data-ajax-method="post" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="emploeecreation" data_reset="true">
+
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Employee Register <a href="https://www.youtube.com/watch?v=WUDqmWmgUdw+t=235s" target="_blank" title="Watch our Youtube video to understand" class="btn btn-default btn-sm float-right"><i class="fa fa-question-circle"></i> Help </a></h3>                        
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels {CampusLoadCallBack="reloadGridData();", ParentContainerID = "emp-register", ColCssClass = "col-6 col-md-3 has-feedback", CampusFieldName = "CampusID", ShowCampus = true })
+                        </div>
+                        <div class="row mt-3">
+                            <div id="employeeRegister-gridContainer" class="col-12">
+                               @* @Html.EJS().Grid("list_employee").AllowFiltering().FilterSettings(filter => filter.Type(FilterType.Menu)).AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+                           {
+                               col.Template("${sno(index)}").HeaderText("S.No").Width(90).TextAlign(TextAlign.Right).Add();
+                               col.Field("employeeCode").HeaderText("Code").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("employeeName").Template("#empname").HeaderText("Name").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("FatherName").HeaderText("Father's Name").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("CNIC").HeaderText("NIC").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("joiningDate").HeaderText("Joining Date").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("terminationDate").HeaderText("Termination Date").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("designationName").HeaderText("Designation").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("salaryType").HeaderText("Salary Type").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("mobileNumber").HeaderText("Mobile").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Field("address").HeaderText("Address").TextAlign(TextAlign.Left).AutoFit(true).Add();
+                               col.Template("#action").TextAlign(TextAlign.Center).AllowFiltering(false).AllowGrouping(false).AllowSearching(false).AllowSorting(false).HeaderText("Actions").Width("140").Add();
+                           }).AllowSorting(true).AllowPaging().PageSettings(page => page.PageSize(5).PageSizes(new string[] { "5", "15", "30", "50", "100", "All" })).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser", "Search" }).Render()*@
+
+
+                                @{
+                                    var gridModel = new GridModel()
+            {
+                GridId = "list_employee",
+
+                Columns = new List<Column>
+                                {
+                                new Column{Template="${sno(index)}",HeaderText="S.No",Width="90",TextAlign = TextAlign.Right},
+                                new Column{FieldName ="employeeCode", HeaderText = "Code", TextAlign = TextAlign.Left,AutoFit=true    } ,
+                                new Column{FieldName="employeeName",Template="#empname",HeaderText="Name",  AutoFit=true ,TextAlign=TextAlign.Left},
+                                new Column{FieldName="fatherName",HeaderText="Father's Name",TextAlign=TextAlign.Left},
+                                new Column{FieldName="CNIC",HeaderText="NIC",TextAlign=TextAlign.Left , AutoFit=true},
+                                new Column{FieldName="joiningDate",HeaderText="Joining Date",TextAlign=TextAlign.Left , AutoFit=true},
+                                new Column{FieldName="terminationDate",HeaderText="Termination Date  ",TextAlign=TextAlign.Left , AutoFit=true},
+                                new Column{FieldName="designationName",HeaderText="Designation",TextAlign=TextAlign.Left , AutoFit=true},
+                                new Column{FieldName="salaryType",HeaderText="Salary Type",TextAlign=TextAlign.Left , AutoFit=true},
+                                new Column{FieldName="mobileNumber",HeaderText="Mobile",TextAlign=TextAlign.Left , AutoFit=true},
+                                new Column{FieldName="address",HeaderText="Mobile",TextAlign=TextAlign.Left , AutoFit=true},
+                                new Column{Template="#action",HeaderText="Actions",Width="140",TextAlign = TextAlign.Center},
+                                },
+
+
+            };
+
+
+                                }
+
+                                @await Html.PartialAsync("_grid",gridModel)
+
+                           
+                           
+                           
+                           
+                           </div>
+                            <script type="text/x-jsrender" id="empname">
+                                <a title="Edit Employee" href="/Payroll/EditEmployee/${Id}">${employeeName}</a>
+                            </script>
+                            <script type="text/x-jsrender" id="action">
+                                ${if(!Left)}
+                                <a title="Edit" href="/Payroll/EditEmployee/${Id}" class="navigate ml-1"><i class="fa fa-edit"></i></a>
+                                <a title="Delete" href="/Payroll/DeleteEmployee/${Id}" class="ajax-load ml-1"><i class="fa fa-trash"></i></a>
+                               @* <a title="Credentials" href="/Teacher/Teacheruser/${Id}" class="ajax-load ml-1"><i class="fa fa-lock"></i></a>*@
+                                ${/if}
+                                <a title="View" href="/Payroll/EmployeeDetails/${Id}" class="navigate ml-1"><i class="fa fa-list"></i></a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            @*}*@
+            </form>
+        </div>
+    </div>
+</section>
+
+
+<script @resources.JavaScript>
+    $('#list_employee').on('click',
+        'a.ajax-load',
+        function (e) {
+            e.preventDefault();
+            var title = 'Payroll';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+
+    $('#list_employee').on('click',
+        'a.navigate',
+        function (e) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            Navigate(url);
+            return false;
+        });
+    function reloadGridData() {
+        var campusId = $('#Campus').val();
+        if (!campusId)
+         return false;
+
+        var url = '@Url.Action("EmployeeListInCampus")';
+        url += '?CampusId=' + campusId;
+
+
+        var grid = document.getElementById("list_employee").ej2_instances[0];
+        grid.dataSource = [];
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+    $('#Campus').on('change', function () { reloadGridData(); });
+    $('#Campus').trigger('change');
+    //setTimeout(function () { reloadGridData(); }, 300);
+
+</script>

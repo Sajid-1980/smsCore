@@ -1,0 +1,135 @@
+﻿@using Models
+@using sms.Models
+@using Syncfusion.EJ2.Grids
+@using smsCore.ViewModels;
+@inject StaticResources resources
+@{
+    ViewBag.Title = "Report By Gender";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            <a href="@Url.Action("StudentReports", "Reports")">Student Report</a>
+        </li>
+        <li class="active">
+            Report By Gender
+        </li>
+    </ul>
+</div>
+
+<section class="content" id="reportbygender">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-search"></i> Select Criteria</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        @Html.Partial("_PartialCampusSelector", new PartialCampusViewModels {ParentContainerID = "reportbygender", ColCssClass = " col-12 col-sm-2  form-group has-feedback", ForSearch = true, ShowCampus = true, ShowClasses = true})
+
+                        <div class="col-sm-4 col-12 pb-2 mt-2 pt-3 form-group has-feedback">
+                            <button type="button" class="btn btnSearchStudent btn-primary pull-left sico-button sico-btn mt-2" id="btnSearch"><i class="fa fa-search"></i> Search</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            @{
+                    var grid = new GridModel
+                    {
+                        GridId="list_rpt_missingdoc",
+                        AddSerialNo=true,
+                        AllowPdfExport=true,
+                        ReportTitle="Gender Wise Summary",
+                        Columns=new List<Column> {
+                            new Column { FieldName="CampusName", HeaderText="Campus", AutoFit=true },
+                            new Column { FieldName="ClassName", HeaderText="Class", AutoFit=true },
+                            new Column { FieldName="Male", HeaderText="Male", AutoFit=true },
+                            new Column { FieldName="Female", HeaderText="Female", AutoFit=true },
+                            new Column { Template="#total", FieldName="Total", HeaderText="Total", AutoFit=true },
+                        },
+                        GridAggregateColumns=new List<Syncfusion.EJ2.Grids.GridAggregateColumn>
+                               () {
+                            new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "ClassName", Type = "Custom", FooterTemplate = "Total" },
+                            new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Male", Type = "Sum", FooterTemplate = "${Sum}" },
+                            new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Female", Type = "Sum", FooterTemplate = "${Sum}" },
+                            new Syncfusion.EJ2.Grids.GridAggregateColumn() { ColumnName = "Total", Type = "Custom", FooterTemplate = "${Custom}", CustomAggregate="customAggregateFn"},
+                        }
+                };
+            }
+            @Html.Partial("_grid", grid)
+            @*@Html.EJS().Grid("student-rpt-by-gender").AllowGrouping().Height("auto").Width("auto").AllowExcelExport().AllowPdfExport().ToolbarClick("toolbarClick").ShowColumnMenu().ShowColumnChooser().AllowResizing().Columns(col =>
+       {
+           col.Template("#sno").HeaderText("S.No").Width("70").TextAlign(TextAlign.Left).Add();
+           col.Field("CampusName").HeaderText("Campus Name").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("ClassName").HeaderText("Class Name").Width("150").TextAlign(TextAlign.Left).Add();
+           col.Field("Male").HeaderText("Male").Width("150").TextAlign(TextAlign.Center).Add();
+           col.Field("Female").HeaderText("Female").Width("150").TextAlign(TextAlign.Center).Add();
+           col.Template("#total").Field("Total").HeaderText("Total").Width("150").TextAlign(TextAlign.Center).Add();
+       }).FilterSettings(filter => { filter.Type(FilterType.CheckBox); }).AllowSorting().PageSettings(page => page.PageSize(5)).Toolbar(new List<string> { "PdfExport", "Print", "ExcelExport", "ColumnChooser" }).Aggregates(agg =>
+                   {
+                       agg.Columns(new List<Syncfusion.EJ2.Grids.GridAggregateColumn>
+                           () {
+                       new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Male",Type = "Sum", FooterTemplate = "T.Male: ${Sum}" },
+                       new Syncfusion.EJ2.Grids.GridAggregateColumn() { Field = "Female", Type = "Sum", FooterTemplate = "T.Female: ${Sum}" },
+                       new Syncfusion.EJ2.Grids.GridAggregateColumn() {  ColumnName = "Total", Type = "Custom",FooterTemplate = "Total:${Custom}", CustomAggregate= "customAggregateFn"},
+                       }).Add();
+                   }).Render()
+            <script id="sno" type="text/x-jsrender">
+                ${sno(index)}
+            </script>*@
+            <script id="total" type="text/x-jsrender">
+                ${total(data.Male,data.Female)}
+            </script>
+        </div>
+    </div>
+</section>
+
+<script @resources.JavaScript>
+    //function toolbarClick(args) {
+    //    var gridObj = document.getElementById("student-rpt-by-gender").ej2_instances[0];
+    //    if (args.item.id === 'student-rpt-by-gender_pdfexport') {
+    //        gridObj.pdfExport();
+    //    }
+    //    if (args.item.id === 'student-rpt-by-gender_excelexport') {
+    //        gridObj.excelExport();
+    //    }
+    //}
+
+    $('#btnSearch').on('click',
+        function() {
+            var campus = $('#Campus').val();
+            var classId = $('#Classes').val();
+            var url1 = '@Url.Action("GetReportByGender")';
+            url1 += '?clasId=' + classId + '&campusId=' + campus;
+            var grid = document.getElementById("@grid.GridId").ej2_instances[0];
+            grid.dataSource = [];
+            grid.dataSource = new ej.data.DataManager({
+                url: url1,
+                adaptor: new ejs.data.UrlAdaptor()
+            });
+        });
+    
+    function total(male, female) {
+        var m = parseInt(male);
+        var f = parseInt(female);
+        var total = m + f;
+        return total;
+    }
+    function customAggregateFn(data) {
+        var sumofTotal = 0;
+        data.result.filter(function (item) {
+            sumofTotal += parseInt(item['Male']) + parseInt(item['Female'])
+        });
+        return sumofTotal;
+    }
+</script>
+@Html.EJS().ScriptManager()

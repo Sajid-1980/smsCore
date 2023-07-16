@@ -1,0 +1,281 @@
+﻿ @model FeeSlipViewModel
+@*@model IEnumerable<Models.FeeSlip>*@
+@inject StaticResources resources
+
+@{
+    ViewBag.Title = "Monthly Fee Entry";
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Monthly Fee Entry
+        </li>
+
+    </ul>
+</div>
+
+<style>
+</style>
+
+<section class="content" id="feeSlipIndex-container">
+    <div class="row">
+        <div class="col-12 col-md-5">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Monthly Fee Slip <a href="https://www.youtube.com/watch?v=fYh3kgcnfT8&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a></h3>
+                </div>
+                <div class="card-body">
+                   @* @using (Ajax.BeginForm("AddFeeSlip", "Fee", new AjaxOptions { HttpMethod = "POST", OnComplete = "completed", OnSuccess = "reloadGridData", LoadingElementId = "FeeSlipIndexmainForm #server-progress", OnBegin = "begin" }, new { id = "FeeSlipIndexmainForm" }))
+                    {*@
+                    <form asp-action="AddFeeSlip" asp-controller="Fee" data-ajax="true" data-ajax-method="post" OnSuccess="reloadGridData" enctype="multipart/form-data" data-ajax-complete="completed" data-ajax-begin="begin" class="form-horizontal form-label-left input_mask" id="FeeSlipIndexmainForm" data_reset="true">
+         
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="message">
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12 text-danger">@Html.ValidationSummary(true)</div>
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                       {
+                           Label = "Month:",
+                           PickerType = "month",
+                           Format = "MM yy",
+                           ParentContainerID = "mont-date",
+                           ColCssClass = "col-12 col-sm-6 col-md-5",
+                           ShowAltField = true,
+                           AltFieldId = "monthlyfee",
+                           AltFieldName = "ForMonth",
+                           AltFieldFormat = "dd/mm/yy",
+                           DateFieldId = "monthpick",
+                           DateFieldName = "monthpick",
+                           KeepDataFieldReadOnly = true
+                       })
+
+
+                            @*<div class="w-100 my-1"></div>*@
+                             @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "FeeSlipIndexmainForm", CampusFieldName = "CampusId", ClassesFieldName = "ClassId", ColCssClass = "col-12 col-sm-6 col-lg-4 col-xl-4 col-md-4", ShowCampus = true, ShowClasses = true, ForSearch = true })
+
+                            <div class="w-100 my-1"></div>
+                            <div class="w-100"></div>
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                       {
+                           Label = "Due Date:",
+                           ParentContainerID = "due-date",
+                           ColCssClass = "col-12 col-sm-6 col-md-5",
+                           ShowAltField = false,
+                           DateFieldId = "duedate",
+                           DateFieldName = "DueDate",
+                           KeepDataFieldReadOnly = true
+                       })
+
+                            @await Html.PartialAsync("_PartialDate", new PartialDateViewModels
+                        {
+                            Label = "Last Fine Date:",
+                            ParentContainerID = "lf-date",
+                            ColCssClass = "col-12 col-sm-6 col-md-5",
+                            ShowAltField = false,
+                            DateFieldId = "LastFineDate",
+                            DateFieldName = "LastFineDate",
+                            KeepDataFieldReadOnly = true
+                        })
+
+
+                            <div class="w-100 my-1"></div>
+                            <div class="col-12 form-group has-feedback">
+                                <div class="row">
+                                    <div class="col-12">
+
+
+                                        @Html.EJS().Grid("optinallist").AllowSelection().Columns(col =>
+                                   {
+                                       col.Template("#optional").Width("50").Add();
+                                       col.Field("TypeName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                                       col.Template("#amount").HeaderText("Amount").Width("140").Add();
+                                   }).Render()
+                                        <script id="optional" type="text/x-jsrender">
+                                            <input type="checkbox" name="Fee[${index}].Select" value="true" />
+                                        </script>
+
+                                        <script id="amount" type="text/x-jsrender">
+                                            <input type="hidden" name="Fee[${index}].Id" value="${Id}" />
+                                            <input type="text" class="form-control" name="Fee[${index}].Amount" value="0" />
+                                        </script>
+                                    </div>
+
+                                    <div class="col-12 col-md-6">
+                                        <label class="checkbox">
+                                            <input name="SendMessage" type="checkbox" value="true" class="mr-1" /><span> Send message &nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        </label>
+                                        <div class="w-100 my-1"></div>
+                                        <label class="checkbox">
+                                            <input name="AddSmsCharges" type="checkbox" value="true" class="mr-1" /><span>Add SMS Charge&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        </label>
+
+                                        <div class="w-100 my-1"></div>
+                                        <label class="checkbox">
+                                            <input name="AddTransport" type="checkbox" value="true" class="mr-1" /><span>Add TransPort Charge &nbsp; &nbsp; &nbsp; &nbsp;</span>
+                                        </label>
+
+                                        @*<div class="w-100 my-1"></div>
+                                            <label class="checkbox">
+                                                <input name="AddLateFee" type="checkbox" value="true" class="mr-1" /><span>Add Late Fee </span>
+                                            </label>*@
+                                    </div>
+                                    <div class="col-12 col-md-6">
+
+                                        <p class="text-black-50 mb-1 mt-3">
+                                            If Record Found?
+                                        </p>
+                                        <label class="checkbox">
+                                            <input name="OverWrite" type="radio" value="true" checked class="mr-1" /><span>Over Write Existing Record</span>
+                                        </label>
+
+                                        <div class="w-100 my-1"></div>
+                                        <label class="checkbox">
+                                            <input name="OverWrite" type="radio" value="false" class="mr-1" /> <span>Don't Change</span>
+                                        </label>
+                                    </div>
+
+
+                                </div>
+
+                            </div>
+                            <div class="w-100 my-2"></div>
+
+                            <div class="form-group col-12 pb-2">
+                               
+
+                                <button type="submit" value="Create" class="btn btn-primary float-right">
+                                    <i class="fa fa-save mr-2"></i>
+                                    <span>
+                                        <i id="server-progress" style="display: none;" class=" fa fa-spinner fa-spin "></i>
+                                    </span> Save
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-7">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title">Monthly Fee Entry List</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12">
+
+
+                            @Html.EJS().Grid("feelist").AllowSelection().Columns(col =>
+                       {
+                           col.Field("RegistrationNo").HeaderText("Reg. No").TextAlign(TextAlign.Left).Add();
+                           col.Field("StudentName").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                           col.Field("ForMonth").HeaderText("Month").TextAlign(TextAlign.Left).Format("MMM, yyyy").Add();
+                           col.Field("Amount").HeaderText("Amount").TextAlign(TextAlign.Left).Add();
+                           col.Template("#action").HeaderText("Actions").Width("140").Add();
+                       }).AllowPaging().PageSettings(page=> { page.PageSize(15); }).Render()
+                            
+
+                            <script id="action" type="text/x-jsrender">
+                                <a title="Edit" href="/Fee/EditFeeIndex/${Id}" class="edit ajax-load ml-1"><i class="fa fa-edit"></i></a>                                
+                                <a title="Delete" href="/Fee/FeeSlipDeleteView/${Id}" class="delete ml-1"><i class="fa fa-trash"></i></a>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@Html.EJS().ScriptManager()
+
+<script @resources.JavaScript>
+    $('#feelist').on('click',
+        'a.ajax-load',
+        function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var url = window.$(this).attr('href');
+            Navigate(url);
+            return false;
+        });
+    function loadMonthlyFee() {
+        var _month = $('#monthlyfee').val();
+
+        var campusId = $('#Campus').val();
+        var clsId = $('#Classes').val();
+        console.log(_month, campusId, clsId);
+        if (!_month || !campusId || !clsId)
+            return false;
+
+            var url = '@Url.Action("MonthlyFeeList")';
+        url += '?month=' + _month + '&campusId=' + campusId + '&classid=' + clsId;
+
+
+        var grid = document.getElementById("feelist").ej2_instances[0];
+        grid.dataSource = [];
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }  
+    function reloadGridData() {
+        var gird = document.getElementById('feelist').ej2_instances[0];
+        gird.refresh();
+    }
+    function loadOptionalFee() {
+        var grid = document.getElementById("optinallist").ej2_instances[0];
+        grid.dataSource = [];
+        let url = '@Url.Action("OptionalFeeList")';
+
+        grid.dataSource = new ej.data.DataManager({
+            url: url,
+            adaptor: new ejs.data.UrlAdaptor()
+        });
+    }
+
+
+    loadOptionalFee();
+
+    $('#Campus,#Classes').on('change',
+        function() {
+            loadMonthlyFee();
+        });
+   
+
+    $('#monthpick').MonthPicker({ OnAfterMenuClose: function () { loadMonthlyFee(); } });
+    $('#duedate').on('change',
+        function() {
+            $('#LastFineDate').attr('min', $('#duedate').val().toString('yyyy-mm-dd'));
+        });
+
+    // Modal For Delete //
+    $('#feelist').on('click',
+        'a.delete',
+        function (e) {
+            e.preventDefault();
+            var title = 'Delete Fee Slip';
+            var url = $(this).attr('href');
+
+            BootstrapDialog.show({
+                title: title,
+                message: $('#bootstrap-diallog').html('<div />').load(url),
+                onhide: function (dialogRef) {
+                    $('body').append('<div id="bootstrap-diallog"></div>');
+                    reloadGridData();
+                }
+            });
+            return false;
+        });
+</script>

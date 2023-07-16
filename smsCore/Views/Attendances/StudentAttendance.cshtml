@@ -1,0 +1,225 @@
+﻿@inject StaticResources resources
+
+@{
+    //ViewBag.Title = "Add New Exam";
+    //Layout = "~/Areas/Admin/Views/Shared/_LayoutDashboard.cshtml";
+
+
+}
+<div class="breadcrumbs ace-save-state" id="breadcrumb">
+    <ul class="breadcrumb">
+        <li>
+            <i class="fa fa-home ace-icon home-icon">
+
+            </i>
+            <a href="@Url.Action("Index", "Dashboard")">Dashboard</a>
+        </li>
+        <li class="active">
+            Attendance
+        </li>
+        <li class="active">
+            Student Attendance
+        </li>
+    </ul>
+</div>
+
+<style>
+    .checkbox input[type=checkbox], .checkbox-inline input[type=checkbox], .radio input[type=radio], .radio-inline input[type=radio] {
+        margin-left: -15px;
+    }
+</style>
+<section class="content" id="attendance-container">
+    <div class="row ">
+        @*<div class="col-12">
+        <div id="newCreateMessage">
+        </div>
+        </div>*@
+        @Html.AntiForgeryToken()
+        <div class="col-12 col-md-4" id="attendance-container">
+            <div class="row">
+
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header with-border">
+                            <h3 class="card-title">
+                                <i class="fa fa-search"></i> Select Criteria <a href="https://www.youtube.com/watch?v=1V8UAwwydJU&list=UUQFf95Tyl3o9y-DE0vvlTQg" target="_blank" class="btn btn-default btn-sm float-right ml-5"><i class="fa fa-question-circle"></i> Help </a>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                @await Html.PartialAsync("_PartialCampusSelector", new PartialCampusViewModels { ParentContainerID = "attendance-container", ColCssClass = "col-12 pt-2 has-feedback", ForSearch = true, ShowCampus = true })
+
+                                <div class="col-12">
+                                    <label>Registration No.</label><font class="text-danger">*</font>
+                                    <div class="controls">
+                                        @Html.TextBox("RegNo", null, new { @class = "form-control has-feedback-left col-md-12", placeholder = "enter registration no here." })
+                                        <span class="fa fa-user form-control-feedback left" aria-hidden="true" id="RegNoi"></span>
+                                        @Html.ValidationMessage("RegNo")
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-sm-12">
+                    <div class="card">
+
+                        <div class="card-body">
+                            <div class="col-12 col-md-12">
+                                <img class="profile-user-img img-fluid rounded mx-auto d-block" id="pbxPhoto" src="~/Uploads/images/user.png" alt="User profile picture" style="max-width: 90px">
+                                <h3 class="profile-username text-center">
+                                    <span class="name" id="lblregno">.........</span>
+                                </h3>
+                                <ul class="list-group list-group-unbordered">
+                                    <li class="list-group-item listnoback">
+                                        <span>Address</span>
+                                        <a class="float-right text-aqua">
+                                            <span class="name address" id="lbladdress">.......</span>
+                                        </a>
+                                    </li>
+
+                                    <li class="list-group-item listnoback">
+                                        <span>Campus</span>
+                                        <a class="float-right text-aqua">
+                                            <span class="campusname" id="lblcampus">...</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Class</span>
+                                        <a class="float-right text-aqua">
+                                            <span class="classname" id="lblclass">...</span>
+                                        </a>
+                                    </li>
+                                    <li class="list-group-item listnoback">
+                                        <span>Section</span>
+                                        <a class="float-right text-aqua">
+                                            <span class="sectionname" id="lblsection">...</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-12 col-md-8">
+            <div class="card">
+                <div class="card-header with-border">
+                    <h3 class="card-title"><i class="fa fa-list mr-2"></i>Student List</h3>
+
+                </div>
+                <div class="card-body">
+                    <div id="Existing">
+                        @{
+                            var gridmodel = new GridModel()
+            {
+                GridId = "list_attenance",
+                Columns = new List<Column>
+                        {
+                        new Column{FieldName="regNo",HeaderText="Reg No",TextAlign=TextAlign.Left},
+                        new Column{FieldName="name",HeaderText="Name",TextAlign=TextAlign.Left},
+                        new Column{FieldName="class",HeaderText="Class",TextAlign=TextAlign.Left},
+                        new Column{FieldName="time",HeaderText="Time",TextAlign=TextAlign.Left},
+                        new Column{FieldName="Status",HeaderText="Status",TextAlign=TextAlign.Left},
+                        },
+            };
+                        }
+                        @await Html.PartialAsync("_grid",gridmodel)
+
+                    </div>
+                    @* <div id="Existing">
+
+
+                    @Html.EJS().Grid("list_attenance").Columns(col =>
+                    {
+                    //col.Field("RegNo").HeaderText("Reg. No").TextAlign(TextAlign.Left).Add();
+                    col.Field("RegNo").HeaderText("Reg No").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                    col.Field("Name").HeaderText("Name").TextAlign(TextAlign.Left).Add();
+                    col.Field("Class").HeaderText("Class").AutoFit(true).TextAlign(TextAlign.Left).Add();
+                    col.Field("Time").HeaderText("Time").TextAlign(TextAlign.Left).Add();
+                    col.Field("Status").HeaderText("Status").TextAlign(TextAlign.Left).Add();
+                    }).Load("loaded").Render()
+                    </div>*@
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+<script>
+    function loaded() {
+        let grid = document.getElementById("list_attenance").ej2_instances[0];
+        grid.dataSource = [];
+    }
+</script>
+<script @resources.JavaScript>
+    @*var table = $('#tableAttendance').DataTable({
+        "autoWidth": true,
+        "createdRow": function(row, data, index) {
+        var date = new Date(data[3]);
+        $.post('@Url.Action("SaveAttendance", "Attendances")',
+        { regno: parseInt(data[1]), time: date.toString("HH:mm") },
+        function(data) {
+        if (data.message == 'Success') {
+        data[4] = 'Success';
+        $('td', row).eq(4).html('Success');
+        } else {
+        $('td', row).eq(4).html(data.message);
+        }
+        });
+        }
+        });*@
+
+        $('#RegNo').change(function () {
+            
+            let grid = document.getElementById("list_attenance").ej2_instances[0];
+            
+            var regno = $(this).val();
+            var campusId = $('#Campus').val();
+            $(lblregno).html('...');
+            $(lblcampus).html('...');
+            $(lblclass).html('...');
+            $(lblsection).html('...');
+            $(lbladdress).html('...');
+            $(pbxPhoto).attr('src', '/Uploads/images/user.png');
+
+            var found = (grid.dataSource).find(function (v, i) { return v.RegNo == regno; });
+            //console.log(found);
+            if (found) {
+                $('#RegNo').focus().select();
+                return false;
+            }
+
+            block('#attendance-container');
+            //var exist = table.columns(1).data().eq(0).indexOf(regno);
+            let saveUrl = '/Attendances/SaveAttendance';
+            $.post(saveUrl,
+                { regno: regno, time: moment().format("DD-MM-YYYY HH:mm") },
+                function (data) {
+                    if (data) {
+                        let info = { regNo: regno, name: data.data.studentName, class: data.data.className, time: moment().format("DD-MM-YYYY HH:mm"), Status: data.data.status };
+                        (grid.dataSource).unshift(info);
+                        grid.refresh();
+
+                        $(lblregno).html(data.data.studentName);
+                        $(lblcampus).html(data.data.campusName);
+                        $(lblclass).html(data.data.className);
+                        $(lbladdress).html(data.data.postalAddress);
+                        $(lblsection).html(data.data.sectionName);
+                        $(pbxPhoto).attr('src', data.data.photo);
+                    } else {
+                        //alert();
+                    }
+                    $('#attendance-container').unblock();
+                }).error(function () {
+                    $('#attendance-container').unblock();
+                });
+            $('#RegNo').select();
+        }); //end reg no change
+</script>
